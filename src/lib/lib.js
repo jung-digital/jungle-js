@@ -1,6 +1,8 @@
+import Spark from './gx/Spark.js';
+
 class Lib {
-  greet() {
-    return 'hello';
+  constructor() {
+    this.Spark = Spark;
   }
 }
 

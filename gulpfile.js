@@ -90,13 +90,13 @@ function buildComplete(build, done) {
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.babel())
       .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationFolder))
+      .pipe(gulp.dest(destinationFolder + '/' + build.key))
       .pipe($.filter(['*', '!**/*.js.map']))
       .pipe($.rename(build.key + '.min.js'))
       .pipe($.sourcemaps.init({ loadMaps: true }))
       .pipe($.uglify())
       .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationFolder))
+      .pipe(gulp.dest(destinationFolder+ '/' + build.key))
       .on('end', done);
   })
   .catch(done);
