@@ -1,0 +1,10 @@
+[
+  {
+    "key": "lib",
+    "entry": "./lib/lib.js"
+  },
+  {
+    "key": "embers",
+    "entry": "./embers/embers.js"
+  }
+]

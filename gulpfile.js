@@ -1,36 +1,34 @@
-// Load Gulp and all of our Gulp plugins
-const gulp = require('gulp');
-const $ = require('gulp-load-plugins')();
+/*---------------------------------------------------------------------------*\
+ * Gulp Modules
+\*---------------------------------------------------------------------------*/
+const gulp = require('gulp'),
+      $ = require('gulp-load-plugins')();
 
-// Load other npm modules
-const del = require('del');
-const glob = require('glob');
-const path = require('path');
-const isparta = require('isparta');
-const babelify = require('babelify');
-const watchify = require('watchify');
-const buffer = require('vinyl-buffer');
-const esperanto = require('esperanto');
-const browserify = require('browserify');
-const runSequence = require('run-sequence');
-const source = require('vinyl-source-stream');
+/*---------------------------------------------------------------------------*\
+ * NPM Modules
+\*---------------------------------------------------------------------------*/
+const del = require('del'),
+      glob = require('glob'),
+      path = require('path'),
+      isparta = require('isparta'),
+      babelify = require('babelify'),
+      watchify = require('watchify'),
+      buffer = require('vinyl-buffer'),
+      esperanto = require('esperanto'),
+      browserify = require('browserify'),
+      runSequence = require('run-sequence'),
+      source = require('vinyl-source-stream');
 
-// Gather the library data from `package.json`
-const manifest = require('./package.json');
-const config = manifest.babelBoilerplateOptions;
-const mainFile = manifest.main;
-const destinationFolder = path.dirname(mainFile);
-const exportFileName = path.basename(mainFile, path.extname(mainFile));
+/*---------------------------------------------------------------------------*\
+ * Load Dependencies
+\*---------------------------------------------------------------------------*/
+const manifest = require('./package.json'),
+      destinationFolder = './dist',
+      builds = require('./src/builds.json'),
+      config = manifest.babelBoilerplateOptions;
 
-// Remove the built files
-gulp.task('clean', function(cb) {
-  del([destinationFolder], cb);
-});
-
-// Remove our temporary files
-gulp.task('clean-tmp', function(cb) {
-  del(['tmp'], cb);
-});
+gulp.task('clean', del.bind(undefined, [destinationFolder]));
+gulp.task('clean-tmp', del.bind(undefined, ['tmp']));
 
 // Send a notification when JSCS fails,
 // so that you know your changes didn't build
@@ -51,41 +49,16 @@ function createLintTask(taskName, files) {
   });
 }
 
-// Lint our source code
 createLintTask('lint-src', ['src/**/*.js']);
-
-// Lint our test code
 createLintTask('lint-test', ['test/**/*.js']);
 
-// Build two versions of the library
-gulp.task('build', ['lint-src', 'clean'], function(done) {
-  esperanto.bundle({
-    base: 'src',
-    entry: config.entryFileName,
-  }).then(function(bundle) {
-    var res = bundle.toUmd({
-      // Don't worry about the fact that the source map is inlined at this step.
-      // `gulp-sourcemaps`, which comes next, will externalize them.
-      sourceMap: 'inline',
-      name: config.mainVarName
-    });
-
-    $.file(exportFileName + '.js', res.code, { src: true })
-      .pipe($.plumber())
-      .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.babel())
-      .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationFolder))
-      .pipe($.filter(['*', '!**/*.js.map']))
-      .pipe($.rename(exportFileName + '.min.js'))
-      .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.uglify())
-      .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationFolder))
-      .on('end', done);
-  })
-  .catch(done);
+builds.forEach(function (build) {
+  // Build two versions of the library
+  
+  gulp.task('build-' + build.key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
 });
+
+gulp.task('build', builds.map(function (b) {return 'build-' + b.key}));
 
 function bundle(bundler) {
   return bundler.bundle()
@@ -100,6 +73,34 @@ function bundle(bundler) {
     .pipe($.livereload());
 }
 
+function buildComplete(build, done) {
+  esperanto.bundle({
+    base: 'src',
+    entry: build.entry,
+  }).then(function(bundle) {
+    var res = bundle.toUmd({
+      // Don't worry about the fact that the source map is inlined at this step.
+      // `gulp-sourcemaps`, which comes next, will externalize them.
+      sourceMap: 'inline',
+      name: build.key
+    });
+
+    $.file(build.key + '.js', res.code, { src: true })
+      .pipe($.plumber())
+      .pipe($.sourcemaps.init({ loadMaps: true }))
+      .pipe($.babel())
+      .pipe($.sourcemaps.write('./'))
+      .pipe(gulp.dest(destinationFolder))
+      .pipe($.filter(['*', '!**/*.js.map']))
+      .pipe($.rename(build.key + '.min.js'))
+      .pipe($.sourcemaps.init({ loadMaps: true }))
+      .pipe($.uglify())
+      .pipe($.sourcemaps.write('./'))
+      .pipe(gulp.dest(destinationFolder))
+      .on('end', done);
+  })
+  .catch(done);
+}
 function getBundler() {
   // Our browserify bundle is made up of our unit tests, which
   // should individually load up pieces of our application.
