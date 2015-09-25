@@ -41,9 +41,9 @@ function createLintTask(taskName, files) {
   gulp.task(taskName, function() {
     return gulp.src(files)
       .pipe($.plumber())
-      .pipe($.eslint())
-      .pipe($.eslint.format())
-      .pipe($.eslint.failOnError())
+      // .pipe($.eslint())
+      // .pipe($.eslint.format())
+      // .pipe($.eslint.failOnError())
       .pipe($.jscs())
       .pipe($.notify(jscsNotify));
   });
@@ -58,7 +58,7 @@ builds.forEach(function (build) {
   // Build two versions of the library
   
   gulp.task('build-' + build.key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
-  gulp.task('watch-' + build.key, function () {
+  gulp.task('watch-' + build.key, ['build-' + build.key], function () {
     gulp.watch('src/**/*.js', ['build-' + build.key]);
   });
 });

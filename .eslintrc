@@ -2,7 +2,8 @@
   "parser": "babel-eslint",
   "rules": {
     "strict": 0,
-    "quotes": [2, "single"]
+    "quotes": [2, "single"],
+    "curly": [2, "multi-or-nest"]
   },
   "env": {
     "browser": true,

@@ -24,6 +24,8 @@ class ComponentBase {
     if (id) {
       canvas.setAttribute('id', id);
     }
+
+    window.requestAnimationFrame(this.onFrameFirst.bind(this));
   }
 
   resizeHandler(event) {
@@ -53,6 +55,11 @@ class ComponentBase {
 
   onTouchMoveHandler() {
     // noop
+  }
+
+  onFrameFirst(timestamp) {
+    this.lastTime = timestamp;
+    window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
   onFrameHandler(timestamp) {
