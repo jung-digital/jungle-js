@@ -63,6 +63,7 @@
     ]
   },
   "dependencies": {
+    "gl-matrix": "^2.3.1",
     "gulp-watch": "^4.3.5"
   }
 }

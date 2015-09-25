@@ -2,14 +2,16 @@ const DEFAULT_WIDTH = 800;
 const DEFAULT_HEIGHT = 800 / 1.618;
 
 class ComponentBase {
-  constructor(canvas, id) {
+  constructor(canvas, options, id) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
 
+    this.options = options || {};
+
     this.lastTime = 0;
 
-    this.canvasTargetWidth = this.width = DEFAULT_WIDTH;
-    this.canvasTargetHeight = this.height = DEFAULT_HEIGHT;
+    this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
+    this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
 
     window.addEventListener('resize', this.resizeHandler.bind(this));
 

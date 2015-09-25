@@ -7,8 +7,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('shared/util/util')) : typeof define === 'function' && define.amd ? define(['shared/util/util'], factory) : global.Embers = factory(global.util);
-})(this, function (util) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : global.Embers = factory();
+})(this, function () {
   'use strict';
 
   /*============================================
@@ -118,16 +118,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var DEFAULT_HEIGHT = 800 / 1.618;
 
   var ComponentBase = (function () {
-    function ComponentBase(canvas, id) {
+    function ComponentBase(canvas, options, id) {
       _classCallCheck(this, ComponentBase);
 
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d');
 
+      this.options = options || {};
+
       this.lastTime = 0;
 
-      this.canvasTargetWidth = this.width = DEFAULT_WIDTH;
-      this.canvasTargetHeight = this.height = DEFAULT_HEIGHT;
+      this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
+      this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
 
       window.addEventListener('resize', this.resizeHandler.bind(this));
 
@@ -145,10 +147,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       window.requestAnimationFrame(this.onFrameFirst.bind(this));
     }
-
-    /*============================================
-     * Constants
-     *============================================*/
 
     _createClass(ComponentBase, [{
       key: 'resizeHandler',
@@ -206,11 +204,154 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return ComponentBase;
   })();
 
-  var SPARKS = 500; // Maximum number of sparks to display simulataneously
+  function _ran(min, max) {
+    return Math.random() * (max - min) + min;
+  };
+
+  function ranItem(arr) {
+    return arr[Math.floor(_ran(0, arr.length - 0.000001))];
+  };
+
+  var Sides = {
+    LEFT: 1,
+    TOP: 2,
+    RIGHT: 3,
+    BOTTOM: 4,
+    ran: function ran() {
+      return Math.floor(_ran(1, 4.99));
+    }
+  };
+
+  function isAbove(p1, p2) {
+    return p1.y < p2.y;
+  }
+  function isBelow(p1, p2) {
+    return p1.y > p2.y;
+  }
+  function isLeft(p1, p2) {
+    return p1.x < p2.x;
+  }
+  function isRight(p1, p2) {
+    return p1.x > p2.x;
+  }
+  function reverseOf(dir) {
+    return (dir - 1 + 2) % 4 + 1;
+  } // Opposite of LEFT (1) is RIGHT (3) etc.
+  function toward(p1, p2) {
+    var dir = [];
+    if (isAbove(p1, p2)) dir.push(4);
+    if (isBelow(p1, p2)) dir.push(2);
+    if (isLeft(p1, p2)) dir.push(3);
+    if (isRight(p1, p2)) dir.push(1);
+    return dir;
+  }
+
+  function vecFor(side) {
+    if (side == Sides.LEFT) return new paper.Point(-1, 0);
+    if (side == Sides.RIGHT) return new paper.Point(1, 0);
+    if (side == Sides.TOP) return new paper.Point(0, -1);
+    if (side == Sides.BOTTOM) return new paper.Point(0, 1);
+  }
+
+  function getRandomPointFor(side, bounds) {
+    var x = 0;
+    x = side == Sides.RIGHT ? bounds.right : x;
+    x = side == Sides.TOP || side == Sides.BOTTOM ? _ran(0, bounds.right) : x;
+
+    var y = 0;
+    y = side == Sides.BOTTOM ? bounds.bottom : y;
+    y = side == Sides.LEFT || side == Sides.RIGHT ? _ran(0, bounds.bottom) : y;
+
+    return new paper.Point(x, y);
+  }
+
+  function hsvToRgb(h, s, v) {
+    var i;
+    var f;
+    var p;
+    var q;
+    var t;
+    var r;
+    var g;
+    var b;
+    if (s == 0) {
+      // achromatic (grey)
+      r = g = b = v;
+    } else {
+      h /= 60; // sector 0 to 5
+      i = Math.floor(h);
+      f = h - i; // factorial part of h
+      p = v * (1 - s);
+      q = v * (1 - s * f);
+      t = v * (1 - s * (1 - f));
+      switch (i) {
+        case 0:
+          r = v;
+          g = t;
+          b = p;
+          break;
+        case 1:
+          r = q;
+          g = v;
+          b = p;
+          break;
+        case 2:
+          r = p;
+          g = v;
+          b = t;
+          break;
+        case 3:
+          r = p;
+          g = q;
+          b = v;
+          break;
+        case 4:
+          r = t;
+          g = p;
+          b = v;
+          break;
+        default:
+          r = v;
+          g = p;
+          b = q;
+          break;
+      }
+    }
+
+    return {
+      r: r,
+      g: g,
+      b: b
+    };
+  }
+
+  var util = {
+    ran: _ran,
+    ranItem: ranItem,
+    Sides: Sides,
+    isAbove: isAbove,
+    isBelow: isBelow,
+    isLeft: isLeft,
+    isRight: isRight,
+    reverseOf: reverseOf,
+    toward: toward,
+    vecFor: vecFor,
+    hsvToRgb: hsvToRgb,
+    getRandomPointFor: getRandomPointFor
+  };
+
+  /*============================================
+   * Constants
+   *============================================*/
+  var SPARK_COUNT = 25; // Maximum number of sparks to display simultaneously
+  var SPARK_MAX_SIZE = 2;
+  var SPARK_MIN_SIZE = 0.5;
+  var SPARK_MAX_VELOCITY = 70;
+  var SPARK_MIN_VELOCITY = 20;
   var WIDTH = 800; // Width of canvas
   var HEIGHT = 800 / 1.61; // Height of canvas,
   var SPARK_SOURCE_RADIUS = 50; // Spark source radius in pixels
-  var CHANGE_DIR_TIME_MAX = 5000; // The maximum time to wait between changing directions  
+  var CHANGE_DIR_TIME_MAX = 5000; // The maximum time to wait between changing directions
 
   /*============================================
    * The demo JSX component
@@ -219,18 +360,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var Embers = (function (_ComponentBase) {
     _inherits(Embers, _ComponentBase);
 
-    function Embers(canvas) {
+    function Embers(canvas, options) {
       _classCallCheck(this, Embers);
 
-      _get(Object.getPrototypeOf(Embers.prototype), 'constructor', this).call(this, canvas);
+      _get(Object.getPrototypeOf(Embers.prototype), 'constructor', this).call(this, canvas, options);
+
+      this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
+      this.options.maxSparkSize = this.options.maxSparkSize || SPARK_MAX_SIZE;
+      this.options.minSparkSize = this.options.minSparkSize || SPARK_MIN_SIZE;
+      this.options.maxSparkVelocity = this.options.maxSparkVelocity || SPARK_MAX_VELOCITY;
+      this.options.minSparkVelocity = this.options.minSparkVelocity || SPARK_MIN_VELOCITY;
+      this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
 
       this.hue = 0;
 
-      this.sparkSource = new gl.vec2.fromValues(WIDTH / 2, HEIGHT / 5);
+      this.sparkSource = new vec2.fromValues(WIDTH / 2, HEIGHT / 5);
 
       this.sparks = [];
 
-      for (var i = 0; i < SPARKS; i++) {
+      for (var i = 0; i < this.options.sparkCount; i++) {
         this.sparks.push(new Spark({
           pathRedraw: this.pathRedraw,
           sparkResolution: 4
@@ -243,7 +391,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function pathRedraw(spark, start, end, ratio, elapsed, context) {
         ratio = 1 - ratio;
 
-        context.strokeStyle = 'rgba(' + ~ ~(spark.options.color.r * 256) + ',' + ~ ~(spark.options.color.g * 256) + ',' + ~ ~spark.options.color.b * 256 + ',' + ratio + ')';
+        var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
+
+        context.strokeStyle = 'rgba(' + ~ ~(rgb.r * 256) + ',' + ~ ~(rgb.g * 256) + ',' + ~ ~rgb.b * 256 + ',' + ratio + ')';
         context.lineWidth = spark.options.size * ratio;
 
         context.beginPath();
@@ -256,7 +406,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function onFrame(timestamp) {
         var _this = this;
 
-        this.ctx.clearRect(0, 0, this.state.WIDTH, this.state.HEIGHT);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.elapsed = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
 
@@ -280,17 +430,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var velAngle = Math.random() - .5 - Math.PI / 2;
         var sourceAngle = Math.random() * Math.PI * 2;
         var sourceDistance = Math.random() * SPARK_SOURCE_RADIUS;
-        var rgb = util.hsvToRgb(this.hue, 1, 0.8);
+        var life = Math.random() * 8 + 2;
 
         spark.spark({
           type: 2,
-          size: Math.random() * 2 + 1,
-          color: rgb,
-          position: gl.vec2.add(gl.vec2.create(), this.sparkSource, gl.vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
-          velocity: gl.vec2.scale(gl.vec2.create(), gl.vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * 150 + 20),
+          size: Math.random() * (this.options.maxSparkSize - this.options.minSparkSize) + this.options.minSparkSize,
+          color: {
+            h: Math.random() * 25 + 25,
+            s: Math.random() * 0.2 + 0.8,
+            l: 1
+          },
+          position: vec2.add(vec2.create(), this.sparkSource, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
+          velocity: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
           heatCurrent: 0,
           lastAngleChangeTime: 0,
-          life: Math.random() * 4 + 2
+          glow: Math.random() * 0.8 + 0.2,
+          flickerSpeed: Math.random(),
+          life: life,
+          lifeTotal: life
         });
       }
 
@@ -302,16 +459,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         if (ran > CHANGE_DIR_TIME_MAX) {
           var angle = Math.random() * (3.141 / 3) - 3.141 / 6;
-          var matrix = gl.mat2.create();
-          gl.mat2.rotate(matrix, matrix, angle);
-          gl.vec2.transformMat2(this.options.velocity, this.options.velocity, matrix);
+          var matrix = mat2.create();
+          mat2.rotate(matrix, matrix, angle);
+          vec2.transformMat2(this.options.velocity, this.options.velocity, matrix);
           this.options.lastAngleChangeTime = demo.lastTime;
         }
 
         this.options.heatCurrent += Math.random();
         this.options.life -= demo.elapsed;
+        this.options.color.l = this.options.life / this.options.lifeTotal * this.options.glow;
 
-        var nextPos = gl.vec2.scaleAndAdd(gl.vec2.create(), this.position, this.options.velocity, demo.elapsed);
+        var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, demo.elapsed);
         this.next(nextPos);
 
         if (this.options.life < 0 || nextPos.y > HEIGHT + 50 || nextPos.x < -50 || nextPos.y < -50 || nextPos.x > WIDTH + 50) {
@@ -322,9 +480,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: 'onMouseMoveHandler',
       value: function onMouseMoveHandler(event) {
         var rect = this.canvas.getBoundingClientRect();
-        var scale = WIDTH / this.state.canvasTargetWidth;
+        var scale = this.WIDTH / this.canvasTargetWidth;
 
-        this.sparkSource = gl.vec2.fromValues((event.clientX - rect.left) * scale, (event.clientY - rect.top) * scale);
+        this.sparkSource = vec2.fromValues((event.clientX - rect.left) * scale, (event.clientY - rect.top) * scale);
       }
     }, {
       key: 'onTouchMoveHandler',
@@ -334,7 +492,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var rect = this.canvas.getBoundingClientRect();
         var scale = WIDTH / this.state.canvasTargetWidth;
 
-        this.sparkSource = gl.vec2.fromValues((event.touches[0].clientX - rect.left) * scale, (event.touches[0].clientY - rect.top) * scale);
+        this.sparkSource = vec2.fromValues((event.touches[0].clientX - rect.left) * scale, (event.touches[0].clientY - rect.top) * scale);
       }
     }]);
 
