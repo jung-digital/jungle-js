@@ -6,7 +6,7 @@ import util from '../lib/util/util.js';
 /*============================================
  * Constants
  *============================================*/
-const SPARK_COUNT = 500;              // Maximum number of sparks to display simultaneously
+const SPARK_COUNT = 100;              // Maximum number of sparks to display simultaneously
 const SPARK_MAX_SIZE = 1.5;
 const SPARK_MIN_SIZE = 0.5;
 const SPARK_MAX_VELOCITY = 70;
@@ -28,7 +28,7 @@ class Embers extends ComponentBase {
     this.options.minSparkVelocity = this.options.minSparkVelocity || SPARK_MIN_VELOCITY;
     this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
 
-    this.sparkSource = new vec2.fromValues(this.width / 2, this.height / 5);
+    this.sparkSource = this.options.sparkSource ? this.options.sparkSource : new vec2.fromValues(this.width / 2, this.height / 5);
 
     this.sparks = [];
 
@@ -54,10 +54,8 @@ class Embers extends ComponentBase {
     context.stroke();
   }
 
-  onFrame(timestamp) {
+  onFrameHandler(elapsed) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.elapsed = (timestamp - this.lastTime) / 1000;
-    this.lastTime = timestamp;
 
     this.sparks.forEach(spark => {
       if (!spark.sparking) {
@@ -68,8 +66,6 @@ class Embers extends ComponentBase {
 
       spark.onFrame(this.elapsed, this.ctx);
     });
-
-    window.requestAnimationFrame(this.onFrame.bind(this));
   }
 
   startSpark(spark) {
@@ -77,6 +73,24 @@ class Embers extends ComponentBase {
     var sourceAngle = Math.random() * Math.PI * 2;
     var sourceDistance = Math.random() * SPARK_SOURCE_RADIUS;
     var life = Math.random() * 8;
+    var source = this.sparkSource;
+
+    if (source.target) {
+      var boundingRect = source.target.getBoundingClientRect(); // Get rect ya'll
+      var xOffset = 0;
+      var yOffset = 0;
+
+      if (source.offset && source.offset.x)
+      {
+        xOffset = source.offset.x.indexOf('%') != -1 ? source.target[source.widthProp] * (parseFloat(source.offset.x) / 100) : source.offset.x;
+      }
+      if (source.offset && source.offset.y)
+      {
+        yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
+      }
+
+      source = vec2.fromValues(xOffset, yOffset);
+    }
 
     spark.spark({
       type: 2,
@@ -86,7 +100,7 @@ class Embers extends ComponentBase {
         s: Math.random() * 0.4 + 0.6,
         l: 1
       },
-      position: vec2.add(vec2.create(), this.sparkSource, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
+      position: vec2.add(vec2.create(), source, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
       velocity: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
       heatCurrent: 0,
       lastAngleChangeTime: 0,

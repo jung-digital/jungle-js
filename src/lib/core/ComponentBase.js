@@ -7,11 +7,18 @@ class ComponentBase {
     this.ctx = canvas.getContext('2d');
 
     this.options = options || {};
-
+    this.options.fillCanvas = this.options.fillCanvas === false ? false : true;
     this.lastTime = 0;
 
-    this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
-    this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
+    if (!this.options.fillCanvas)
+    {
+      this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
+      this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
+    }
+    else 
+    {
+      this.resizeHandler();
+    }
 
     window.addEventListener('resize', this.resizeHandler.bind(this));
 
@@ -27,14 +34,24 @@ class ComponentBase {
       canvas.setAttribute('id', id);
     }
 
-    window.requestAnimationFrame(this.onFrameFirst.bind(this));
+    window.requestAnimationFrame(this._onFrameFirstHandler.bind(this));
   }
 
   resizeHandler(event) {
-    var i = Math.min(800, window.innerWidth);
+    if (this.options.fillCanvas) {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
 
-    canvas.style.width = this.canvasTargetWidth = i;
-    canvas.style.height = this.canvasTargetHeight = i / 1.618;
+      console.log(this.canvas);
+      this.canvas.width = this.canvas.style.width = this.canvasTargetWidth = this.width = w;
+      this.canvas.height = this.canvas.style.height = this.canvasTargetHeight = this.height = h;
+    }
+    else {
+      var i = Math.min(800, window.innerWidth);
+
+      this.canvas.style.width = this.canvasTargetWidth = i;
+      this.canvas.style.height = this.canvasTargetHeight = i / 1.618;
+    }
 
     this.resize();
   }
@@ -59,18 +76,28 @@ class ComponentBase {
     // noop
   }
 
-  onFrameFirst(timestamp) {
-    this.lastTime = timestamp;
-    window.requestAnimationFrame(this.onFrame.bind(this));
+  get debugText() {
+    return this.canvas.width + ', ' + this.canvas.height + ' FPS: ' + Math.round(1 / this.elapsed);
   }
 
-  onFrameHandler(timestamp) {
-    if (!this.lastTime) {
-      this.lastTime = timestamp;
-      this.elapsed = 0.01;
-    } else {
-      this.elapsed = (timestamp - this.lastTime) / 1000;
+  _onFrameFirstHandler(timestamp) {
+    this.lastTime = timestamp;
+    window.requestAnimationFrame(this._onFrameHandler.bind(this));
+  }
+
+  _onFrameHandler(timestamp) {
+    this.elapsed = (timestamp - this.lastTime) / 1000;
+    this.lastTime = timestamp;
+
+    this.onFrameHandler(this.elapsed);
+
+    if (this.options.debug) {
+      this.ctx.font = '12px Georgia white';
+      this.ctx.fillStyle = 'white';
+      this.ctx.fillText(this.debugText, 10, 50);
     }
+
+    window.requestAnimationFrame(this._onFrameHandler.bind(this));
   }
 }
 

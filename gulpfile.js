@@ -41,9 +41,6 @@ function createLintTask(taskName, files) {
   gulp.task(taskName, function() {
     return gulp.src(files)
       .pipe($.plumber())
-      // .pipe($.eslint())
-      // .pipe($.eslint.format())
-      // .pipe($.eslint.failOnError())
       .pipe($.jscs())
       .pipe($.notify(jscsNotify));
   });
