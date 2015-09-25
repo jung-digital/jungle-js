@@ -7,12 +7,13 @@ import util from '../lib/util/util.js';
  * Constants
  *============================================*/
 const SPARK_COUNT = 100;              // Maximum number of sparks to display simultaneously
-const SPARK_MAX_SIZE = 1.5;
-const SPARK_MIN_SIZE = 0.5;
+const SPARK_MAX_SIZE = 3.4;
+const SPARK_MIN_SIZE = 1;
 const SPARK_MAX_VELOCITY = 70;
 const SPARK_MIN_VELOCITY = 20;
-const SPARK_SOURCE_RADIUS = 50;       // Spark source radius in pixels
+const SPARK_SOURCE_RADIUS = 40;       // Spark source radius in pixels
 const CHANGE_DIR_TIME_MAX = 5000;     // The maximum time to wait between changing directions
+const SPARK_RESOLUTION = 10;          // The number of tail segments of the spark.
 
 /*============================================
  * The demo JSX component
@@ -45,7 +46,7 @@ class Embers extends ComponentBase {
 
     var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
-    context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + ratio + ')';
+    context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + 1 + ')';
     context.lineWidth = spark.options.size * ratio;
 
     context.beginPath();
@@ -65,6 +66,18 @@ class Embers extends ComponentBase {
       this.sparkOnFrame.call(spark, this);
 
       spark.onFrame(this.elapsed, this.ctx);
+    });
+  }
+
+  scrollHandler(deltaY) {
+    var trans = vec2.fromValues(0, -deltaY);
+    this.sparks.forEach(spark => {
+      if (spark.sparking)
+      {
+        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
+
+        vec2.add(spark.position, spark.position, trans);
+      }
     });
   }
 
@@ -89,11 +102,17 @@ class Embers extends ComponentBase {
         yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
       }
 
-      source = vec2.fromValues(xOffset, yOffset);
+      source = vec2.fromValues(xOffset, yOffset + boundingRect.top);
+      console.log(xOffset, yOffset);
+    }
+    else
+    {
+      throw 'Huge error';
     }
 
     spark.spark({
       type: 2,
+      sparkResolution: SPARK_RESOLUTION,
       size: (Math.random() * (this.options.maxSparkSize - this.options.minSparkSize)) + this.options.minSparkSize,
       color: {
         h: Math.random() * 28 + 20,
@@ -133,22 +152,6 @@ class Embers extends ComponentBase {
     if (this.options.life < 0 || nextPos.y > demo.canvas.height + 50 || nextPos.x < -50 || nextPos.y < -50 || nextPos.x > demo.canvas.width + 50) {
       this.reset();
     }
-  }
-
-  onMouseMoveHandler(event) {
-    var rect = this.canvas.getBoundingClientRect();
-    var scale = this.WIDTH / this.canvasTargetWidth;
-
-    this.sparkSource = vec2.fromValues((event.clientX - rect.left) * scale, (event.clientY - rect.top) * scale);
-  }
-
-  onTouchMoveHandler(event) {
-    event.preventDefault();
-
-    var rect = this.canvas.getBoundingClientRect();
-    var scale = WIDTH / this.state.canvasTargetWidth;
-
-    this.sparkSource = vec2.fromValues((event.touches[0].clientX - rect.left) * scale, (event.touches[0].clientY - rect.top) * scale);
   }
 }
 

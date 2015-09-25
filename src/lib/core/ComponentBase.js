@@ -10,17 +10,18 @@ class ComponentBase {
     this.options.fillCanvas = this.options.fillCanvas === false ? false : true;
     this.lastTime = 0;
 
-    if (!this.options.fillCanvas)
-    {
+    if (!this.options.fillCanvas) {
       this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
       this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
     }
-    else 
-    {
-      this.resizeHandler();
+    else {
+      setTimeout(this.resizeHandler.bind(this), 250);
     }
 
     window.addEventListener('resize', this.resizeHandler.bind(this));
+    this.lastScrollTop = window.scrollY;
+
+    window.addEventListener('scroll', this._scrollHandler.bind(this));
 
     canvas.addEventListener('mousemove', this.onMouseMoveHandler.bind(this));
     canvas.addEventListener('mouseout', this.onMouseOutHandler.bind(this));
@@ -42,7 +43,6 @@ class ComponentBase {
       var w = window.innerWidth;
       var h = window.innerHeight;
 
-      console.log(this.canvas);
       this.canvas.width = this.canvas.style.width = this.canvasTargetWidth = this.width = w;
       this.canvas.height = this.canvas.style.height = this.canvasTargetHeight = this.height = h;
     }
@@ -54,6 +54,16 @@ class ComponentBase {
     }
 
     this.resize();
+  }
+
+  _scrollHandler(event) {
+    var deltaY = window.scrollY - this.lastScrollTop;
+    this.lastScrollTop = window.scrollY;
+    this.scrollHandler(deltaY);
+  }
+
+  scrollHandler(deltaY) {
+    console.log('Scrolling!', deltaY);
   }
 
   resize() {
@@ -86,6 +96,8 @@ class ComponentBase {
   }
 
   _onFrameHandler(timestamp) {
+    window.requestAnimationFrame(this._onFrameHandler.bind(this));
+
     this.elapsed = (timestamp - this.lastTime) / 1000;
     this.lastTime = timestamp;
 
@@ -96,8 +108,6 @@ class ComponentBase {
       this.ctx.fillStyle = 'white';
       this.ctx.fillText(this.debugText, 10, 50);
     }
-
-    window.requestAnimationFrame(this._onFrameHandler.bind(this));
   }
 }
 

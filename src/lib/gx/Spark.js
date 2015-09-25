@@ -70,7 +70,6 @@ class Spark {
     this.id = options.id || -1; // index of this spark
     this.pathRedraw = options.pathRedraw; // A function to call to redraw each segment as the spark moves.
 
-    this.sparkLength = options.sparkLength || 200; // Pixel length of the spark
     this.sparkResolution = options.sparkResolution || 20; // Resolution (number of segments) of the spark
 
     this.options = options;

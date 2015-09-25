@@ -93,7 +93,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.id = options.id || -1; // index of this spark
       this.pathRedraw = options.pathRedraw; // A function to call to redraw each segment as the spark moves.
 
-      this.sparkLength = options.sparkLength || 200; // Pixel length of the spark
       this.sparkResolution = options.sparkResolution || 20; // Resolution (number of segments) of the spark
 
       this.options = options;
@@ -132,10 +131,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
         this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
       } else {
-        this.resizeHandler();
+        setTimeout(this.resizeHandler.bind(this), 250);
       }
 
       window.addEventListener('resize', this.resizeHandler.bind(this));
+      this.lastScrollTop = window.scrollY;
+
+      window.addEventListener('scroll', this._scrollHandler.bind(this));
 
       canvas.addEventListener('mousemove', this.onMouseMoveHandler.bind(this));
       canvas.addEventListener('mouseout', this.onMouseOutHandler.bind(this));
@@ -159,7 +161,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           var w = window.innerWidth;
           var h = window.innerHeight;
 
-          console.log(this.canvas);
           this.canvas.width = this.canvas.style.width = this.canvasTargetWidth = this.width = w;
           this.canvas.height = this.canvas.style.height = this.canvasTargetHeight = this.height = h;
         } else {
@@ -170,6 +171,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         this.resize();
+      }
+    }, {
+      key: '_scrollHandler',
+      value: function _scrollHandler(event) {
+        var deltaY = window.scrollY - this.lastScrollTop;
+        this.lastScrollTop = window.scrollY;
+        this.scrollHandler(deltaY);
+      }
+    }, {
+      key: 'scrollHandler',
+      value: function scrollHandler(deltaY) {
+        console.log('Scrolling!', deltaY);
       }
     }, {
       key: 'resize',
@@ -205,6 +218,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: '_onFrameHandler',
       value: function _onFrameHandler(timestamp) {
+        window.requestAnimationFrame(this._onFrameHandler.bind(this));
+
         this.elapsed = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
 
@@ -215,8 +230,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.ctx.fillStyle = 'white';
           this.ctx.fillText(this.debugText, 10, 50);
         }
-
-        window.requestAnimationFrame(this._onFrameHandler.bind(this));
       }
     }, {
       key: 'debugText',
@@ -368,12 +381,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * Constants
    *============================================*/
   var SPARK_COUNT = 100; // Maximum number of sparks to display simultaneously
-  var SPARK_MAX_SIZE = 1.5;
-  var SPARK_MIN_SIZE = 0.5;
+  var SPARK_MAX_SIZE = 3.4;
+  var SPARK_MIN_SIZE = 1;
   var SPARK_MAX_VELOCITY = 70;
   var SPARK_MIN_VELOCITY = 20;
-  var SPARK_SOURCE_RADIUS = 50; // Spark source radius in pixels
+  var SPARK_SOURCE_RADIUS = 40; // Spark source radius in pixels
   var CHANGE_DIR_TIME_MAX = 5000; // The maximum time to wait between changing directions
+  var SPARK_RESOLUTION = 10; // The number of tail segments of the spark.
 
   /*============================================
    * The demo JSX component
@@ -413,7 +427,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
-        context.strokeStyle = 'rgba(' + ~ ~(rgb.r * 256) + ',' + ~ ~(rgb.g * 256) + ',' + ~ ~rgb.b * 256 + ',' + ratio + ')';
+        context.strokeStyle = 'rgba(' + ~ ~(rgb.r * 256) + ',' + ~ ~(rgb.g * 256) + ',' + ~ ~rgb.b * 256 + ',' + 1 + ')';
         context.lineWidth = spark.options.size * ratio;
 
         context.beginPath();
@@ -439,6 +453,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         });
       }
     }, {
+      key: 'scrollHandler',
+      value: function scrollHandler(deltaY) {
+        var trans = vec2.fromValues(0, -deltaY);
+        this.sparks.forEach(function (spark) {
+          if (spark.sparking) {
+            spark.points = spark.points.map(function (p) {
+              return vec2.add(vec2.create(), p, trans);
+            });
+
+            vec2.add(spark.position, spark.position, trans);
+          }
+        });
+      }
+    }, {
       key: 'startSpark',
       value: function startSpark(spark) {
         var velAngle = Math.random() - .5 - Math.PI / 2;
@@ -459,11 +487,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
           }
 
-          source = vec2.fromValues(xOffset, yOffset);
+          source = vec2.fromValues(xOffset, yOffset + boundingRect.top);
+          console.log(xOffset, yOffset);
+        } else {
+          throw 'Huge error';
         }
 
         spark.spark({
           type: 2,
+          sparkResolution: SPARK_RESOLUTION,
           size: Math.random() * (this.options.maxSparkSize - this.options.minSparkSize) + this.options.minSparkSize,
           color: {
             h: Math.random() * 28 + 20,
@@ -505,24 +537,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (this.options.life < 0 || nextPos.y > demo.canvas.height + 50 || nextPos.x < -50 || nextPos.y < -50 || nextPos.x > demo.canvas.width + 50) {
           this.reset();
         }
-      }
-    }, {
-      key: 'onMouseMoveHandler',
-      value: function onMouseMoveHandler(event) {
-        var rect = this.canvas.getBoundingClientRect();
-        var scale = this.WIDTH / this.canvasTargetWidth;
-
-        this.sparkSource = vec2.fromValues((event.clientX - rect.left) * scale, (event.clientY - rect.top) * scale);
-      }
-    }, {
-      key: 'onTouchMoveHandler',
-      value: function onTouchMoveHandler(event) {
-        event.preventDefault();
-
-        var rect = this.canvas.getBoundingClientRect();
-        var scale = WIDTH / this.state.canvasTargetWidth;
-
-        this.sparkSource = vec2.fromValues((event.touches[0].clientX - rect.left) * scale, (event.touches[0].clientY - rect.top) * scale);
       }
     }]);
 
