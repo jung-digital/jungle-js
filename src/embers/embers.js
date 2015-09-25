@@ -72,8 +72,7 @@ class Embers extends ComponentBase {
   scrollHandler(deltaY) {
     var trans = vec2.fromValues(0, -deltaY);
     this.sparks.forEach(spark => {
-      if (spark.sparking)
-      {
+      if (spark.sparking) {
         spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
 
         vec2.add(spark.position, spark.position, trans);
@@ -93,20 +92,16 @@ class Embers extends ComponentBase {
       var xOffset = 0;
       var yOffset = 0;
 
-      if (source.offset && source.offset.x)
-      {
+      if (source.offset && source.offset.x) {
         xOffset = source.offset.x.indexOf('%') != -1 ? source.target[source.widthProp] * (parseFloat(source.offset.x) / 100) : source.offset.x;
       }
-      if (source.offset && source.offset.y)
-      {
+      if (source.offset && source.offset.y) {
         yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
       }
 
       source = vec2.fromValues(xOffset, yOffset + boundingRect.top);
       console.log(xOffset, yOffset);
-    }
-    else
-    {
+    } else {
       throw 'Huge error';
     }
 

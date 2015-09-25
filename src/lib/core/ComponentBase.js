@@ -13,8 +13,7 @@ class ComponentBase {
     if (!this.options.fillCanvas) {
       this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
       this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
-    }
-    else {
+    } else {
       setTimeout(this.resizeHandler.bind(this), 250);
     }
 
@@ -45,8 +44,7 @@ class ComponentBase {
 
       this.canvas.width = this.canvas.style.width = this.canvasTargetWidth = this.width = w;
       this.canvas.height = this.canvas.style.height = this.canvasTargetHeight = this.height = h;
-    }
-    else {
+    } else {
       var i = Math.min(800, window.innerWidth);
 
       this.canvas.style.width = this.canvasTargetWidth = i;
