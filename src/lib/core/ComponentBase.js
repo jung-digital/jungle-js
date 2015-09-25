@@ -33,14 +33,14 @@ class ComponentBase {
   resizeHandler(event) {
     var i = Math.min(800, window.innerWidth);
 
-    canvas.style.width = this.state.canvasTargetWidth = i;
-    canvas.style.height = this.state.canvasTargetHeight = i / 1.618;
+    canvas.style.width = this.canvasTargetWidth = i;
+    canvas.style.height = this.canvasTargetHeight = i / 1.618;
 
     this.resize();
   }
 
   resize() {
-    console.log('Resized!', this.state.canvasTargetWidth, this.state.canvasTargetHeight);
+    console.log('Resized!', this.canvasTargetWidth, this.canvasTargetHeight);
   }
 
   onMouseMoveHandler() {

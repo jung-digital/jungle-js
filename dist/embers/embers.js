@@ -153,15 +153,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function resizeHandler(event) {
         var i = Math.min(800, window.innerWidth);
 
-        canvas.style.width = this.state.canvasTargetWidth = i;
-        canvas.style.height = this.state.canvasTargetHeight = i / 1.618;
+        canvas.style.width = this.canvasTargetWidth = i;
+        canvas.style.height = this.canvasTargetHeight = i / 1.618;
 
         this.resize();
       }
     }, {
       key: 'resize',
       value: function resize() {
-        console.log('Resized!', this.state.canvasTargetWidth, this.state.canvasTargetHeight);
+        console.log('Resized!', this.canvasTargetWidth, this.canvasTargetHeight);
       }
     }, {
       key: 'onMouseMoveHandler',
@@ -343,13 +343,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   /*============================================
    * Constants
    *============================================*/
-  var SPARK_COUNT = 25; // Maximum number of sparks to display simultaneously
-  var SPARK_MAX_SIZE = 2;
+  var SPARK_COUNT = 500; // Maximum number of sparks to display simultaneously
+  var SPARK_MAX_SIZE = 1.5;
   var SPARK_MIN_SIZE = 0.5;
   var SPARK_MAX_VELOCITY = 70;
   var SPARK_MIN_VELOCITY = 20;
-  var WIDTH = 800; // Width of canvas
-  var HEIGHT = 800 / 1.61; // Height of canvas,
   var SPARK_SOURCE_RADIUS = 50; // Spark source radius in pixels
   var CHANGE_DIR_TIME_MAX = 5000; // The maximum time to wait between changing directions
 
@@ -372,9 +370,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.options.minSparkVelocity = this.options.minSparkVelocity || SPARK_MIN_VELOCITY;
       this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
 
-      this.hue = 0;
-
-      this.sparkSource = new vec2.fromValues(WIDTH / 2, HEIGHT / 5);
+      this.sparkSource = new vec2.fromValues(this.width / 2, this.height / 5);
 
       this.sparks = [];
 
@@ -410,8 +406,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.elapsed = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
 
-        this.hue = Math.random() * Math.random() * 60;
-
         this.sparks.forEach(function (spark) {
           if (!spark.sparking) {
             _this.startSpark(spark);
@@ -430,24 +424,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var velAngle = Math.random() - .5 - Math.PI / 2;
         var sourceAngle = Math.random() * Math.PI * 2;
         var sourceDistance = Math.random() * SPARK_SOURCE_RADIUS;
-        var life = Math.random() * 8 + 2;
+        var life = Math.random() * 8;
 
         spark.spark({
           type: 2,
           size: Math.random() * (this.options.maxSparkSize - this.options.minSparkSize) + this.options.minSparkSize,
           color: {
-            h: Math.random() * 25 + 25,
-            s: Math.random() * 0.2 + 0.8,
+            h: Math.random() * 28 + 20,
+            s: Math.random() * 0.4 + 0.6,
             l: 1
           },
           position: vec2.add(vec2.create(), this.sparkSource, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
           velocity: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
           heatCurrent: 0,
           lastAngleChangeTime: 0,
-          glow: Math.random() * 0.8 + 0.2,
+          glow: Math.random() * 0.6 + 0.2,
           flickerSpeed: Math.random(),
           life: life,
-          lifeTotal: life
+          lifeTotal: 8
         });
       }
 
@@ -472,7 +466,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, demo.elapsed);
         this.next(nextPos);
 
-        if (this.options.life < 0 || nextPos.y > HEIGHT + 50 || nextPos.x < -50 || nextPos.y < -50 || nextPos.x > WIDTH + 50) {
+        if (this.options.life < 0 || nextPos.y > demo.canvas.height + 50 || nextPos.x < -50 || nextPos.y < -50 || nextPos.x > demo.canvas.width + 50) {
           this.reset();
         }
       }
