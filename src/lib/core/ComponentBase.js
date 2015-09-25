@@ -1,8 +1,3 @@
-import Dispatcher from '../../core/Dispatcher';
-import ActionTypes from '../../constants/ActionTypes';
-import React, { PropTypes } from 'react';
-import Const from './shared/const';
-
 const DEFAULT_WIDTH = 800;
 const DEFAULT_HEIGHT = 800 / 1.618;
 
@@ -23,8 +18,8 @@ class ComponentBase {
     canvas.addEventListener('touchstart', this.onTouchStartHandler.bind(this));
     canvas.addEventListener('touchmove', this.onTouchMoveHandler.bind(this));
 
-    canvas.setAttribute('width', this.state.WIDTH);
-    canvas.setAttribute('height', this.state.HEIGHT);
+    canvas.setAttribute('width', DEFAULT_WIDTH);
+    canvas.setAttribute('height', DEFAULT_HEIGHT);
 
     if (id) {
       canvas.setAttribute('id', id);
@@ -70,4 +65,4 @@ class ComponentBase {
   }
 }
 
-export default DemoBase;
+export default ComponentBase;

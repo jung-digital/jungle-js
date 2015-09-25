@@ -52,10 +52,15 @@ function createLintTask(taskName, files) {
 createLintTask('lint-src', ['src/**/*.js']);
 createLintTask('lint-test', ['test/**/*.js']);
 
+var _builds = [];
+
 builds.forEach(function (build) {
   // Build two versions of the library
   
   gulp.task('build-' + build.key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
+  gulp.task('watch-' + build.key, function () {
+    gulp.watch('src/**/*.js', ['build-' + build.key]);
+  });
 });
 
 gulp.task('build', builds.map(function (b) {return 'build-' + b.key}));
@@ -74,9 +79,11 @@ function bundle(bundler) {
 }
 
 function buildComplete(build, done) {
+  _builds.push(build);
+
   esperanto.bundle({
     base: 'src',
-    entry: build.entry,
+    entry: build.entry
   }).then(function(bundle) {
     var res = bundle.toUmd({
       // Don't worry about the fact that the source map is inlined at this step.
@@ -85,19 +92,23 @@ function buildComplete(build, done) {
       name: build.key
     });
 
-    $.file(build.key + '.js', res.code, { src: true })
-      .pipe($.plumber())
-      .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.babel())
-      .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationFolder + '/' + build.key))
-      .pipe($.filter(['*', '!**/*.js.map']))
-      .pipe($.rename(build.key + '.min.js'))
-      .pipe($.sourcemaps.init({ loadMaps: true }))
-      .pipe($.uglify())
-      .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest(destinationFolder+ '/' + build.key))
-      .on('end', done);
+    function buildJS() {
+      $.file(build.key + '.js', res.code, { src: true })
+        .pipe($.plumber())
+        .pipe($.sourcemaps.init({ loadMaps: true }))
+        .pipe($.babel())
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest(destinationFolder + '/' + build.key))
+        .pipe($.filter(['*', '!**/*.js.map']))
+        .pipe($.rename(build.key + '.min.js'))
+        .pipe($.sourcemaps.init({ loadMaps: true }))
+        .pipe($.uglify())
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest(destinationFolder+ '/' + build.key))
+        .on('end', done);
+    }
+
+    buildJS();
   })
   .catch(done);
 }

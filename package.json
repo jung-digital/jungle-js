@@ -61,5 +61,8 @@
       "spy",
       "expect"
     ]
+  },
+  "dependencies": {
+    "gulp-watch": "^4.3.5"
   }
 }
