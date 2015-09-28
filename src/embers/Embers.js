@@ -64,7 +64,7 @@ class Embers extends ComponentBase {
 
     this.sparks.forEach(spark => {
       if (!spark.sparking) {
-        if (Math.random() > 0.95)
+        if (Math.random() > 1 - (elapsed * 1/5))
         {
           this.startSpark(spark);
         }
@@ -153,10 +153,11 @@ class Embers extends ComponentBase {
     this.next(nextPos);
 
     if (this.options.life < 0 ||
-        nextPos.y > demo.canvas.height ||
-        nextPos.x < 0 ||
-        nextPos.y < 0 ||
-        nextPos.x > demo.canvas.width) {
+        nextPos[1] > demo.canvas.height ||
+        nextPos[0] < 0 ||
+        nextPos[1] < 0 ||
+        nextPos[0] > demo.canvas.width) {
+      console.log('Death of spark')
       this.reset();
     }
   }

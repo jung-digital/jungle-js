@@ -96,7 +96,7 @@ class ComponentBase {
   _onFrameHandler(timestamp) {
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
 
-    this.elapsed = (timestamp - this.lastTime) / 1000;
+    this.elapsed = Math.min(0.1, (timestamp - this.lastTime) / 1000);
     this.lastTime = timestamp;
 
     this.onFrameHandler(this.elapsed);

@@ -239,7 +239,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function _onFrameHandler(timestamp) {
         window.requestAnimationFrame(this._onFrameHandler.bind(this));
 
-        this.elapsed = (timestamp - this.lastTime) / 1000;
+        this.elapsed = Math.min(0.1, (timestamp - this.lastTime) / 1000);
         this.lastTime = timestamp;
 
         this.onFrameHandler(this.elapsed);
@@ -467,7 +467,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         this.sparks.forEach(function (spark) {
           if (!spark.sparking) {
-            if (Math.random() > 0.95) {
+            if (Math.random() > 1 - elapsed * 1 / 5) {
               _this.startSpark(spark);
             } else return;
           }
@@ -559,7 +559,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, demo.elapsed);
         this.next(nextPos);
 
-        if (this.options.life < 0 || nextPos.y > demo.canvas.height || nextPos.x < 0 || nextPos.y < 0 || nextPos.x > demo.canvas.width) {
+        if (this.options.life < 0 || nextPos[1] > demo.canvas.height || nextPos[0] < 0 || nextPos[1] < 0 || nextPos[0] > demo.canvas.width) {
+          console.log('Death of spark');
           this.reset();
         }
       }
