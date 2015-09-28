@@ -29,14 +29,32 @@ class Spark {
     this.points = this.options.position ? [this.options.position] : undefined; // Reset points for manual mode
   }
 
-  // Manual mode, set the next position of the spark
+  // Manual mode, set the next position of the spark. Insert points if the spark has jumped a great distance so that it
+  // still looks smooth.
   next(pos) {
-    this.position = pos;
+    if (!pos)
+    {
+      return;
+    }
 
     this.points = this.points || [];
+
+    var delta = vec2.sub(vec2.create(), pos, this.position);
+    var deltaNorm = vec2.normalize(vec2.create(), delta);
+    var len = vec2.len(delta);
+
+    for (var i = 1; i < len; i += 1.0)
+    {
+      var tmp = vec2.create();
+      var p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.position);
+      this.points.push(p);
+    }
+
     this.points.push(pos);
 
-    if (this.points.length > this.sparkResolution) {
+    this.position = pos;
+
+    while (this.points.length > this.sparkResolution) {
       this.points.shift();
     }
   }
@@ -55,12 +73,15 @@ class Spark {
     // Go backwards from the end, building up paths and letting the dev manually style them
     // ensuring that there are this.resolution # of paths.
     if (this.points.length > 1) {
+      var curLen = 0;
       for (var i = 0; i < this.points.length - 1; i++) {
         var start = this.points[this.points.length - (i + 1)];
         var end = this.points[this.points.length - (i + 2)];
 
+        curLen += vec2.len(vec2.sub(vec2.create(), end, start));
+
         // Let dev manually style points based on ratio of start to end
-        this.pathRedraw(this, start, end, i / (this.sparkResolution - 1), elapsed, context);
+        this.pathRedraw(this, start, end, curLen, i / (this.sparkResolution - 1), elapsed, context);
       }
     }
   }

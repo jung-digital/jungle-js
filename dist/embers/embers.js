@@ -44,16 +44,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.points = this.options.position ? [this.options.position] : undefined; // Reset points for manual mode
       }
 
-      // Manual mode, set the next position of the spark
+      // Manual mode, set the next position of the spark. Insert points if the spark has jumped a great distance so that it
+      // still looks smooth.
     }, {
       key: 'next',
       value: function next(pos) {
-        this.position = pos;
+        if (!pos) {
+          return;
+        }
 
         this.points = this.points || [];
+
+        var delta = vec2.sub(vec2.create(), pos, this.position);
+        var deltaNorm = vec2.normalize(vec2.create(), delta);
+        var len = vec2.len(delta);
+
+        for (var i = 1; i < len; i += 1.0) {
+          var tmp = vec2.create();
+          var p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.position);
+          this.points.push(p);
+        }
+
         this.points.push(pos);
 
-        if (this.points.length > this.sparkResolution) {
+        this.position = pos;
+
+        while (this.points.length > this.sparkResolution) {
           this.points.shift();
         }
       }
@@ -74,12 +90,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         // Go backwards from the end, building up paths and letting the dev manually style them
         // ensuring that there are this.resolution # of paths.
         if (this.points.length > 1) {
+          var curLen = 0;
           for (var i = 0; i < this.points.length - 1; i++) {
             var start = this.points[this.points.length - (i + 1)];
             var end = this.points[this.points.length - (i + 2)];
 
+            curLen += vec2.len(vec2.sub(vec2.create(), end, start));
+
             // Let dev manually style points based on ratio of start to end
-            this.pathRedraw(this, start, end, i / (this.sparkResolution - 1), elapsed, context);
+            this.pathRedraw(this, start, end, curLen, i / (this.sparkResolution - 1), elapsed, context);
           }
         }
       }
@@ -388,6 +407,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var SPARK_SOURCE_RADIUS = 40; // Spark source radius in pixels
   var CHANGE_DIR_TIME_MAX = 5000; // The maximum time to wait between changing directions
   var SPARK_RESOLUTION = 10; // The number of tail segments of the spark.
+  var SPARK_MAX_TAIL_LENGTH = 20;
+  var SPARK_MAX_LIFE_S = 10;
 
   /*============================================
    * The demo JSX component
@@ -406,7 +427,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.options.minSparkSize = this.options.minSparkSize || SPARK_MIN_SIZE;
       this.options.maxSparkVelocity = this.options.maxSparkVelocity || SPARK_MAX_VELOCITY;
       this.options.minSparkVelocity = this.options.minSparkVelocity || SPARK_MIN_VELOCITY;
+      this.options.maxTailLength = this.options.maxTailLength || SPARK_MAX_TAIL_LENGTH;
       this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
+      this.options.maxSparkLife = this.options.maxSparkLife || SPARK_MAX_LIFE_S;
 
       this.sparkSource = this.options.sparkSource ? this.options.sparkSource : new vec2.fromValues(this.width / 2, this.height / 5);
 
@@ -414,7 +437,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       for (var i = 0; i < this.options.sparkCount; i++) {
         this.sparks.push(new Spark({
-          pathRedraw: this.pathRedraw,
+          pathRedraw: this.pathRedraw.bind(this),
           sparkResolution: 4
         }));
       }
@@ -422,12 +445,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     _createClass(Embers, [{
       key: 'pathRedraw',
-      value: function pathRedraw(spark, start, end, ratio, elapsed, context) {
-        ratio = 1 - ratio;
+      value: function pathRedraw(spark, start, end, curLen, ratio, elapsed, context) {
+        ratio = 1 - curLen / this.options.maxTailLength;
 
         var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
-        context.strokeStyle = 'rgba(' + ~ ~(rgb.r * 256) + ',' + ~ ~(rgb.g * 256) + ',' + ~ ~rgb.b * 256 + ',' + 1 + ')';
+        context.strokeStyle = 'rgba(' + ~ ~(rgb.r * 256) + ',' + ~ ~(rgb.g * 256) + ',' + ~ ~rgb.b * 256 + ',' + ratio * spark.options.lifeRatio + ')';
         context.lineWidth = spark.options.size * ratio;
 
         context.beginPath();
@@ -444,7 +467,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         this.sparks.forEach(function (spark) {
           if (!spark.sparking) {
-            _this.startSpark(spark);
+            if (Math.random() > 0.95) {
+              _this.startSpark(spark);
+            } else return;
           }
 
           _this.sparkOnFrame.call(spark, _this);
@@ -472,7 +497,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var velAngle = Math.random() - .5 - Math.PI / 2;
         var sourceAngle = Math.random() * Math.PI * 2;
         var sourceDistance = Math.random() * SPARK_SOURCE_RADIUS;
-        var life = Math.random() * 8;
+        var life = Math.random() * this.options.maxSparkLife / 2 + this.options.maxSparkLife / 2;
         var source = this.sparkSource;
 
         if (source.target) {
@@ -487,8 +512,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
           }
 
-          source = vec2.fromValues(xOffset, yOffset + boundingRect.top);
-          console.log(xOffset, yOffset);
+          source = vec2.fromValues(xOffset, Math.min(yOffset + boundingRect.top, window.innerHeight));
         } else {
           throw 'Huge error';
         }
@@ -506,10 +530,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           velocity: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
           heatCurrent: 0,
           lastAngleChangeTime: 0,
-          glow: Math.random() * 0.6 + 0.2,
+          glow: Math.random() * 0.8 + 0.2,
           flickerSpeed: Math.random(),
           life: life,
-          lifeTotal: 8
+          lifeTotal: this.options.maxSparkLife
         });
       }
 
@@ -530,11 +554,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.options.heatCurrent += Math.random();
         this.options.life -= demo.elapsed;
         this.options.color.l = this.options.life / this.options.lifeTotal * this.options.glow;
+        this.options.lifeRatio = this.options.life / this.options.lifeTotal;
 
         var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, demo.elapsed);
         this.next(nextPos);
 
-        if (this.options.life < 0 || nextPos.y > demo.canvas.height + 50 || nextPos.x < -50 || nextPos.y < -50 || nextPos.x > demo.canvas.width + 50) {
+        if (this.options.life < 0 || nextPos.y > demo.canvas.height || nextPos.x < 0 || nextPos.y < 0 || nextPos.x > demo.canvas.width) {
           this.reset();
         }
       }
