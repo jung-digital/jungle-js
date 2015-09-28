@@ -64,11 +64,9 @@ class Embers extends ComponentBase {
 
     this.sparks.forEach(spark => {
       if (!spark.sparking) {
-        if (Math.random() > 1 - (elapsed * 1/5))
-        {
+        if (Math.random() > 1 - (elapsed * 1 / 5)) {
           this.startSpark(spark);
-        }
-        else return;
+        } else return;
       }
 
       this.sparkOnFrame.call(spark, this);
@@ -92,7 +90,7 @@ class Embers extends ComponentBase {
     var velAngle = Math.random() - .5 - (Math.PI / 2);
     var sourceAngle = Math.random() * Math.PI * 2;
     var sourceDistance = Math.random() * SPARK_SOURCE_RADIUS;
-    var life = (Math.random() * this.options.maxSparkLife/2) + this.options.maxSparkLife / 2;
+    var life = (Math.random() * this.options.maxSparkLife / 2) + this.options.maxSparkLife / 2;
     var source = this.sparkSource;
 
     if (source.target) {
@@ -157,7 +155,6 @@ class Embers extends ComponentBase {
         nextPos[0] < 0 ||
         nextPos[1] < 0 ||
         nextPos[0] > demo.canvas.width) {
-      console.log('Death of spark')
       this.reset();
     }
   }

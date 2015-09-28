@@ -32,19 +32,17 @@ class Spark {
   // Manual mode, set the next position of the spark. Insert points if the spark has jumped a great distance so that it
   // still looks smooth.
   next(pos) {
-    if (!pos)
-    {
+    if (!pos) {
       return;
     }
 
     this.points = this.points || [];
 
     var delta = vec2.sub(vec2.create(), pos, this.position);
-    var deltaNorm = vec2.normalize(vec2.create(), delta);
+    var deltaNorm = vec2.normalize(vec2.crbeate(), delta);
     var len = vec2.len(delta);
 
-    for (var i = 1; i < len; i += 1.0)
-    {
+    for (var i = 1; i < len; i += 1.0) {
       var tmp = vec2.create();
       var p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.position);
       this.points.push(p);
