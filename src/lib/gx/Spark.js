@@ -39,7 +39,7 @@ class Spark {
     this.points = this.points || [];
 
     var delta = vec2.sub(vec2.create(), pos, this.position);
-    var deltaNorm = vec2.normalize(vec2.crbeate(), delta);
+    var deltaNorm = vec2.normalize(vec2.create(), delta);
     var len = vec2.len(delta);
 
     for (var i = 1; i < len; i += 1.0) {
