@@ -1,52 +1,68 @@
+/*---------------------------------------------------------------------------*\
+ * Imports
+\*---------------------------------------------------------------------------*/
 import Lib from '../lib/Lib.js';
 import ComponentBase from '../lib/core/ComponentBase.js';
 import Spark from '../lib/gx/Spark.js';
 import util from '../lib/util/util.js';
 
-/*============================================
+/*---------------------------------------------------------------------------*\
  * Constants
- *============================================*/
-const SPARK_COUNT = 100;              // Maximum number of sparks to display simultaneously
+\*---------------------------------------------------------------------------*/
+const SPARK_COUNT = 75;                // Maximum number of sparks to display simultaneously
 const SPARK_MAX_SIZE = 3.4;
 const SPARK_MIN_SIZE = 1;
 const SPARK_MAX_VELOCITY = 70;
 const SPARK_MIN_VELOCITY = 20;
-const SPARK_SOURCE_RADIUS = 40;       // Spark source radius in pixels
-const CHANGE_DIR_TIME_MAX = 5000;     // The maximum time to wait between changing directions
-const SPARK_RESOLUTION = 10;          // The number of tail segments of the spark.
+const SPARK_SOURCE_RADIUS = 40;        // Spark source radius in pixels
+const CHANGE_DIR_TIME_MAX_MS = 5000;   // The maximum time to wait between changing directions
+const SPARK_MAX_SEGMENTS = 8;          // The number of tail segments of the spark.
 const SPARK_MAX_TAIL_LENGTH = 20;
 const SPARK_MAX_LIFE_S = 10;
+const SPARK_EDGE_BOTTOM_OFFSET = 200;  // Offset for bottom edge of spark source when target is off screen.
 
-/*============================================
- * The demo JSX component
- *============================================*/
+/*---------------------------------------------------------------------------*\
+ * Embers Component
+\*---------------------------------------------------------------------------*/
 class Embers extends ComponentBase {
+  //---------------------------------------------
+  // Constructor
+  //---------------------------------------------
   constructor(canvas, options) {
     super(canvas, options);
 
-    this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
-    this.options.maxSparkSize = this.options.maxSparkSize || SPARK_MAX_SIZE;
-    this.options.minSparkSize = this.options.minSparkSize || SPARK_MIN_SIZE;
-    this.options.maxSparkVelocity = this.options.maxSparkVelocity || SPARK_MAX_VELOCITY;
-    this.options.minSparkVelocity = this.options.minSparkVelocity || SPARK_MIN_VELOCITY;
-    this.options.maxTailLength = this.options.maxTailLength || SPARK_MAX_TAIL_LENGTH;
-    this.options.sparkCount = this.options.sparkCount || SPARK_COUNT;
-    this.options.maxSparkLife = this.options.maxSparkLife || SPARK_MAX_LIFE_S;
+    var o = this.options;
+
+    o.sparkCount = o.sparkCount || SPARK_COUNT;
+    o.maxSparkSize = o.maxSparkSize || SPARK_MAX_SIZE;
+    o.minSparkSize = o.minSparkSize || SPARK_MIN_SIZE;
+    o.maxSparkVelocity = o.maxSparkVelocity || SPARK_MAX_VELOCITY;
+    o.minSparkVelocity = o.minSparkVelocity || SPARK_MIN_VELOCITY;
+    o.maxTailLength = o.maxTailLength || SPARK_MAX_TAIL_LENGTH;
+    o.sparkCount = o.sparkCount || SPARK_COUNT;
+    o.maxSparkLife = o.maxSparkLife || SPARK_MAX_LIFE_S;
+    o.sparkEdgeBottomOffset = o.sparkEdgeBottomOffset || SPARK_EDGE_BOTTOM_OFFSET;
 
     this.sparkSource = this.options.sparkSource ? this.options.sparkSource : new vec2.fromValues(this.width / 2, this.height / 5);
 
     this.sparks = [];
 
+    var rs = this.redrawSegment.bind(this);
+
     for (var i = 0; i < this.options.sparkCount; i++) {
       this.sparks.push(new Spark({
-        pathRedraw: this.pathRedraw.bind(this),
+        redrawSegment: rs,
         sparkResolution: 4
       }));
     }
   }
 
-  pathRedraw(spark, start, end, curLen, ratio, elapsed, context) {
-    ratio =  1 - (curLen / this.options.maxTailLength);
+  //---------------------------------------------
+  // redrawSegment
+  //   Redraws a single segment of a Spark
+  //---------------------------------------------
+  redrawSegment(spark, start, end, curLen, ratio, elapsed, context) {
+    ratio = 1 - (curLen / this.options.maxTailLength);
 
     var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
@@ -59,9 +75,11 @@ class Embers extends ComponentBase {
     context.stroke();
   }
 
+  //---------------------------------------------
+  // onFrameHandler
+  //   Extends ComponentBase::onFrameHandler
+  //---------------------------------------------
   onFrameHandler(elapsed) {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.sparks.forEach(spark => {
       if (!spark.sparking) {
         if (Math.random() > 1 - (elapsed * 1 / 5)) {
@@ -75,6 +93,9 @@ class Embers extends ComponentBase {
     });
   }
 
+  //---------------------------------------------
+  // scrollHandler
+  //---------------------------------------------
   scrollHandler(deltaY) {
     var trans = vec2.fromValues(0, -deltaY);
     this.sparks.forEach(spark => {
@@ -86,6 +107,9 @@ class Embers extends ComponentBase {
     });
   }
 
+  //---------------------------------------------
+  // startSpark
+  //---------------------------------------------
   startSpark(spark) {
     var velAngle = Math.random() - .5 - (Math.PI / 2);
     var sourceAngle = Math.random() * Math.PI * 2;
@@ -105,14 +129,14 @@ class Embers extends ComponentBase {
         yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
       }
 
-      source = vec2.fromValues(xOffset, Math.min(yOffset + boundingRect.top, window.innerHeight));
+      source = vec2.fromValues(xOffset, Math.min(yOffset + boundingRect.top, window.innerHeight + this.options.sparkEdgeBottomOffset));
     } else {
-      throw 'Huge error';
+      throw 'Please provide a valid target type to Embers object.';
     }
 
     spark.spark({
       type: 2,
-      sparkResolution: SPARK_RESOLUTION,
+      sparkResolution: SPARK_MAX_SEGMENTS,
       size: (Math.random() * (this.options.maxSparkSize - this.options.minSparkSize)) + this.options.minSparkSize,
       color: {
         h: Math.random() * 28 + 20,
@@ -124,37 +148,44 @@ class Embers extends ComponentBase {
       heatCurrent: 0,
       lastAngleChangeTime: 0,
       glow: (Math.random() * 0.8) + 0.2,
-      flickerSpeed: Math.random(),
+      glowFlickerSpeed: (Math.random() * 5) + 2,
       life: life,
       lifeTotal: this.options.maxSparkLife
     });
   }
 
+  //---------------------------------------------
+  // Spark::sparkOnFrame
   // 'this' will be the Spark object itself.
-  sparkOnFrame(demo) {
-    var ran = (Math.random() * CHANGE_DIR_TIME_MAX) + (demo.lastTime - this.options.lastAngleChangeTime);
+  //---------------------------------------------
+  sparkOnFrame(embers) {
+    var ran = (Math.random() * CHANGE_DIR_TIME_MAX_MS) + (embers.lastTime - this.options.lastAngleChangeTime);
 
-    if (ran > CHANGE_DIR_TIME_MAX) {
-      var angle = (Math.random() * (3.141 / 3)) - (3.141 / 6);
+    if (ran > CHANGE_DIR_TIME_MAX_MS) {
+      var angle = (Math.random() * (Math.PI / 3)) - (Math.PI / 6);
       var matrix = mat2.create();
       mat2.rotate(matrix, matrix, angle);
       vec2.transformMat2(this.options.velocity, this.options.velocity, matrix);
-      this.options.lastAngleChangeTime = demo.lastTime;
+      vec2.scale(this.options.velocity, this.options.velocity, 1 - (Math.random() * embers.elapsed * 0.2));
+
+      this.options.lastAngleChangeTime = embers.lastTime;
     }
 
     this.options.heatCurrent += (Math.random());
-    this.options.life -= demo.elapsed;
-    this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow;
+    this.options.life -= embers.elapsed;
+    var sinGlow = ((Math.sin(this.options.life * this.options.glowFlickerSpeed) + 1.5) * 0.5);
+    this.options.glowFlickerSpeed += Math.random() * embers.elapsed;
+    this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow * sinGlow;
     this.options.lifeRatio = this.options.life / this.options.lifeTotal;
 
-    var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, demo.elapsed);
+    var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, embers.elapsed);
     this.next(nextPos);
 
     if (this.options.life < 0 ||
-        nextPos[1] > demo.canvas.height ||
+        nextPos[1] > embers.canvas.height + this.options.sparkEdgeBottomOffset ||
         nextPos[0] < 0 ||
         nextPos[1] < 0 ||
-        nextPos[0] > demo.canvas.width) {
+        nextPos[0] > embers.canvas.width) {
       this.reset();
     }
   }

@@ -52,8 +52,6 @@ createLintTask('lint-test', ['test/**/*.js']);
 var _builds = [];
 
 builds.forEach(function (build) {
-  // Build two versions of the library
-  
   gulp.task('build-' + build.key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
   gulp.task('watch-' + build.key, ['build-' + build.key], function () {
     gulp.watch('src/**/*.js', ['build-' + build.key]);

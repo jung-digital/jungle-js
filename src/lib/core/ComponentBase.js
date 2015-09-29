@@ -1,12 +1,23 @@
+/*---------------------------------------------------------------------------*\
+ * Constants
+\*---------------------------------------------------------------------------*/
 const DEFAULT_WIDTH = 800;
-const DEFAULT_HEIGHT = 800 / 1.618;
+const DEFAULT_HEIGHT = 800 / 1.618;  // Golden Ratio
 
+/*---------------------------------------------------------------------------*\
+ * ComponentBase
+ *   Root of all graphical components.
+\*---------------------------------------------------------------------------*/
 class ComponentBase {
+  //---------------------------------------------
+  // Constructor
+  //---------------------------------------------
   constructor(canvas, options, id) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
 
     this.options = options || {};
+    this.options.canvasAutoClear = this.options.canvasAutoClear !== undefined ? this.options.canvasAutoClear : true;
     this.options.fillCanvas = this.options.fillCanvas === false ? false : true;
     this.lastTime = 0;
 
@@ -22,10 +33,10 @@ class ComponentBase {
 
     window.addEventListener('scroll', this._scrollHandler.bind(this));
 
-    canvas.addEventListener('mousemove', this.onMouseMoveHandler.bind(this));
-    canvas.addEventListener('mouseout', this.onMouseOutHandler.bind(this));
-    canvas.addEventListener('touchstart', this.onTouchStartHandler.bind(this));
-    canvas.addEventListener('touchmove', this.onTouchMoveHandler.bind(this));
+    canvas.addEventListener('mousemove', this.canvasOnMouseMoveHandler.bind(this));
+    canvas.addEventListener('mouseout', this.canvasOnMouseOutHandler.bind(this));
+    canvas.addEventListener('touchstart', this.canvasOnTouchStartHandler.bind(this));
+    canvas.addEventListener('touchmove', this.canvasOnTouchMoveHandler.bind(this));
 
     canvas.setAttribute('width', DEFAULT_WIDTH);
     canvas.setAttribute('height', DEFAULT_HEIGHT);
@@ -37,6 +48,25 @@ class ComponentBase {
     window.requestAnimationFrame(this._onFrameFirstHandler.bind(this));
   }
 
+  //---------------------------------------------
+  // debugText
+  //---------------------------------------------
+  get debugText() {
+    return this.canvas.width + ', ' + this.canvas.height + ' FPS: ' + Math.round(1 / this.elapsed);
+  }
+
+  //---------------------------------------------
+  // debugText
+  //---------------------------------------------
+  debug(...args) {
+    if (this.debug) {
+      console.log.apply(console, args);
+    }
+  }
+
+  //---------------------------------------------
+  // resizeHandler
+  //---------------------------------------------
   resizeHandler(event) {
     if (this.options.fillCanvas) {
       var w = window.innerWidth;
@@ -54,47 +84,79 @@ class ComponentBase {
     this.resize();
   }
 
+  //---------------------------------------------
+  // _scrollHandler
+  //---------------------------------------------
   _scrollHandler(event) {
     var deltaY = window.scrollY - this.lastScrollTop;
     this.lastScrollTop = window.scrollY;
     this.scrollHandler(deltaY);
   }
 
+  //---------------------------------------------
+  // scrollHandler
+  //---------------------------------------------
   scrollHandler(deltaY) {
-    console.log('Scrolling!', deltaY);
+    // noop
   }
 
+  //---------------------------------------------
+  // resize
+  //---------------------------------------------
   resize() {
-    console.log('Resized!', this.canvasTargetWidth, this.canvasTargetHeight);
+    this.debug('Resized!', this.canvasTargetWidth, this.canvasTargetHeight);
   }
 
-  onMouseMoveHandler() {
+  //---------------------------------------------
+  // canvasOnMouseMoveHandler
+  //---------------------------------------------
+  canvasOnMouseMoveHandler() {
     // noop
   }
 
-  onMouseOutHandler() {
+  //---------------------------------------------
+  // canvasOnMouseOutHandler
+  //---------------------------------------------
+  canvasOnMouseOutHandler() {
     // noop
   }
 
-  onTouchStartHandler() {
+  //---------------------------------------------
+  // canvasOnTouchStartHandler
+  //---------------------------------------------
+  canvasOnTouchStartHandler() {
     // noop
   }
 
-  onTouchMoveHandler() {
+  //---------------------------------------------
+  // canvasOnTouchMoveHandler
+  //---------------------------------------------
+  canvasOnTouchMoveHandler() {
     // noop
   }
 
-  get debugText() {
-    return this.canvas.width + ', ' + this.canvas.height + ' FPS: ' + Math.round(1 / this.elapsed);
-  }
-
+  //---------------------------------------------
+  // _onFrameFirstHandler
+  //---------------------------------------------
   _onFrameFirstHandler(timestamp) {
     this.lastTime = timestamp;
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
   }
 
+  //---------------------------------------------
+  // _onFrameHandler
+  //---------------------------------------------
   _onFrameHandler(timestamp) {
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
+
+    if (this.options.canvasAutoClear) {
+      if (this.options.canvasAutoClear === true) {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      } else {
+        this.ctx.fillStyle = this.options.canvasAutoClear;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+    }
 
     this.elapsed = Math.min(0.1, (timestamp - this.lastTime) / 1000);
     this.lastTime = timestamp;
@@ -106,6 +168,13 @@ class ComponentBase {
       this.ctx.fillStyle = 'white';
       this.ctx.fillText(this.debugText, 10, 50);
     }
+  }
+
+  //---------------------------------------------
+  // onFrameHandler
+  //---------------------------------------------
+  onFrameHandler(elapsed) {
+    // Override
   }
 }
 

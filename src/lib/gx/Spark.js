@@ -79,7 +79,7 @@ class Spark {
         curLen += vec2.len(vec2.sub(vec2.create(), end, start));
 
         // Let dev manually style points based on ratio of start to end
-        this.pathRedraw(this, start, end, curLen, i / (this.sparkResolution - 1), elapsed, context);
+        this.redrawSegment(this, start, end, curLen, i / (this.sparkResolution - 1), elapsed, context);
       }
     }
   }
@@ -87,7 +87,7 @@ class Spark {
   // Spark()
   constructor(options) {
     this.id = options.id || -1; // index of this spark
-    this.pathRedraw = options.pathRedraw; // A function to call to redraw each segment as the spark moves.
+    this.redrawSegment = options.redrawSegment; // A function to call to redraw each segment as the spark moves.
 
     this.sparkResolution = options.sparkResolution || 20; // Resolution (number of segments) of the spark
 
