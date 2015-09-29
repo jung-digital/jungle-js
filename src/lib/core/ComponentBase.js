@@ -81,6 +81,9 @@ class ComponentBase {
       this.canvas.style.height = this.canvasTargetHeight = i / 1.618;
     }
 
+    this.scaleX = this.canvas.width / DEFAULT_WIDTH;
+    this.scaleY = this.canvas.height / DEFAULT_WIDTH;
+
     this.resize();
   }
 

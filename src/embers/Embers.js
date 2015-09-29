@@ -67,7 +67,7 @@ class Embers extends ComponentBase {
     var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
     context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
-    context.lineWidth = spark.options.size * ratio;
+    context.lineWidth = spark.options.size * ratio * this.scaleX;
 
     context.beginPath();
     context.moveTo(start[0], start[1]);
@@ -164,6 +164,7 @@ class Embers extends ComponentBase {
     if (ran > CHANGE_DIR_TIME_MAX_MS) {
       var angle = (Math.random() * (Math.PI / 3)) - (Math.PI / 6);
       var matrix = mat2.create();
+
       mat2.rotate(matrix, matrix, angle);
       vec2.transformMat2(this.options.velocity, this.options.velocity, matrix);
       vec2.scale(this.options.velocity, this.options.velocity, 1 - (Math.random() * embers.elapsed * 0.2));
@@ -178,7 +179,8 @@ class Embers extends ComponentBase {
     this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow * sinGlow;
     this.options.lifeRatio = this.options.life / this.options.lifeTotal;
 
-    var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, embers.elapsed);
+    var elapsedScale = embers.elapsed * embers.scaleX;
+    var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, elapsedScale);
     this.next(nextPos);
 
     if (this.options.life < 0 ||
