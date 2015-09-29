@@ -43,6 +43,8 @@ class ComponentBase {
 
     if (id) {
       canvas.setAttribute('id', id);
+      window.jd = window.jd || {};
+      window.jd[id] = this;
     }
 
     window.requestAnimationFrame(this._onFrameFirstHandler.bind(this));

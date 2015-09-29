@@ -28,8 +28,8 @@ class Embers extends ComponentBase {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
-  constructor(canvas, options) {
-    super(canvas, options);
+  constructor(canvas, options, id) {
+    super(canvas, options, id || 'embers');
 
     var o = this.options;
 
