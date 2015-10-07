@@ -18,6 +18,7 @@ class Fireworks extends ComponentBase {
   // Constructor
   //---------------------------------------------
   constructor(canvas, options, id) {
+    options.canvasAutoClear = 'black';
     super(canvas, options, id || 'fireworks');
   }
 

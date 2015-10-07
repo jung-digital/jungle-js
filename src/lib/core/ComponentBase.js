@@ -25,7 +25,7 @@ class ComponentBase {
       this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
       this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
     } else {
-      setTimeout(this.resizeHandler.bind(this), 250);
+      setTimeout(this.resizeHandler.bind(this), 1);
     }
 
     window.addEventListener('resize', this.resizeHandler.bind(this));
@@ -74,8 +74,10 @@ class ComponentBase {
       var w = window.innerWidth;
       var h = window.innerHeight;
 
-      this.canvas.width = this.canvas.style.width = this.canvasTargetWidth = this.width = w;
-      this.canvas.height = this.canvas.style.height = this.canvasTargetHeight = this.height = h;
+      this.canvas.width = this.canvasTargetWidth = this.width = w;
+      this.canvas.style.width = w + 'px';
+      this.canvas.height = this.canvasTargetHeight = this.height = h;
+      this.canvas.style.height = h + 'px';
     } else {
       var i = Math.min(800, window.innerWidth);
 
@@ -154,11 +156,12 @@ class ComponentBase {
   _onFrameHandler(timestamp) {
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
 
-    if (this.options.canvasAutoClear) {
-      if (this.options.canvasAutoClear === true) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      } else {
+    if (this.options.canvasAutoClear !== undefined) {
+      if (this.options.canvasAutoClear !== true) {
         this.ctx.fillStyle = this.options.canvasAutoClear;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+      else {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       }
     }
@@ -170,7 +173,7 @@ class ComponentBase {
 
     if (this.options.debug) {
       this.ctx.font = '12px Georgia white';
-      this.ctx.fillStyle = 'white';
+      this.ctx.fillStyle = 'orange';
       this.ctx.fillText(this.debugText, 10, 50);
     }
   }
