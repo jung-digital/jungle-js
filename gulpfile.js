@@ -17,7 +17,8 @@ const del = require('del'),
       esperanto = require('esperanto'),
       browserify = require('browserify'),
       runSequence = require('run-sequence'),
-      source = require('vinyl-source-stream');
+      source = require('vinyl-source-stream'),
+      browserSync = require('browser-sync');
 
 /*---------------------------------------------------------------------------*\
  * Load Dependencies
@@ -52,9 +53,29 @@ createLintTask('lint-test', ['test/**/*.js']);
 var _builds = [];
 
 builds.forEach(function (build) {
-  gulp.task('build-' + build.key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
-  gulp.task('watch-' + build.key, ['build-' + build.key], function () {
-    gulp.watch('src/**/*.js', ['build-' + build.key]);
+  var key = build.key.toLowerCase();
+
+  gulp.task('build-' + key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
+
+  gulp.task('watch-' + key, ['build-' + key], function () {
+    gulp.watch('src/**/*.js', ['build-' + key]);
+  });
+
+  gulp.task('serve-' + key, ['build-' + key], function () {
+    browserSync({
+      notify: false,
+      port: 3030,
+      server: {
+        baseDir: ['demos/' + key],
+        routes: {
+          '/shared': 'demos/shared',
+          '/dist': 'dist/' + key,
+          '/bower_components': 'bower_components'
+        }
+      }
+    });
+
+    gulp.watch(['src/**/*.js', './demos/' + key], ['build-' + key]).on('change', browserSync.reload);;
   });
 });
 

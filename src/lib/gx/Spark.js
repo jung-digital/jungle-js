@@ -1,9 +1,11 @@
+import Physical2D from '../physics/Physical2D';
+
 /*============================================
  * A spark represents a sequence of shapes that
  * move along a provided path.
  *============================================*/
 
-class Spark {
+class Spark extends Physical2D {
 
   reset() {
     this.sparking = false;
@@ -21,15 +23,15 @@ class Spark {
 
     // TODO do not duplicate variable names, reference via 'this.options.blah'
     this.onFrameCallback = options.onFrameCallback;
-    this.velocity = options.velocity;
+    this.vel = options.vel;
 
     this.sparking = true;
-    this.position = this.options.position;
+    this.pos = this.options.pos;
 
-    this.points = this.options.position ? [this.options.position] : undefined; // Reset points for manual mode
+    this.points = this.options.pos ? [this.options.pos] : undefined; // Reset points for manual mode
   }
 
-  // Manual mode, set the next position of the spark. Insert points if the spark has jumped a great distance so that it
+  // Manual mode, set the next pos of the spark. Insert points if the spark has jumped a great distance so that it
   // still looks smooth.
   next(pos) {
     if (!pos) {
@@ -38,19 +40,19 @@ class Spark {
 
     this.points = this.points || [];
 
-    var delta = vec2.sub(vec2.create(), pos, this.position);
+    var delta = vec2.sub(vec2.create(), pos, this.pos);
     var deltaNorm = vec2.normalize(vec2.create(), delta);
     var len = vec2.len(delta);
 
     for (var i = 1; i < len; i += 1.0) {
       var tmp = vec2.create();
-      var p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.position);
+      var p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.pos);
       this.points.push(p);
     }
 
     this.points.push(pos);
 
-    this.position = pos;
+    this.pos = pos;
 
     while (this.points.length > this.sparkResolution) {
       this.points.shift();
@@ -86,6 +88,8 @@ class Spark {
 
   // Spark()
   constructor(options) {
+    super(options);
+
     this.id = options.id || -1; // index of this spark
     this.redrawSegment = options.redrawSegment; // A function to call to redraw each segment as the spark moves.
 

@@ -102,7 +102,7 @@ class Embers extends ComponentBase {
       if (spark.sparking) {
         spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
 
-        vec2.add(spark.position, spark.position, trans);
+        vec2.add(spark.pos, spark.pos, trans);
       }
     });
   }
@@ -143,8 +143,8 @@ class Embers extends ComponentBase {
         s: Math.random() * 0.4 + 0.6,
         l: 1
       },
-      position: vec2.add(vec2.create(), source, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
-      velocity: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
+      pos: vec2.add(vec2.create(), source, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
+      vel: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
       heatCurrent: 0,
       lastAngleChangeTime: 0,
       glow: (Math.random() * 0.8) + 0.2,
@@ -166,8 +166,8 @@ class Embers extends ComponentBase {
       var matrix = mat2.create();
 
       mat2.rotate(matrix, matrix, angle);
-      vec2.transformMat2(this.options.velocity, this.options.velocity, matrix);
-      vec2.scale(this.options.velocity, this.options.velocity, 1 - (Math.random() * embers.elapsed * 0.2));
+      vec2.transformMat2(this.options.vel, this.options.vel, matrix);
+      vec2.scale(this.options.vel, this.options.vel, 1 - (Math.random() * embers.elapsed * 0.2));
 
       this.options.lastAngleChangeTime = embers.lastTime;
     }
@@ -180,7 +180,7 @@ class Embers extends ComponentBase {
     this.options.lifeRatio = this.options.life / this.options.lifeTotal;
 
     var elapsedScale = embers.elapsed * embers.scaleX;
-    var nextPos = vec2.scaleAndAdd(vec2.create(), this.position, this.options.velocity, elapsedScale);
+    var nextPos = vec2.scaleAndAdd(vec2.create(), this.pos, this.options.vel, elapsedScale);
     this.next(nextPos);
 
     if (this.options.life < 0 ||

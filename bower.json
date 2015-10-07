@@ -1,0 +1,26 @@
+{
+  "name": "jd-js-lib",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jung-digital/jd-js-lib",
+  "authors": [
+    "joshjung <joshua.p.jung@gmail.com>"
+  ],
+  "description": "Jung Digital Javascript Library",
+  "main": "src/lib/Lib.js",
+  "moduleType": [
+    "es6",
+    "globals"
+  ],
+  "license": "none",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}

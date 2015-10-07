@@ -6,5 +6,9 @@
   {
     "key": "Embers",
     "entry": "./embers/Embers.js"
+  },
+  {
+    "key": "Fireworks",
+    "entry": "./fireworks/Fireworks.js"
   }
 ]
