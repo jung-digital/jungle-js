@@ -19,11 +19,12 @@ class ComponentBase {
     this.options = options || {};
     this.options.canvasAutoClear = this.options.canvasAutoClear !== undefined ? this.options.canvasAutoClear : true;
     this.options.fillCanvas = this.options.fillCanvas === false ? false : true;
+    this.options.aspectRatio = this.options.aspectRatio;
     this.lastTime = 0;
 
     if (!this.options.fillCanvas) {
       this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
-      this.canvasTargetHeight = this.height = this.options.width || DEFAULT_HEIGHT;
+      this.canvasTargetHeight = this.height = this.options.height || DEFAULT_HEIGHT;
     } else {
       setTimeout(this.resizeHandler.bind(this), 1);
     }
@@ -37,6 +38,7 @@ class ComponentBase {
     canvas.addEventListener('mouseout', this.canvasOnMouseOutHandler.bind(this));
     canvas.addEventListener('touchstart', this.canvasOnTouchStartHandler.bind(this));
     canvas.addEventListener('touchmove', this.canvasOnTouchMoveHandler.bind(this));
+    canvas.addEventListener('click', this.canvasOnMouseClickHandler.bind(this));
 
     canvas.setAttribute('width', DEFAULT_WIDTH);
     canvas.setAttribute('height', DEFAULT_HEIGHT);
@@ -54,7 +56,7 @@ class ComponentBase {
   // debugText
   //---------------------------------------------
   get debugText() {
-    return this.canvas.width + ', ' + this.canvas.height + ' FPS: ' + Math.round(1 / this.elapsed);
+    return this.canvas.width + ', ' + this.canvas.height + ' FPS: ' + Math.round(1 / this.elapsed) + (this.options.debugText ? this.options.debugText : '');
   }
 
   //---------------------------------------------
@@ -72,10 +74,11 @@ class ComponentBase {
   resizeHandler(event) {
     if (this.options.fillCanvas) {
       var w = window.innerWidth;
-      var h = window.innerHeight;
+      var h = this.options.aspectRatio ? w / this.options.aspectRatio : window.innerHeight;
 
       this.canvas.width = this.canvasTargetWidth = this.width = w;
       this.canvas.style.width = w + 'px';
+
       this.canvas.height = this.canvasTargetHeight = this.height = h;
       this.canvas.style.height = h + 'px';
     } else {
@@ -112,6 +115,13 @@ class ComponentBase {
   //---------------------------------------------
   resize() {
     this.debug('Resized!', this.canvasTargetWidth, this.canvasTargetHeight);
+  }
+
+  //---------------------------------------------
+  // canvasOnMouseClickHandler
+  //---------------------------------------------
+  canvasOnMouseClickHandler() {
+    // noop
   }
 
   //---------------------------------------------
@@ -160,8 +170,7 @@ class ComponentBase {
       if (this.options.canvasAutoClear !== true) {
         this.ctx.fillStyle = this.options.canvasAutoClear;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      }
-      else {
+      } else {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       }
     }

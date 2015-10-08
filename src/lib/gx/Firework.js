@@ -41,28 +41,47 @@ class Firework extends Physical2D {
     }
   }
 
-  launch(start, end, duration) {
-    if (launched) {
+  launch(start, vel) {
+    if (this.launched) {
       this.reset();
     }
 
     this.launchTime = 0;
-    this.start = start;
+    this.start = vec2.clone(start);
+    this.vel = vel;
     this.pos = this.tail.pos = vec2.clone(start);
-    this.end = end;
-    this.duration = duration;
   }
 
   onFrame(elapsed, context) {
+    //console.log(this.vel);
+
     if (this.launched) {
+      console.log(this.pos, this.vel);
       super.onFrame(elapsed, context);
+
+      this.tail.next(this.pos);
 
       this.launchTime += elapsed;
 
       if (this.launchTime > this.duration) {
         this.burst();
       }
+
+      this.tail.onFrame(elapsed, context);
     }
+  }
+
+  redrawTailSegment(spark, start, end, curLen, ratio, elapsed, context) {
+    console.log('drawing');
+    ratio = 1 - (curLen / this.options.maxTailLength);
+
+    context.strokeStyle = 'rgba(255, 255, 255, 1)';
+    context.lineWidth = spark.options.size * ratio * this.scaleX;
+
+    context.beginPath();
+    context.moveTo(start[0], start[1]);
+    context.lineTo(end[0], end[1]);
+    context.stroke();
   }
 
   // Firework()
@@ -73,19 +92,20 @@ class Firework extends Physical2D {
 
     this.options.minSparks = options.minSparks || 30;
     this.options.maxSparks = options.maxSparks || 50;
+    this.options.gravity = options.gravity || vec2.create(0, 50);
+
+    this.forces = [this.options.gravity];
 
     this.sparks = [];
     this.tail = new Spark({
       type: 1,
+      redrawSegment: this.redrawTailSegment.bind(this),
       color: {
         h: 1,
         s: 1,
         l: 1
       }
     });
-
-    // Add gravity
-    this.forces.push(vec2.create(0, 50));
   }
 }
 

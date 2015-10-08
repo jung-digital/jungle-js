@@ -11,16 +11,17 @@ class Physical2D {
 
   onFrame(elapsed, context) {
     // Add forces to velocity
-    this.forces.forEach(function(force) {
-      vec2.add(this.vel, this.vel, vec2.scale(force, elapsed));
+    this.forces.forEach(force => {
+      vec2.add(this.vel, this.vel, vec2.scale(vec2.create(), force, elapsed));
     });
 
     // pos = pos + vel * elapsed
-    vec2.add(this.pos, this.pos, vec2.scale(this.vel, elapsed));
+    vec2.add(this.pos, this.pos, vec2.scale(vec2.create(), this.vel, elapsed));
   }
 
   // Physical2D()
   constructor(options) {
+    options = options || {};
     this.id = options.id || -1; // index of this physical object
     this.pos = options.pos || vec2.create();
     this.vel = options.vel || vec2.create();
