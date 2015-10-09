@@ -79,7 +79,7 @@ builds.forEach(function (build) {
   });
 });
 
-gulp.task('build', builds.map(function (b) {return 'build-' + b.key}));
+gulp.task('build', builds.map(function (b) {return 'build-' + b.key.toLowerCase()}));
 
 function bundle(bundler) {
   return bundler.bundle()
