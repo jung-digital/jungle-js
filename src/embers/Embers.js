@@ -42,6 +42,7 @@ class Embers extends ComponentBase {
     o.sparkCount = o.sparkCount || SPARK_COUNT;
     o.maxSparkLife = o.maxSparkLife || SPARK_MAX_LIFE_S;
     o.sparkEdgeBottomOffset = o.sparkEdgeBottomOffset || SPARK_EDGE_BOTTOM_OFFSET;
+    o.scrollRatio = o.scrollRatio || 1;
 
     this.sparkSource = this.options.sparkSource ? this.options.sparkSource : new vec2.fromValues(this.width / 2, this.height / 5);
 
@@ -82,7 +83,7 @@ class Embers extends ComponentBase {
   onFrameHandler(elapsed) {
     this.sparks.forEach(spark => {
       if (!spark.sparking) {
-        if (Math.random() > 1 - (elapsed * 1 / 5)) {
+        if (Math.random() > 1 - elapsed) {
           this.startSpark(spark);
         } else return;
       }
@@ -97,7 +98,7 @@ class Embers extends ComponentBase {
   // scrollHandler
   //---------------------------------------------
   scrollHandler(deltaY) {
-    var trans = vec2.fromValues(0, -deltaY);
+    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
     this.sparks.forEach(spark => {
       if (spark.sparking) {
         spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
@@ -139,7 +140,7 @@ class Embers extends ComponentBase {
       sparkResolution: SPARK_MAX_SEGMENTS,
       size: (Math.random() * (this.options.maxSparkSize - this.options.minSparkSize)) + this.options.minSparkSize,
       color: {
-        h: Math.random() * 28 + 20,
+        h: Math.random() * 28 + 15,
         s: Math.random() * 0.4 + 0.6,
         l: 1
       },
