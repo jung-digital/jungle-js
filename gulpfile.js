@@ -1,33 +1,26 @@
-/*---------------------------------------------------------------------------*\
- * Gulp Modules
-\*---------------------------------------------------------------------------*/
-const gulp = require('gulp'),
-      $ = require('gulp-load-plugins')();
+/*============================================*\
+ * Require Gulp Modules
+\*============================================*/
+const gulp = require('gulp');
+const $ = require('gulp-load-plugins')();
+const del = require('del');
+const glob = require('glob');
+const path = require('path');
+const isparta = require('isparta');
+const watchify = require('watchify');
+const buffer = require('vinyl-buffer');
+const runSequence = require('run-sequence');
+const source = require('vinyl-source-stream');
+const browserSync = require('browser-sync');
+const manifest = require('./package.json');
+const destinationFolder = './dist';
+const builds = require('./src/builds.json');
 
-/*---------------------------------------------------------------------------*\
- * NPM Modules
-\*---------------------------------------------------------------------------*/
-const del = require('del'),
-      glob = require('glob'),
-      path = require('path'),
-      isparta = require('isparta'),
-      babelify = require('babelify'),
-      watchify = require('watchify'),
-      buffer = require('vinyl-buffer'),
-      esperanto = require('esperanto'),
-      browserify = require('browserify'),
-      runSequence = require('run-sequence'),
-      source = require('vinyl-source-stream'),
-      browserSync = require('browser-sync');
+const config = manifest.babelBoilerplateOptions;
 
-/*---------------------------------------------------------------------------*\
- * Load Dependencies
-\*---------------------------------------------------------------------------*/
-const manifest = require('./package.json'),
-      destinationFolder = './dist',
-      builds = require('./src/builds.json'),
-      config = manifest.babelBoilerplateOptions;
-
+/*============================================*\
+ * Task Definitions
+\*============================================*/
 gulp.task('clean', del.bind(undefined, [destinationFolder]));
 gulp.task('clean-tmp', del.bind(undefined, ['tmp']));
 
@@ -81,129 +74,23 @@ builds.forEach(function (build) {
 
 gulp.task('build', builds.map(function (b) {return 'build-' + b.key.toLowerCase()}));
 
-function bundle(bundler) {
-  return bundler.bundle()
-    .on('error', function(err) {
-      console.log(err.message);
-      this.emit('end');
-    })
-    .pipe($.plumber())
-    .pipe(source('./tmp/__spec-build.js'))
-    .pipe(buffer())
-    .pipe(gulp.dest(''))
-    .pipe($.livereload());
-}
-
 function buildComplete(build, done) {
   _builds.push(build);
 
-  esperanto.bundle({
-    base: 'src',
-    entry: build.entry
-  }).then(function(bundle) {
-    var res = bundle.toUmd({
-      // Don't worry about the fact that the source map is inlined at this step.
-      // `gulp-sourcemaps`, which comes next, will externalize them.
-      sourceMap: 'inline',
-      name: build.key
-    });
-
-    function buildJS() {
-      $.file(build.key + '.js', res.code, { src: true })
-        .pipe($.plumber())
-        .pipe($.sourcemaps.init({ loadMaps: true }))
-        .pipe($.babel())
-        .pipe($.sourcemaps.write('./'))
-        .pipe(gulp.dest(destinationFolder + '/' + build.key))
-        .pipe($.filter(['*', '!**/*.js.map']))
-        .pipe($.rename(build.key + '.min.js'))
-        .pipe($.sourcemaps.init({ loadMaps: true }))
-        .pipe($.uglify())
-        .pipe($.sourcemaps.write('./'))
-        .pipe(gulp.dest(destinationFolder+ '/' + build.key))
-        .on('end', done);
-    }
-
-    buildJS();
-  })
-  .catch(done);
+  $.file(build.key + '.js', { src: true })
+    .pipe($.plumber())
+    .pipe($.sourcemaps.init({ loadMaps: true }))
+    .pipe($.babel())
+    .pipe($.sourcemaps.write('./'))
+    .pipe(gulp.dest(destinationFolder + '/' + build.key))
+    .pipe($.filter(['*', '!**/*.js.map']))
+    .pipe($.rename(build.key + '.min.js'))
+    .pipe($.sourcemaps.init({ loadMaps: true }))
+    .pipe($.uglify())
+    .pipe($.sourcemaps.write('./'))
+    .pipe(gulp.dest(destinationFolder+ '/' + build.key))
+    .on('end', done);
 }
-function getBundler() {
-  // Our browserify bundle is made up of our unit tests, which
-  // should individually load up pieces of our application.
-  // We also include the browserify setup file.
-  var testFiles = glob.sync('./test/unit/**/*');
-  var allFiles = ['./test/setup/browserify.js'].concat(testFiles);
-
-  // Create our bundler, passing in the arguments required for watchify
-  var bundler = browserify(allFiles, watchify.args);
-
-  // Watch the bundler, and re-bundle it whenever files change
-  bundler = watchify(bundler);
-  bundler.on('update', function() {
-    bundle(bundler);
-  });
-
-  // Set up Babelify so that ES6 works in the tests
-  bundler.transform(babelify.configure({
-    sourceMapRelative: __dirname + '/src'
-  }));
-
-  return bundler;
-};
-
-// Build the unit test suite for running tests
-// in the browser
-gulp.task('browserify', function() {
-  return bundle(getBundler());
-});
-
-function test() {
-  return gulp.src(['test/setup/node.js', 'test/unit/**/*.js'], {read: false})
-    .pipe($.mocha({reporter: 'dot', globals: config.mochaGlobals}));
-}
-
-gulp.task('coverage', ['lint-src', 'lint-test'], function(done) {
-  require('babel-core/register');
-  gulp.src(['src/**/*.js'])
-    .pipe($.istanbul({ instrumenter: isparta.Instrumenter }))
-    .pipe($.istanbul.hookRequire())
-    .on('finish', function() {
-      return test()
-        .pipe($.istanbul.writeReports())
-        .on('end', done);
-    });
-});
-
-// Lint and run our tests
-gulp.task('test', ['lint-src', 'lint-test'], function() {
-  require('babel-core/register');
-  return test();
-});
-
-// Ensure that linting occurs before browserify runs. This prevents
-// the build from breaking due to poorly formatted code.
-gulp.task('build-in-sequence', function(callback) {
-  runSequence(['lint-src', 'lint-test'], 'browserify', callback);
-});
-
-// These are JS files that should be watched by Gulp. When running tests in the browser,
-// watchify is used instead, so these aren't included.
-const jsWatchFiles = ['src/**/*', 'test/**/*'];
-// These are files other than JS files which are to be watched. They are always watched.
-const otherWatchFiles = ['package.json', '**/.eslintrc', '.jscsrc'];
-
-// Run the headless unit tests as you make changes.
-gulp.task('watch', function() {
-  const watchFiles = jsWatchFiles.concat(otherWatchFiles);
-  gulp.watch(watchFiles, ['test']);
-});
-
-// Set up a livereload environment for our spec runner
-gulp.task('test-browser', ['build-in-sequence'], function() {
-  $.livereload.listen({port: 35729, host: 'localhost', start: true});
-  return gulp.watch(otherWatchFiles, ['build-in-sequence']);
-});
 
 // An alias of test
 gulp.task('default', ['test']);

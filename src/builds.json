@@ -10,5 +10,9 @@
   {
     "key": "Fireworks",
     "entry": "./fireworks/Fireworks.js"
+  },
+  {
+    "key": "Surge",
+    "entry": "./surge/Surge.js"
   }
 ]

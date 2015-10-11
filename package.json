@@ -65,6 +65,8 @@
   "dependencies": {
     "browser-sync": "^2.9.10",
     "gl-matrix": "^2.3.1",
-    "gulp-watch": "^4.3.5"
+    "gulp-babel": "^5.2.1",
+    "gulp-watch": "^4.3.5",
+    "hasharray": "^0.3.0"
   }
 }

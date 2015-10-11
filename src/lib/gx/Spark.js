@@ -1,16 +1,55 @@
-import Physical2D from '../physics/Physical2D';
+'use strict';
 
-/*============================================
- * A spark represents a sequence of shapes that
- * move along a provided path.
- *============================================*/
+/*============================================*\
+ * Imports
+\*============================================*/
+import Object2D from '../physics/Object2D';
 
-class Spark extends Physical2D {
+/*============================================*\
+ * Class
+\*============================================*/
+/**
+ * A Spark is a particle effect that has a point and a tail.
+ */
+class Spark extends Object2D {
+  //------------------------------------
+  // Constructor
+  //------------------------------------
+  /**
+   * Construct a spark based on the options specified.
+   *
+   * @param options Spark options.
+   */
+  constructor(options) {
+    super(options);
 
+    this.id = options.id || -1; // index of this spark
+    this.redrawSegment = options.redrawSegment; // A function to call to redraw each segment as the spark moves.
+
+    this.sparkResolution = options.sparkResolution || 20; // Resolution (number of segments) of the spark
+
+    this.options = options;
+
+    this.paths = []; // Paper.js Paths of this spark, one for each segment.
+
+    this.sparking = false;
+  }
+
+  //------------------------------------
+  // Methods
+  //------------------------------------
+  /**
+   * Turn off the spark.
+   */
   reset() {
     this.sparking = false;
   }
 
+  /**
+   * Turn the spark on.
+   *
+   * @param options
+   */
   spark(options) {
     if (this.sparking) {
       return;
@@ -31,8 +70,12 @@ class Spark extends Physical2D {
     this.points = this.options.pos ? [this.options.pos] : undefined; // Reset points for manual mode
   }
 
-  // Manual mode, set the next pos of the spark. Insert points if the spark has jumped a great distance so that it
-  // still looks smooth.
+  /**
+   * For manual mode only. Sets the next position of the spark. The tail of the spark will follow whatever
+   * sequence of positions you provide.
+   *
+   * @param pos The vec2 of the next position of the spark.
+   */
   next(pos) {
     if (!pos) {
       return;
@@ -40,13 +83,13 @@ class Spark extends Physical2D {
 
     this.points = this.points || [];
 
-    var delta = vec2.sub(vec2.create(), pos, this.pos);
-    var deltaNorm = vec2.normalize(vec2.create(), delta);
-    var len = vec2.len(delta);
+    let delta = vec2.sub(vec2.create(), pos, this.pos);
+    let deltaNorm = vec2.normalize(vec2.create(), delta);
+    let len = vec2.len(delta);
 
     for (var i = 1; i < len; i += 1.0) {
-      var tmp = vec2.create();
-      var p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.pos);
+      let tmp = vec2.create();
+      let p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.pos);
       this.points.push(p);
     }
 
@@ -58,18 +101,13 @@ class Spark extends Physical2D {
       this.points.shift();
     }
   }
-
-  onFrame(elapsed, context) {
-    if (this.sparking) {
-      if (this.onFrameCallback) {
-        this.onFrameCallback.call(this, elapsed, context);
-      }
-
-      this.updateTail(elapsed, context);
-    }
-  }
-
-  updateTail(elapsed, context) {
+  /**
+   * Renders the tail of the Spark.
+   *
+   * @param elapsed
+   * @param context
+   */
+  renderTail(elapsed, context) {
     // Go backwards from the end, building up paths and letting the dev manually style them
     // ensuring that there are this.resolution # of paths.
     if (this.points.length > 1) {
@@ -86,20 +124,23 @@ class Spark extends Physical2D {
     }
   }
 
-  // Spark()
-  constructor(options) {
-    super(options);
+  //------------------------------------
+  // Event Handlers
+  //------------------------------------
+  /**
+   * Called once per render loop.
+   *
+   * @param elapsed The elapsed time in ms. since last render loop.
+   * @param context The Canvas context on which to render.
+   */
+  onFrameHandler(elapsed, context) {
+    if (this.sparking) {
+      if (this.onFrameCallback) {
+        this.onFrameCallback.call(this, elapsed, context);
+      }
 
-    this.id = options.id || -1; // index of this spark
-    this.redrawSegment = options.redrawSegment; // A function to call to redraw each segment as the spark moves.
-
-    this.sparkResolution = options.sparkResolution || 20; // Resolution (number of segments) of the spark
-
-    this.options = options;
-
-    this.paths = []; // Paper.js Paths of this spark, one for each segment.
-
-    this.sparking = false;
+      this.renderTail(elapsed, context);
+    }
   }
 }
 

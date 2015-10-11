@@ -1,25 +1,30 @@
-/*---------------------------------------------------------------------------*\
+/*============================================*\
  * Imports
-\*---------------------------------------------------------------------------*/
-import Lib from '../lib/Lib.js';
-import ComponentBase from '../lib/core/ComponentBase.js';
-import Firework from '../lib/gx/Firework.js';
+\*============================================*/
 import util from '../lib/util/util.js';
 
-/*---------------------------------------------------------------------------*\
- * Constants
-\*---------------------------------------------------------------------------*/
+import Layer from '../lib/core/Renderer.js';
+import Firework from '../lib/gx/Firework.js';
 
-/*---------------------------------------------------------------------------*\
- * Fireworks Component
-\*---------------------------------------------------------------------------*/
-class Fireworks extends ComponentBase {
+/*============================================*\
+ * Class
+\*============================================*/
+/**
+ * A layer that launches fireworks as directed.
+ */
+class Fireworks extends Layer {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
-  constructor(canvas, options, id) {
+  /**
+   * Build a new Fireworks layer.
+   * @param {Object} options
+   * @param {String} id
+   */
+  constructor(options, id) {
     options.canvasAutoClear = 'black';
-    super(canvas, options, id || 'fireworks');
+
+    super(options, id || 'fireworks');
 
     this.fireworks = [];
     this.launchPads = options.launchPads || [];
@@ -33,9 +38,13 @@ class Fireworks extends ComponentBase {
   }
 
   //---------------------------------------------
-  // canvasOnMouseClickHandler
-  //   Extends ComponentBase::canvasOnMouseClickHandler
+  // Methods
   //---------------------------------------------
+  /**
+   * Called when the mouse clicks the canvas.
+   *
+   * @param {ClickEvent} event
+   */
   canvasOnMouseClickHandler(event) {
     var self = this;
 
@@ -44,7 +53,7 @@ class Fireworks extends ComponentBase {
     // Launch a firework from each launchpad
     this.launchPads.forEach(lp => {
       var dX = (event.clientX - lp[0]);
-      var vX = dX / self.duration;  
+      var vX = dX / self.duration;
       var vY = 100;
 
       var firework = new Firework({});
@@ -56,10 +65,11 @@ class Fireworks extends ComponentBase {
     });
   }
 
-  //---------------------------------------------
-  // onFrameHandler
-  //   Extends ComponentBase::onFrameHandler
-  //---------------------------------------------
+  /**
+   * Called once per render loop.
+   *
+   * @param {Number} elapsed time in seconds
+   */
   onFrameHandler(elapsed) {
     this.fireworks.forEach(function(fw) {
       fw.onFrame(elapsed);

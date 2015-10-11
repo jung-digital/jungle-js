@@ -1,14 +1,13 @@
-/*---------------------------------------------------------------------------*\
+/*============================================*\
  * Imports
-\*---------------------------------------------------------------------------*/
-import Lib from '../lib/Lib.js';
-import ComponentBase from '../lib/core/ComponentBase.js';
-import Spark from '../lib/gx/Spark.js';
-import util from '../lib/util/util.js';
+\*============================================*/
+import Layer from '../lib/core/GraphicContainer';
+import Spark from '../lib/gx/Spark';
+import hsvToRgb from '../lib/util/Color';
 
-/*---------------------------------------------------------------------------*\
+/*============================================*\
  * Constants
-\*---------------------------------------------------------------------------*/
+\*============================================*/
 const SPARK_COUNT = 75;                // Maximum number of sparks to display simultaneously
 const SPARK_MAX_SIZE = 3.4;
 const SPARK_MIN_SIZE = 1;
@@ -21,13 +20,58 @@ const SPARK_MAX_TAIL_LENGTH = 20;
 const SPARK_MAX_LIFE_S = 10;
 const SPARK_EDGE_BOTTOM_OFFSET = 200;  // Offset for bottom edge of spark source when target is off screen.
 
-/*---------------------------------------------------------------------------*\
- * Embers Component
-\*---------------------------------------------------------------------------*/
-class Embers extends ComponentBase {
+/*============================================*\
+ * Functions
+\*============================================*/
+function sparkOnFrame(embers) {
+  var ran = (Math.random() * CHANGE_DIR_TIME_MAX_MS) + (embers.lastTime - this.options.lastAngleChangeTime);
+
+  if (ran > CHANGE_DIR_TIME_MAX_MS) {
+    var angle = (Math.random() * (Math.PI / 3)) - (Math.PI / 6);
+    var matrix = mat2.create();
+
+    mat2.rotate(matrix, matrix, angle);
+    vec2.transformMat2(this.options.vel, this.options.vel, matrix);
+    vec2.scale(this.options.vel, this.options.vel, 1 - (Math.random() * embers.elapsed * 0.2));
+
+    this.options.lastAngleChangeTime = embers.lastTime;
+  }
+
+  this.options.heatCurrent += (Math.random());
+  this.options.life -= embers.elapsed;
+  var sinGlow = ((Math.sin(this.options.life * this.options.glowFlickerSpeed) + 1.5) * 0.5);
+  this.options.glowFlickerSpeed += Math.random() * embers.elapsed;
+  this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow * sinGlow;
+  this.options.lifeRatio = this.options.life / this.options.lifeTotal;
+
+  var elapsedScale = embers.elapsed * embers.scaleX;
+  var nextPos = vec2.scaleAndAdd(vec2.create(), this.pos, this.options.vel, elapsedScale);
+  this.next(nextPos);
+
+  if (this.options.life < 0 ||
+    nextPos[1] > embers.canvas.height + this.options.sparkEdgeBottomOffset ||
+    nextPos[0] < 0 ||
+    nextPos[1] < 0 ||
+    nextPos[0] > embers.canvas.width) {
+    this.reset();
+  }
+}
+
+
+/*============================================*\
+ * Embers
+\*============================================*/
+class Embers extends Layer {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
+  /**
+   * Embers is a digital effect to display sparks on the screen.
+   *
+   * @param {DOMNode} canvas The canvas on which to render the effects.
+   * @param {Object} options The options for this special effect.
+   * @param {String} id
+   */
   constructor(canvas, options, id) {
     super(canvas, options, id || 'embers');
 
@@ -59,13 +103,23 @@ class Embers extends ComponentBase {
   }
 
   //---------------------------------------------
-  // redrawSegment
-  //   Redraws a single segment of a Spark
+  // Methods
   //---------------------------------------------
+  /**
+   * Redraws a single segment of an ember.
+   *
+   * @param {Spark} spark The Spark object.
+   * @param {vec2} start The start of the segment.
+   * @param {vec2} end The end of the segment.
+   * @param {Number} curLen The length from the start of the ember to this current segment start.
+   * @param {Number} ratio The ratio of curLen out of the full length of the Spark.
+   * @param {Number} elapsed The elapsed time in seconds since the last render.
+   * @param {RenderingContext} context The DOM canvas rendering context on which to draw.
+   */
   redrawSegment(spark, start, end, curLen, ratio, elapsed, context) {
     ratio = 1 - (curLen / this.options.maxTailLength);
 
-    var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
+    var rgb = hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
     context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
     context.lineWidth = spark.options.size * ratio * this.scaleX;
@@ -76,41 +130,11 @@ class Embers extends ComponentBase {
     context.stroke();
   }
 
-  //---------------------------------------------
-  // onFrameHandler
-  //   Extends ComponentBase::onFrameHandler
-  //---------------------------------------------
-  onFrameHandler(elapsed) {
-    this.sparks.forEach(spark => {
-      if (!spark.sparking) {
-        if (Math.random() > 1 - elapsed) {
-          this.startSpark(spark);
-        } else return;
-      }
-
-      this.sparkOnFrame.call(spark, this);
-
-      spark.onFrame(this.elapsed, this.ctx);
-    });
-  }
-
-  //---------------------------------------------
-  // scrollHandler
-  //---------------------------------------------
-  scrollHandler(deltaY) {
-    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
-    this.sparks.forEach(spark => {
-      if (spark.sparking) {
-        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
-
-        vec2.add(spark.pos, spark.pos, trans);
-      }
-    });
-  }
-
-  //---------------------------------------------
-  // startSpark
-  //---------------------------------------------
+  /**
+   * Start a new spark.
+   *
+   * @param spark
+   */
   startSpark(spark) {
     var velAngle = Math.random() - .5 - (Math.PI / 2);
     var sourceAngle = Math.random() * Math.PI * 2;
@@ -156,41 +180,38 @@ class Embers extends ComponentBase {
   }
 
   //---------------------------------------------
-  // Spark::sparkOnFrame
-  // 'this' will be the Spark object itself.
+  // Event Handlers
   //---------------------------------------------
-  sparkOnFrame(embers) {
-    var ran = (Math.random() * CHANGE_DIR_TIME_MAX_MS) + (embers.lastTime - this.options.lastAngleChangeTime);
+  /**
+   * @param {Number} elapsed
+   */
+  onFrameHandler(elapsed) {
+    this.sparks.forEach(spark => {
+      if (!spark.sparking) {
+        if (Math.random() > 1 - elapsed) {
+          this.startSpark(spark);
+        } else return;
+      }
 
-    if (ran > CHANGE_DIR_TIME_MAX_MS) {
-      var angle = (Math.random() * (Math.PI / 3)) - (Math.PI / 6);
-      var matrix = mat2.create();
+      sparkOnFrame.call(spark, this);
 
-      mat2.rotate(matrix, matrix, angle);
-      vec2.transformMat2(this.options.vel, this.options.vel, matrix);
-      vec2.scale(this.options.vel, this.options.vel, 1 - (Math.random() * embers.elapsed * 0.2));
+      spark.onFrame(this.elapsed, this.ctx);
 
-      this.options.lastAngleChangeTime = embers.lastTime;
-    }
+    });
+  }
 
-    this.options.heatCurrent += (Math.random());
-    this.options.life -= embers.elapsed;
-    var sinGlow = ((Math.sin(this.options.life * this.options.glowFlickerSpeed) + 1.5) * 0.5);
-    this.options.glowFlickerSpeed += Math.random() * embers.elapsed;
-    this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow * sinGlow;
-    this.options.lifeRatio = this.options.life / this.options.lifeTotal;
+  /**
+   * @param {Number} deltaY The change in scroll position.
+   */
+  scrollHandler(deltaY) {
+    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
+    this.sparks.forEach(spark => {
+      if (spark.sparking) {
+        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
 
-    var elapsedScale = embers.elapsed * embers.scaleX;
-    var nextPos = vec2.scaleAndAdd(vec2.create(), this.pos, this.options.vel, elapsedScale);
-    this.next(nextPos);
-
-    if (this.options.life < 0 ||
-        nextPos[1] > embers.canvas.height + this.options.sparkEdgeBottomOffset ||
-        nextPos[0] < 0 ||
-        nextPos[1] < 0 ||
-        nextPos[0] > embers.canvas.width) {
-      this.reset();
-    }
+        vec2.add(spark.pos, spark.pos, trans);
+      }
+    });
   }
 }
 

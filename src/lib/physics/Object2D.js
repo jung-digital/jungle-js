@@ -19,7 +19,7 @@ class Physical2D {
     vec2.add(this.pos, this.pos, vec2.scale(vec2.create(), this.vel, elapsed));
   }
 
-  // Physical2D()
+  // Object2D()
   constructor(options) {
     options = options || {};
     this.id = options.id || -1; // index of this physical object

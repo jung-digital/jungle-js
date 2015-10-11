@@ -1,90 +1,26 @@
-import Physical2D from '../physics/Physical2D';
+/*============================================*\
+ * Imports
+\*============================================*/
+import Object2D from '../physics/Object2D';
 import Spark from './Spark';
-import util from '../util/util';
+import hsvToRgb from '../util/Color';
+import ran from '../util/Number';
 
-/*============================================
- * A firework is the digital representation of
- * a real firework including launch and explosion
- *============================================*/
-class Firework extends Physical2D {
-  reset() {
-    super.reset();
-  }
-
-  get launched() {
-    return vec2.length(this.vel) != 0;
-  }
-
-  renderSparkSegment(spark, start, end, curLen, ratio, elapsed, context) {
-    ratio = 1 - (curLen / this.options.maxTailLength);
-
-    var rgb = util.hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
-
-    context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
-    context.lineWidth = spark.options.size * ratio * this.scaleX;
-
-    context.beginPath();
-    context.moveTo(start[0], start[1]);
-    context.lineTo(end[0], end[1]);
-    context.stroke();
-  }
-
-  burst() {
-    var sparkCount = util.ran(this.options.minSparks, this.options.maxSparks);
-    var rs = this.renderSparkSegment.bind(this);
-
-    for (var i = 0; i < sparkCount; i++) {
-      this.sparks.push(new Spark({
-        redrawSegment: rs,
-        sparkResolution: this.options.sparkResolution || 4
-      }));
-    }
-  }
-
-  launch(start, vel) {
-    if (this.launched) {
-      this.reset();
-    }
-
-    this.launchTime = 0;
-    this.start = vec2.clone(start);
-    this.vel = vel;
-    this.pos = this.tail.pos = vec2.clone(start);
-  }
-
-  onFrame(elapsed, context) {
-    //console.log(this.vel);
-
-    if (this.launched) {
-      console.log(this.pos, this.vel);
-      super.onFrame(elapsed, context);
-
-      this.tail.next(this.pos);
-
-      this.launchTime += elapsed;
-
-      if (this.launchTime > this.duration) {
-        this.burst();
-      }
-
-      this.tail.onFrame(elapsed, context);
-    }
-  }
-
-  redrawTailSegment(spark, start, end, curLen, ratio, elapsed, context) {
-    console.log('drawing');
-    ratio = 1 - (curLen / this.options.maxTailLength);
-
-    context.strokeStyle = 'rgba(255, 255, 255, 1)';
-    context.lineWidth = spark.options.size * ratio * this.scaleX;
-
-    context.beginPath();
-    context.moveTo(start[0], start[1]);
-    context.lineTo(end[0], end[1]);
-    context.stroke();
-  }
-
-  // Firework()
+/*============================================*\
+ * Class
+\*============================================*/
+/**
+ * A single firework.
+ */
+class Firework extends Object2D {
+  //------------------------------------
+  // Constructor
+  //------------------------------------
+  /**
+   * Construct a firework with the provided options.
+   *
+   * @param options
+   */
   constructor(options) {
     super(options);
 
@@ -99,13 +35,142 @@ class Firework extends Physical2D {
     this.sparks = [];
     this.tail = new Spark({
       type: 1,
-      redrawSegment: this.redrawTailSegment.bind(this),
+      redrawSegment: this.renderSmokeTrailSegment.bind(this),
       color: {
         h: 1,
         s: 1,
         l: 1
       }
     });
+  }
+
+  //------------------------------------
+  // Properties
+  //------------------------------------
+  /**
+   * Returns true if the firework has been launched.
+   *
+   * @returns {boolean}
+   */
+  get launched() {
+    return vec2.length(this.vel) != 0;
+  }
+
+  //------------------------------------
+  // Methods
+  //------------------------------------
+  /**
+   * Reset all the firework properties immediately.
+   */
+  reset() {
+    super.reset();
+  }
+
+  /**
+   * Internal render of a single spark segment for a firework.
+   *
+   * @param spark The Spark object.
+   * @param start Start vec2
+   * @param end End vec2
+   * @param curLen Length from the sparks start to the beginning of the current segment.
+   * @param ratio Ratio of the current segments start to the total length.
+   * @param elapsed Elapsed number of ms. since the last render loop.
+   * @param context The Canvas context on which to render.
+   */
+  renderSparkSegment(spark, start, end, curLen, ratio, elapsed, context) {
+    ratio = 1 - (curLen / this.options.maxTailLength);
+
+    var rgb = hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
+
+    context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
+    context.lineWidth = spark.options.size * ratio * this.scaleX;
+
+    context.beginPath();
+    context.moveTo(start[0], start[1]);
+    context.lineTo(end[0], end[1]);
+    context.stroke();
+  }
+
+  /**
+   * Internal render of a single spark segment for a fireworks launch smoke trail.
+   *
+   * @param spark The Spark object.
+   * @param start Start vec2
+   * @param end End vec2
+   * @param curLen Length from the sparks start to the beginning of the current segment.
+   * @param ratio Ratio of the current segments start to the total length.
+   * @param elapsed Elapsed number of ms. since the last render loop.
+   * @param context The Canvas context on which to render.
+   */
+  renderSmokeTrailSegment(spark, start, end, curLen, ratio, elapsed, context) {
+    console.log('drawing');
+    ratio = 1 - (curLen / this.options.maxTailLength);
+
+    context.strokeStyle = 'rgba(255, 255, 255, 1)';
+    context.lineWidth = spark.options.size * ratio * this.scaleX;
+
+    context.beginPath();
+    context.moveTo(start[0], start[1]);
+    context.lineTo(end[0], end[1]);
+    context.stroke();
+  }
+
+  /**
+   * Tell the firework to explode.
+   */
+  burst() {
+    var sparkCount = ran(this.options.minSparks, this.options.maxSparks);
+    var rs = this.renderSparkSegment.bind(this);
+
+    for (var i = 0; i < sparkCount; i++) {
+      this.sparks.push(new Spark({
+        redrawSegment: rs,
+        sparkResolution: this.options.sparkResolution || 4
+      }));
+    }
+  }
+
+  /**
+   * Launch the firework from start with vel.
+   *
+   * @param start Start position vec2
+   * @param vel Velocity vec2
+   */
+  launch(start, vel) {
+    if (this.launched) {
+      this.reset();
+    }
+
+    this.launchTime = 0;
+    this.start = vec2.clone(start);
+    this.vel = vel;
+    this.pos = this.tail.pos = vec2.clone(start);
+  }
+
+  //------------------------------------
+  // Event Handlers
+  //------------------------------------
+  /**
+   * Called every render frame.
+   *
+   * @param elapsed Elapsed number of ms. since last render loop.
+   * @param context The Canvas context on which to render.
+   */
+  onFrameHandler(elapsed, context) {
+    if (this.launched) {
+      console.log(this.pos, this.vel);
+      super.onFrame(elapsed, context);
+
+      this.tail.next(this.pos);
+
+      this.launchTime += elapsed;
+
+      if (this.launchTime > this.duration) {
+        this.burst();
+      }
+
+      this.tail.onFrame(elapsed, context);
+    }
   }
 }
 
