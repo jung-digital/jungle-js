@@ -18,7 +18,7 @@ class Spark extends Object2D {
   /**
    * Construct a spark based on the options specified.
    *
-   * @param options Spark options.
+   * @param {Object} options Spark options.
    */
   constructor(options) {
     super(options);
@@ -48,7 +48,7 @@ class Spark extends Object2D {
   /**
    * Turn the spark on.
    *
-   * @param options
+   * @param {Object} options
    */
   spark(options) {
     if (this.sparking) {
@@ -74,7 +74,7 @@ class Spark extends Object2D {
    * For manual mode only. Sets the next position of the spark. The tail of the spark will follow whatever
    * sequence of positions you provide.
    *
-   * @param pos The vec2 of the next position of the spark.
+   * @param {vec2} pos The vec2 of the next position of the spark.
    */
   next(pos) {
     if (!pos) {
@@ -104,8 +104,8 @@ class Spark extends Object2D {
   /**
    * Renders the tail of the Spark.
    *
-   * @param elapsed
-   * @param context
+   * @param {Number} elapsed
+   * @param {RenderingContext} context
    */
   renderTail(elapsed, context) {
     // Go backwards from the end, building up paths and letting the dev manually style them
@@ -130,8 +130,8 @@ class Spark extends Object2D {
   /**
    * Called once per render loop.
    *
-   * @param elapsed The elapsed time in ms. since last render loop.
-   * @param context The Canvas context on which to render.
+   * @param {Number} elapsed The elapsed time in ms. since last render loop.
+   * @param {RenderingContext} context The Canvas context on which to render.
    */
   onFrameHandler(elapsed, context) {
     if (this.sparking) {

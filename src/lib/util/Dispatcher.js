@@ -15,9 +15,10 @@ class Dispatcher {
   }
 
   /**
-   * Add a listener for a
-   * @param type The type of the event to listen for.
-   * @param callback The function to call when the event is dispatched.
+   * Add a listener for a particular event type. Remember to bind the function if you want to preserve `this`.
+   *
+   * @param {String} type The type of the event to listen for.
+   * @param {Function} callback The function to call when the event is dispatched.
    */
   addListener(type, callback) {
     this.listeners[type] = this.listeners[type] || [];
@@ -25,7 +26,7 @@ class Dispatcher {
   }
 
   dispatch(event) {
-    this.listeners[event.type] ? this.listeners[event.type].forEach(l => l(event))
+    this.listeners[event.type] ? this.listeners[event.type].forEach(l => l(event)) : void 0;
   }
 }
 

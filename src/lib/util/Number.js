@@ -3,8 +3,8 @@
 /**
  * Returns a random number between min and max.
  *
- * @param min Minimum value of the random number.
- * @param max Maximum value of the random number.
+ * @param {Number} min Minimum value of the random number.
+ * @param {Number} max Maximum value of the random number.
  * @returns {Number}
  */
 export function ran(min, max) {

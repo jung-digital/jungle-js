@@ -77,8 +77,9 @@ gulp.task('build', builds.map(function (b) {return 'build-' + b.key.toLowerCase(
 function buildComplete(build, done) {
   _builds.push(build);
 
-  $.file(build.key + '.js', { src: true })
+  gulp.src(build.entry)
     .pipe($.plumber())
+    .pipe($.rollup())
     .pipe($.sourcemaps.init({ loadMaps: true }))
     .pipe($.babel())
     .pipe($.sourcemaps.write('./'))

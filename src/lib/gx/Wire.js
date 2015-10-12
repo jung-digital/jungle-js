@@ -29,7 +29,7 @@ class Wire {
   /**
    * Constructs a Wire object given the options you provide.
    *
-   * @param options All the options associated with a Wire object.
+   * @param {Object} options All the options associated with a Wire object.
    */
   constructor(options) {
     options = options || {};
@@ -43,7 +43,9 @@ class Wire {
 
     this.points = [];
 
-    if (options.autoGen) this.generate(ranItem([1,2,3,4]), ranItem([1,2,3,4]), this.detail, this.bounds);
+    if (options.autoGen) {
+      this.generate(ranItem([1,2,3,4]), ranItem([1,2,3,4]), this.detail, this.bounds);
+    }
   }
 
   //------------------------------------
@@ -52,10 +54,10 @@ class Wire {
   /**
    * Generate a wire.
    *
-   * @param startSide The side of the Sides enum on which to start.
-   * @param endSide The sdie of the Sides enum on which to end.
-   * @param detail The maximum length of a segment of the wire.
-   * @param rect The rect within which to build the wire.
+   * @param {Number} startSide The side of the Sides enum on which to start.
+   * @param {Number} endSide The sdie of the Sides enum on which to end.
+   * @param {Number} detail The maximum length of a segment of the wire.
+   * @param {Rect} rect The rect within which to build the wire.
    */
   generate(startSide, endSide, detail, rect) {
     let start = rect.getRandomPointFor(startSide);
@@ -63,8 +65,7 @@ class Wire {
     let cur = start;
     let lastDir = 0;
 
-    if (this.debugStartEnd)
-    {
+    if (this.debugStartEnd) {
       var scircle = new paper.Path.Circle(start, 5);
       scircle.fillColor = 'green';
 
@@ -72,8 +73,7 @@ class Wire {
       ecircle.fillColor = 'red';
     }
 
-    while (true)
-    {
+    while (true) {
       // Generate a direction for the wire to go, giving preference to directions toward the end
       // and ensuring the same direction is never repeated twice in a row
       let dirs = [1,2,3,4];
@@ -91,8 +91,7 @@ class Wire {
       let next = vec2.create();
       let disToEnd = vec2.len(vec2.sub(vec2.create(), end, cur));
 
-      if (disToEnd < detail)
-      {
+      if (disToEnd < detail) {
         // Just link the two together by two pieces. We should have 1 or 2 sidesToward. Just make a segment for each.
         if (end.x - cur.x) {
           vec2.add(cur, cur, vec2.fromValues(end.x - cur.x, 0));
@@ -103,8 +102,7 @@ class Wire {
           this.points.push(cur);
         }
         break;
-      }
-      else {
+      } else {
         let dir;
         let moveDis;
         let dirVec;
@@ -140,8 +138,9 @@ class Wire {
       this.path.lineTo(vec2ToPoint(v));
     });
 
-    if (this.type === WireTypes.CURVED)
+    if (this.type === WireTypes.CURVED) {
       this.path.smooth();
+    }
   }
 }
 

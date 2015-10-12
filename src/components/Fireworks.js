@@ -3,7 +3,7 @@
 \*============================================*/
 import util from '../lib/util/util.js';
 
-import Layer from '../lib/core/GraphicRenderer.js';
+import GraphicContainer from '../lib/core/GraphicContainer.js';
 import Firework from '../lib/gx/Firework.js';
 
 /*============================================*\
@@ -12,12 +12,13 @@ import Firework from '../lib/gx/Firework.js';
 /**
  * A layer that launches fireworks as directed.
  */
-class Fireworks extends Layer {
+class Fireworks extends GraphicContainer {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
   /**
    * Build a new Fireworks layer.
+   *
    * @param {Object} options
    * @param {String} id
    */

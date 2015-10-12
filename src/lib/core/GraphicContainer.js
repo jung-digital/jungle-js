@@ -18,9 +18,8 @@ class GraphicContainer extends Graphic {
   /**
    * A GraphicContainer represents the root of a single special effect to be displayed on a canvas.
    *
-   * @param canvas The canvas on which to render the layer.
-   * @param options The options with which to initialize the layer.
-   * @param id The ID of this layer.
+   * @param {Object} options The options with which to initialize the layer.
+   * @param {Number} id The ID of this layer.
    */
   constructor(options, id) {
     this.ctx = canvas.getContext('2d');
@@ -41,7 +40,7 @@ class GraphicContainer extends Graphic {
   /**
    * Add a child to this GraphicContainer.
    *
-   * @param {GraphicContainer} child The child layer to add.
+   * @param {Graphic} child The child graphic element to add.
    */
   addChild(child) {
     this.addChildAt(child, this.children.length);
@@ -50,7 +49,7 @@ class GraphicContainer extends Graphic {
   /**
    * Add a child at the specified index.
    *
-   * @param {GraphicContainer} child The child layer to add.
+   * @param {Graphic} child The child layer to add.
    * @param {Number} index The index at which to add the child.
    */
   addChildAt(child, index) {
@@ -60,12 +59,11 @@ class GraphicContainer extends Graphic {
   /**
    * Remove the provided child from the GraphicContainer.
    *
-   * @param {GraphicContainer} child The child to remove.
+   * @param {Graphic} child The child to remove.
    */
   removeChild(child) {
     var ix = this.children.indexOf(child);
-    if (ix != -1)
-    {
+    if (ix != -1)  {
       this.removeChildAt(ix);
     }
   }
@@ -87,7 +85,8 @@ class GraphicContainer extends Graphic {
   // Events Handlers
   //---------------------------------------------
   /**
-   * Called every time the
+   * Called every render loop.
+   *
    * @param {Number} elapsed Number of seconds that have elapsed since last render.
    */
   _onFrameHandler(elapsed) {

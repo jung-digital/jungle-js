@@ -1,7 +1,7 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import Layer from '../lib/core/GraphicContainer';
+import GraphicContainer from '../lib/core/GraphicContainer';
 import Spark from '../lib/gx/Spark';
 import hsvToRgb from '../lib/util/Color';
 
@@ -57,11 +57,13 @@ function sparkOnFrame(embers) {
   }
 }
 
-
 /*============================================*\
- * Embers
+ * Class
 \*============================================*/
-class Embers extends Layer {
+/**
+ * The embers class display photo-realistic sparks rising as if from a fire.
+ */
+class Embers extends GraphicContainer {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
@@ -133,7 +135,7 @@ class Embers extends Layer {
   /**
    * Start a new spark.
    *
-   * @param spark
+   * @param {Spark} spark
    */
   startSpark(spark) {
     var velAngle = Math.random() - .5 - (Math.PI / 2);

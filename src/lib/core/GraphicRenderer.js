@@ -16,13 +16,13 @@ const DEFAULT_HEIGHT = 800 / 1.618;  // Golden Ratio
  * GraphicRenderer is a Class that manages rendering onto a single canvas. Each canvas
  * should have a single GraphicRenderer.
  *
- * Each GraphicRenderer has one or more layers that are stacked on top of each other.
+ * Each GraphicRenderer has one or more components that are stacked on top of each other.
  *
  * The GraphicRenderer is responsible for:
  *
  * - Keeping track of elapsed time
  * - Clearing the canvas
- * - Organizing the layers so they draw themselves at the proper times and in
+ * - Organizing the components so they draw themselves at the proper times and in
  *   the proper order.
  */
 class GraphicRenderer extends GraphicContainer {
@@ -151,7 +151,7 @@ class GraphicRenderer extends GraphicContainer {
   /**
    * Internal response to a browser scroll.
    *
-   * @param event The scroll event.
+   * @param {Event} event The scroll event.
    * @private
    */
   _scrollHandler(event) {
@@ -162,7 +162,8 @@ class GraphicRenderer extends GraphicContainer {
 
   /**
    * Scroll handler to be overridden by a sub-class.
-   * @param deltaY The change in scroll Y
+   *
+   * @param {Number} deltaY The change in scroll Y
    */
   scrollHandler(deltaY) {
     // noop
@@ -217,7 +218,7 @@ class GraphicRenderer extends GraphicContainer {
    * This method is only called once to setup the lastTime and begin
    * the render loop.
    *
-   * @param timestamp The high-resolution timestamp provided by the browser.
+   * @param {Number} timestamp The high-resolution timestamp provided by the browser.
    * @private
    */
   _onFrameFirstHandler(timestamp) {
@@ -229,7 +230,7 @@ class GraphicRenderer extends GraphicContainer {
    * Internal render frame handler. Called every frame after the first frame
    * call to _onFrameFirstHandler.
    *
-   * @param timestamp The high-resolution timestamp provided by the browser.
+   * @param {DOMHighResTimestamp} timestamp The high-resolution timestamp provided by the browser.
    * @private
    */
   _onFrameHandler(timestamp) {

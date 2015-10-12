@@ -1,18 +1,18 @@
 [
   {
     "key": "Lib",
-    "entry": "./lib/Lib.js"
+    "entry": "src/lib/Lib.js"
   },
   {
     "key": "Embers",
-    "entry": "./embers/Embers.js"
+    "entry": "src/components/Embers.js"
   },
   {
     "key": "Fireworks",
-    "entry": "./fireworks/Fireworks.js"
+    "entry": "src/components/Fireworks.js"
   },
   {
     "key": "Surge",
-    "entry": "./surge/Surge.js"
+    "entry": "src/components/Surge.js"
   }
 ]

@@ -3,7 +3,7 @@
 /**
  * Sides enumeration.
  *
- * @type {{LEFT: number, TOP: number, RIGHT: number, BOTTOM: number, ran: Function}}
+ * @type {{LEFT: Number, TOP: Number, RIGHT: Number, BOTTOM: Number, ran: Function}}
  */
 export const Sides = {
   LEFT: 1,
@@ -18,8 +18,8 @@ export const Sides = {
 /**
  * Returns the reverse of the provided direction
  *
- * @param dir Direction as provided via the Sides enumeration.
- * @returns {boolean}
+ * @param {Number} dir Direction as provided via the Sides enumeration.
+ * @returns {Boolean}
  */
 export function reverseOf(dir) {
   return (((dir - 1) + 2) % 4) + 1; // Opposite of LEFT (1) is RIGHT (3) etc.
@@ -28,8 +28,8 @@ export function reverseOf(dir) {
 /**
  * Returns an Array of all Sides from v1 that face v2.
  *
- * @param v1
- * @param v2
+ * @param {vec2} v1
+ * @param {vec2} v2
  * @returns {Array}
  */
 export function toward(v1, v2) {
@@ -47,7 +47,7 @@ export function toward(v1, v2) {
 /**
  * Returns a gl-matrix vec2 object for the given side.
  *
- * @param side See Sides enum.
+ * @param {Number} side See Sides enum.
  * @returns {vec2}
  */
 export function vecFor(side) {

@@ -14,10 +14,11 @@ class Rect {
   //------------------------------------
   /**
    * Build a Rect object.
-   * @param x Left
-   * @param y Top
-   * @param width Width of rectangle
-   * @param height Height of rectangle
+   *
+   * @param {Number} x Left
+   * @param {Number} y Top
+   * @param {Number} width Width of rectangle
+   * @param {Number} height Height of rectangle
    */
   constructor(x, y, width, height) {
     this.x = x;
@@ -31,6 +32,7 @@ class Rect {
   //------------------------------------
   /**
    * Returns the right edge of the Rect.
+   *
    * @returns {Number}
    */
   get right() {
@@ -39,6 +41,7 @@ class Rect {
 
   /**
    * Returns the bottom edge of the Rect.
+   *
    * @returns {Number}
    */
   get bottom() {
@@ -50,9 +53,10 @@ class Rect {
   //------------------------------------
   /**
    * Returns true if the provide x,y is within this Rect.
-   * @param x
-   * @param y
-   * @returns {boolean}
+   *
+   * @param {Number} x
+   * @param {Number} y
+   * @returns {Boolean}
    */
   isBounding(x, y) {
     return x >= this.x && y >= this.y && x <= this.x + this.width && y <= this.y + this.height;
@@ -60,8 +64,9 @@ class Rect {
 
   /**
    * Returns true if the provided gl-matrix vec2 object is within this Rect.
-   * @param v A gl-matrix vec2 Object
-   * @returns {boolean}
+   *
+   * @param {vec2} v
+   * @returns {Boolean}
    */
   isBoundingVec2(v) {
     return v[0] >= this.x && v[1] >= this.y && v[0] <= this.x + this.width && v[1] <= this.y + this.height;
@@ -69,11 +74,11 @@ class Rect {
 
   /**
    * Returns a random point along the given side given the provided Rect.
-   * @param side
-   * @param rect
-   * @returns {paper.Point}
+   *
+   * @param {Number} side
+   * @returns {vec2}
    */
-  function getRanVec2For(side) {
+  getRanVec2For(side) {
     let x = 0;
     let y = 0;
 

@@ -19,7 +19,7 @@ class Firework extends Object2D {
   /**
    * Construct a firework with the provided options.
    *
-   * @param options
+   * @param {Object} options
    */
   constructor(options) {
     super(options);
@@ -50,7 +50,7 @@ class Firework extends Object2D {
   /**
    * Returns true if the firework has been launched.
    *
-   * @returns {boolean}
+   * @returns {Boolean}
    */
   get launched() {
     return vec2.length(this.vel) != 0;
@@ -69,13 +69,13 @@ class Firework extends Object2D {
   /**
    * Internal render of a single spark segment for a firework.
    *
-   * @param spark The Spark object.
-   * @param start Start vec2
-   * @param end End vec2
-   * @param curLen Length from the sparks start to the beginning of the current segment.
-   * @param ratio Ratio of the current segments start to the total length.
-   * @param elapsed Elapsed number of ms. since the last render loop.
-   * @param context The Canvas context on which to render.
+   * @param {Spark} spark The Spark object.
+   * @param {vec2} start Start vec2
+   * @param {vec2} end End vec2
+   * @param {Number} curLen Length from the sparks start to the beginning of the current segment.
+   * @param {Number} ratio Ratio of the current segments start to the total length.
+   * @param {Number} elapsed Elapsed number of ms. since the last render loop.
+   * @param {RenderingContext} context The Canvas context on which to render.
    */
   renderSparkSegment(spark, start, end, curLen, ratio, elapsed, context) {
     ratio = 1 - (curLen / this.options.maxTailLength);
@@ -94,13 +94,13 @@ class Firework extends Object2D {
   /**
    * Internal render of a single spark segment for a fireworks launch smoke trail.
    *
-   * @param spark The Spark object.
-   * @param start Start vec2
-   * @param end End vec2
-   * @param curLen Length from the sparks start to the beginning of the current segment.
-   * @param ratio Ratio of the current segments start to the total length.
-   * @param elapsed Elapsed number of ms. since the last render loop.
-   * @param context The Canvas context on which to render.
+   * @param {Spark} spark The Spark object.
+   * @param {vec2} start Start vec2
+   * @param {vec2} end End vec2
+   * @param {Number} curLen Length from the sparks start to the beginning of the current segment.
+   * @param {Number} ratio Ratio of the current segments start to the total length.
+   * @param {Number} elapsed Elapsed number of ms. since the last render loop.
+   * @param {RenderingContext} context The Canvas context on which to render.
    */
   renderSmokeTrailSegment(spark, start, end, curLen, ratio, elapsed, context) {
     console.log('drawing');
@@ -133,8 +133,8 @@ class Firework extends Object2D {
   /**
    * Launch the firework from start with vel.
    *
-   * @param start Start position vec2
-   * @param vel Velocity vec2
+   * @param {vec2} start Start position
+   * @param {vec2} vel Velocity
    */
   launch(start, vel) {
     if (this.launched) {
@@ -153,8 +153,8 @@ class Firework extends Object2D {
   /**
    * Called every render frame.
    *
-   * @param elapsed Elapsed number of ms. since last render loop.
-   * @param context The Canvas context on which to render.
+   * @param {Number} elapsed Elapsed number of ms. since last render loop.
+   * @param {RenderingContext} context The Canvas context on which to render.
    */
   onFrameHandler(elapsed, context) {
     if (this.launched) {

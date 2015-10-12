@@ -59,3 +59,7 @@ export function hsvToRgb(h, s, v) {
     b: b
   };
 }
+
+export default {
+  hsvToRgb: hsvToRgb
+};
