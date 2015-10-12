@@ -10,3 +10,7 @@
 export function ran(min, max) {
   return Math.random() * (max - min) + min;
 };
+
+export default {
+  ran: ran
+};

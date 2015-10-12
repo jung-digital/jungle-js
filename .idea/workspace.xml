@@ -2,25 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="271bf157-5246-416f-a7ea-b0dcefc4c60b" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/layers/Embers.js" afterPath="$PROJECT_DIR$/src/components/Embers.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/layers/Fireworks.js" afterPath="$PROJECT_DIR$/src/components/Fireworks.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/layers/Surge.js" afterPath="$PROJECT_DIR$/src/components/Surge.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Array.js" afterPath="$PROJECT_DIR$/src/lib/util/Array.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Color.js" afterPath="$PROJECT_DIR$/src/lib/util/Color.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Dispatcher.js" afterPath="$PROJECT_DIR$/src/lib/util/Dispatcher.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/gx/Firework.js" afterPath="$PROJECT_DIR$/src/lib/gx/Firework.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicContainer.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicContainer.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Event.js" afterPath="$PROJECT_DIR$/src/lib/util/Event.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Number.js" afterPath="$PROJECT_DIR$/src/lib/util/Number.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Rect.js" afterPath="$PROJECT_DIR$/src/lib/util/Rect.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Sides.js" afterPath="$PROJECT_DIR$/src/lib/util/Sides.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/gx/Spark.js" afterPath="$PROJECT_DIR$/src/lib/gx/Spark.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/util/Vec2.js" afterPath="$PROJECT_DIR$/src/lib/util/Vec2.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/gx/Wire.js" afterPath="$PROJECT_DIR$/src/lib/gx/Wire.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/builds.json" afterPath="$PROJECT_DIR$/src/builds.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gulpfile.js" afterPath="$PROJECT_DIR$/gulpfile.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="jd-js-lib.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,30 +26,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Surge.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/Surge.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Fireworks.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/Fireworks.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Embers.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/Embers.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -77,11 +38,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Embers.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Embers.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dist/Embers/Embers.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Array.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/util/Array.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -109,34 +80,52 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.875">
-              <caret line="47" column="8" selection-start-line="47" selection-start-column="8" selection-end-line="47" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="builds.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/builds.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.25">
-              <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GraphicRenderer.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicRenderer.js">
+      <file leaf-file-name="Dispatcher.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/util/Dispatcher.js">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="44" column="23" selection-start-line="44" selection-start-column="23" selection-end-line="44" selection-end-column="23" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
+              <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Event.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/util/Event.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Number.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/util/Number.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Rect.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/lib/util/Rect.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Sides.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/lib/util/Sides.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.9194631">
+              <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -161,15 +150,11 @@
         <option value="$PROJECT_DIR$/src/modules/embers/Embers.js" />
         <option value="$PROJECT_DIR$/src/lib/core/Module.js" />
         <option value="$PROJECT_DIR$/.jscsrc" />
-        <option value="$PROJECT_DIR$/src/lib/util/Event.js" />
         <option value="$PROJECT_DIR$/src/lib/core/Renderer.js" />
         <option value="$PROJECT_DIR$/src/lib/core/Layer.js" />
         <option value="$PROJECT_DIR$/src/lib/core/Graphic.js" />
-        <option value="$PROJECT_DIR$/src/lib/util/Array.js" />
-        <option value="$PROJECT_DIR$/src/lib/util/Number.js" />
         <option value="$PROJECT_DIR$/src/lib/util/Vec2.js" />
         <option value="$PROJECT_DIR$/src/lib/gx/Wire.js" />
-        <option value="$PROJECT_DIR$/src/lib/util/Sides.js" />
         <option value="$PROJECT_DIR$/src/lib/util/Dispatcher.js" />
         <option value="$PROJECT_DIR$/src/lib/util/Rect.js" />
         <option value="$PROJECT_DIR$/src/lib/gx/Spark.js" />
@@ -183,6 +168,10 @@
         <option value="$PROJECT_DIR$/dist/Embers/Embers.js" />
         <option value="$PROJECT_DIR$/gulpfile.js" />
         <option value="$PROJECT_DIR$/src/lib/util/Color.js" />
+        <option value="$PROJECT_DIR$/src/lib/util/Array.js" />
+        <option value="$PROJECT_DIR$/src/lib/util/Event.js" />
+        <option value="$PROJECT_DIR$/src/lib/util/Number.js" />
+        <option value="$PROJECT_DIR$/src/lib/util/Sides.js" />
       </list>
     </option>
   </component>
@@ -571,34 +560,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Event.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/core/Graphic.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Array.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Number.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="20" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
           <folding />
         </state>
       </provider>
@@ -615,30 +580,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="59" column="19" selection-start-line="59" selection-start-column="19" selection-end-line="59" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Sides.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="14" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Dispatcher.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="109" selection-start-line="17" selection-start-column="109" selection-end-line="17" selection-end-column="109" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Rect.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
           <folding />
         </state>
       </provider>
@@ -725,14 +666,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/util/Color.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="64" column="2" selection-start-line="64" selection-start-column="2" selection-end-line="64" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/Embers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -746,7 +679,63 @@
     <entry file="file://$PROJECT_DIR$/dist/Embers/Embers.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="17" column="23" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Array.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Color.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="64" column="2" selection-start-line="64" selection-start-column="2" selection-end-line="64" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Dispatcher.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Event.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Number.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Rect.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/util/Sides.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.9194631">
+          <caret line="66" column="0" selection-start-line="66" selection-start-column="0" selection-end-line="66" selection-end-column="0" />
           <folding />
         </state>
       </provider>

@@ -13,3 +13,5 @@ class Event {
     this.useCapture = useCapture;
   }
 }
+
+export default Event;

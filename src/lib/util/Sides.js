@@ -57,3 +57,10 @@ export function vecFor(side) {
   if (side == Sides.BOTTOM) return vec2.fromValues(0, 1);
   return undefined;
 }
+
+export default {
+  Sides: Sides,
+  reverseOf: reverseOf,
+  toward: toward,
+  vecfor
+};
