@@ -3,7 +3,7 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import Dispatcher from '../util/Dispatcher';
+import Graphic from '../util/Graphic';
 
 /*============================================*\
  * Class
@@ -11,7 +11,7 @@ import Dispatcher from '../util/Dispatcher';
 /**
  * Base of a single component that can be added to a Canvas.
  */
-class GraphicContainer extends Dispatcher {
+class GraphicContainer extends Graphic {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------

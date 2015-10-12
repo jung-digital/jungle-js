@@ -1,7 +1,7 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import Layer from './GraphicContainer';
+import GraphicContainer from './GraphicContainer';
 
 /*============================================*\
  * Constants
@@ -13,24 +13,24 @@ const DEFAULT_HEIGHT = 800 / 1.618;  // Golden Ratio
  * Class
 \*============================================*/
 /**
- * Renderer is a Class that manages rendering onto a single canvas. Each canvas
- * should have a single Renderer.
+ * GraphicRenderer is a Class that manages rendering onto a single canvas. Each canvas
+ * should have a single GraphicRenderer.
  *
- * Each Renderer has one or more layers that are stacked on top of each other.
+ * Each GraphicRenderer has one or more layers that are stacked on top of each other.
  *
- * The Renderer is responsible for:
+ * The GraphicRenderer is responsible for:
  *
  * - Keeping track of elapsed time
  * - Clearing the canvas
  * - Organizing the layers so they draw themselves at the proper times and in
  *   the proper order.
  */
-class Renderer extends Layer {
+class GraphicRenderer extends GraphicContainer {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
   /**
-   * Build a Renderer for one canvas.
+   * Build a GraphicRenderer for one canvas.
    *
    * @param {HTMLCanvasElement} canvas The HTMLCanvasElement upon which to render.
    * @param {Object} options The options for this renderer.
@@ -255,15 +255,6 @@ class Renderer extends Layer {
       this.ctx.fillText(this.debugText, 10, 50);
     }
   }
-
-  /**
-   * Frame handler to be overridden by sub-classes.
-   *
-   * @param elapsed
-   */
-  onFrameHandler(elapsed) {
-    // Override
-  }
 }
 
-export default Renderer;
+export default GraphicRenderer;

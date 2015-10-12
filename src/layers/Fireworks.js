@@ -3,7 +3,7 @@
 \*============================================*/
 import util from '../lib/util/util.js';
 
-import Layer from '../lib/core/Renderer.js';
+import Layer from '../lib/core/GraphicRenderer.js';
 import Firework from '../lib/gx/Firework.js';
 
 /*============================================*\

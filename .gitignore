@@ -32,3 +32,5 @@ tmp
 
 # Do not committing distribution
 dist
+
+.DS_Store
