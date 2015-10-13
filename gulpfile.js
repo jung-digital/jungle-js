@@ -81,7 +81,9 @@ function buildComplete(build, done) {
     .pipe($.plumber())
     .pipe($.rollup())
     .pipe($.sourcemaps.init({ loadMaps: true }))
-    .pipe($.babel())
+    .pipe($.babel({
+      modules: 'amd'
+    }))
     .pipe($.sourcemaps.write('./'))
     .pipe(gulp.dest(destinationFolder + '/' + build.key))
     .pipe($.filter(['*', '!**/*.js.map']))

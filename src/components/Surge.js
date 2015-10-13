@@ -18,6 +18,10 @@ const HEIGHT = 800 / 1.61;     // Height of canvas
 /*============================================*\
  * Surge
 \*============================================*/
+/**
+ * The Surge Effect is a full canvas effect of sparks criss-crossing across
+ * wires randomly on the screen.
+ */
 class Surge extends GraphicContainer {
   /**
    * Build a Surge Canvas object.

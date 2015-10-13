@@ -3,7 +3,9 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import Graphic from '../util/Graphic';
+import Graphic from './Graphic';
+import GraphicEvents from './GraphicEvents';
+import Event from '../util/Event';
 
 /*============================================*\
  * Class
@@ -22,6 +24,8 @@ class GraphicContainer extends Graphic {
    * @param {Number} id The ID of this layer.
    */
   constructor(options, id) {
+    super(options);
+
     this.ctx = canvas.getContext('2d');
 
     this.options = options || {};
@@ -54,6 +58,9 @@ class GraphicContainer extends Graphic {
    */
   addChildAt(child, index) {
     this.splice(index, 0, child);
+    child.parent = this;
+    child.dispatch(new Event(GraphicEvents.ADDED));
+    this.dispatch(new Event(GraphicEvents.CHILD_ADDED));
   }
 
   /**
@@ -78,7 +85,10 @@ class GraphicContainer extends Graphic {
       throw 'Child index out of bounds: ' + ix;
     }
 
-    this.children.splice(ix, 1);
+    var child = this.children.splice(ix, 1);
+
+    child.dispatch(new Event(GraphicEvents.REMOVED));
+    this.dispatch(new Event(GraphicEvents.CHILD_REMOVED));
   }
 
   //---------------------------------------------
@@ -92,7 +102,7 @@ class GraphicContainer extends Graphic {
   _onFrameHandler(elapsed) {
     if (visible) {
       this.onFrameHandler(elapsed);
-      this.children.forEach(c => c._onFrameHandler());
+      this.children.forEach(c => c._onFrameHandler(elapsed));
     }
   }
 
@@ -106,4 +116,4 @@ class GraphicContainer extends Graphic {
   }
 }
 
-export default Canvas;
+export default GraphicContainer;

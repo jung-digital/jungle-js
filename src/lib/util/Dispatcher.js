@@ -7,6 +7,9 @@
  * An event dispatcher.
  */
 class Dispatcher {
+  //---------------------------------------------
+  // Constructor
+  //---------------------------------------------
   /**
    * Builds an empty dispatcher.
    */
@@ -14,6 +17,9 @@ class Dispatcher {
     this.listeners = {};
   }
 
+  //---------------------------------------------
+  // Methods
+  //---------------------------------------------
   /**
    * Add a listener for a particular event type. Remember to bind the function if you want to preserve `this`.
    *
@@ -25,8 +31,23 @@ class Dispatcher {
     this.listeners[type].push(callback);
   }
 
+  /**
+   * Dispatch an Event.
+   *
+   * @param {Event} event
+   */
   dispatch(event) {
     this.listeners[event.type] ? this.listeners[event.type].forEach(l => l(event)) : void 0;
+  }
+
+  /**
+   * Returns true if this Dispatcher has at least one listener for the requested event.
+   *
+   * @param {String} type
+   * @returns {Boolean}
+   */
+  hasListener(type) {
+    return this.listeners[type] !== undefined;
   }
 }
 

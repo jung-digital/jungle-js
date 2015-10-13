@@ -23,7 +23,13 @@ const SPARK_EDGE_BOTTOM_OFFSET = 200;  // Offset for bottom edge of spark source
 /*============================================*\
  * Functions
 \*============================================*/
+/**
+ * Internal callback for each ember that updates the position and values.
+ *
+ * @param {Embers} embers The parent Embers instance.
+ */
 function sparkOnFrame(embers) {
+  // Note 'this' is the Spark itself.
   var ran = (Math.random() * CHANGE_DIR_TIME_MAX_MS) + (embers.lastTime - this.options.lastAngleChangeTime);
 
   if (ran > CHANGE_DIR_TIME_MAX_MS) {
