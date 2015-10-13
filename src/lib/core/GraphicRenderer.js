@@ -37,6 +37,11 @@ class GraphicRenderer extends GraphicContainer {
    * @param {String} id The id of this renderer.
    */
   constructor(canvas, options, id) {
+    if (!canvas) {
+      throw 'Please provide a canvas to GraphicRenderer.';
+    }
+    super(options, id);
+
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
 

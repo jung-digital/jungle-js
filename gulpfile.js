@@ -14,7 +14,7 @@ const source = require('vinyl-source-stream');
 const browserSync = require('browser-sync');
 const manifest = require('./package.json');
 const destinationFolder = './dist';
-const builds = require('./src/builds.json');
+const builds = require('./src/packages.json');
 
 const config = manifest.babelBoilerplateOptions;
 

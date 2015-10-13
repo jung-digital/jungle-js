@@ -3,10 +3,10 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import Rect from '../util/Rect';
-import {toward, reverseOf, vecFor} from '../util/Sides';
-import ran from '../util/Number';
-import ranItem from '../util/Array';
+import Rect from '../core/util/Rect';
+import {toward, reverseOf, vecFor} from '../core/util/Sides';
+import ran from '../core/util/Number';
+import ranItem from '../core/util/Array';
 
 /*============================================*\
  * Constants

@@ -62,5 +62,5 @@ export default {
   Sides: Sides,
   reverseOf: reverseOf,
   toward: toward,
-  vecfor
+  vecFor: vecFor
 };

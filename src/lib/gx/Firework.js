@@ -3,8 +3,8 @@
 \*============================================*/
 import Object2D from '../physics/Object2D';
 import Spark from './Spark';
-import hsvToRgb from '../util/Color';
-import ran from '../util/Number';
+import hsvToRgb from '../core/util/Color';
+import ran from '../core/util/Number';
 
 /*============================================*\
  * Class

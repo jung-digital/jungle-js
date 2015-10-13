@@ -5,7 +5,7 @@
 \*============================================*/
 import Graphic from './Graphic';
 import GraphicEvents from './GraphicEvents';
-import Event from '../util/Event';
+import Event from './util/Event';
 
 /*============================================*\
  * Class
@@ -25,8 +25,6 @@ class GraphicContainer extends Graphic {
    */
   constructor(options, id) {
     super(options);
-
-    this.ctx = canvas.getContext('2d');
 
     this.options = options || {};
     this.id = id;

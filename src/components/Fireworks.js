@@ -1,7 +1,7 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import util from '../lib/util/util.js';
+import util from '../lib/core/util/util.js';
 
 import GraphicContainer from '../lib/core/GraphicContainer.js';
 import Firework from '../lib/gx/Firework.js';

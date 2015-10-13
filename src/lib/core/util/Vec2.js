@@ -41,3 +41,10 @@ export function isLeft(v1, v2) {
 export function isRight(v1, v2) {
   return v1[0] > v2[0];
 }
+
+export default {
+  isAbove: isAbove,
+  isBelow: isBelow,
+  isLeft: isLeft,
+  isRight: isRight
+};

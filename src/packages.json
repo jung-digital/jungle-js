@@ -5,7 +5,7 @@
   },
   {
     "key": "Embers",
-    "entry": "src/components/Embers.js"
+    "entry": "src/packages/Embers.js"
   },
   {
     "key": "Fireworks",

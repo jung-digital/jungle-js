@@ -2,7 +2,7 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import DispatcherNode from '../util/DispatcherNode';
+import DispatcherNode from './util/DispatcherNode';
 
 /*============================================*\
  * Class

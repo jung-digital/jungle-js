@@ -3,7 +3,7 @@
 \*============================================*/
 import GraphicContainer from '../lib/core/GraphicContainer';
 import Spark from '../lib/gx/Spark';
-import hsvToRgb from '../lib/util/Color';
+import hsvToRgb from '../lib/core/util/Color';
 
 /*============================================*\
  * Constants
