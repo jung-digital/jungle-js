@@ -4,8 +4,8 @@
     "entry": "src/lib/Lib.js"
   },
   {
-    "key": "Embers",
-    "entry": "src/packages/Embers.js"
+    "key": "Narrator",
+    "entry": "src/packages/Narrator.js"
   },
   {
     "key": "Fireworks",

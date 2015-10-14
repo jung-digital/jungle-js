@@ -64,10 +64,19 @@
   },
   "dependencies": {
     "browser-sync": "^2.9.10",
+    "browserify": "^11.2.0",
+    "es6ify": "^1.6.0",
     "gl-matrix": "^2.3.1",
     "gulp-babel": "^5.2.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-extract-sourcemap": "^0.1.5",
+    "gulp-filter": "^3.0.1",
     "gulp-rollup": "^1.0.1",
+    "gulp-uglify": "^1.4.2",
+    "gulp-uglifyjs": "^0.6.2",
     "gulp-watch": "^4.3.5",
-    "hasharray": "^0.3.0"
+    "hasharray": "^0.3.0",
+    "uglifyify": "^3.0.1",
+    "vinyl-buffer": "^1.0.0"
   }
 }

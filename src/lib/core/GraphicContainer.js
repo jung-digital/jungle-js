@@ -55,8 +55,9 @@ class GraphicContainer extends Graphic {
    * @param {Number} index The index at which to add the child.
    */
   addChildAt(child, index) {
-    this.splice(index, 0, child);
+    this.children.splice(index, 0, child);
     child.parent = this;
+    child.renderer = this.renderer;
     child.dispatch(new Event(GraphicEvents.ADDED));
     this.dispatch(new Event(GraphicEvents.CHILD_ADDED));
   }
@@ -85,6 +86,9 @@ class GraphicContainer extends Graphic {
 
     var child = this.children.splice(ix, 1);
 
+    child.renderer = undefined;
+    child.parent = undefined;
+    
     child.dispatch(new Event(GraphicEvents.REMOVED));
     this.dispatch(new Event(GraphicEvents.CHILD_REMOVED));
   }
@@ -98,7 +102,7 @@ class GraphicContainer extends Graphic {
    * @param {Number} elapsed Number of seconds that have elapsed since last render.
    */
   _onFrameHandler(elapsed) {
-    if (visible) {
+    if (this.visible) {
       this.onFrameHandler(elapsed);
       this.children.forEach(c => c._onFrameHandler(elapsed));
     }

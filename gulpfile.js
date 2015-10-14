@@ -3,14 +3,19 @@
 \*============================================*/
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
+const es6ify = require('es6ify');
+const uglify = require('gulp-uglifyjs');
+const browserify = require('browserify');
+const filter = require('gulp-filter');
+const extractor = require('gulp-extract-sourcemap')
 const del = require('del');
 const glob = require('glob');
 const path = require('path');
 const isparta = require('isparta');
 const watchify = require('watchify');
-const buffer = require('vinyl-buffer');
+const vinylBuffer = require('vinyl-buffer');
 const runSequence = require('run-sequence');
-const source = require('vinyl-source-stream');
+const vinylSource = require('vinyl-source-stream');
 const browserSync = require('browser-sync');
 const manifest = require('./package.json');
 const destinationFolder = './dist';
@@ -77,21 +82,40 @@ gulp.task('build', builds.map(function (b) {return 'build-' + b.key.toLowerCase(
 function buildComplete(build, done) {
   _builds.push(build);
 
-  gulp.src(build.entry)
-    .pipe($.plumber())
-    .pipe($.rollup())
-    .pipe($.sourcemaps.init({ loadMaps: true }))
-    .pipe($.babel({
-      modules: 'amd'
+  var exchange = {
+    source_map: {
+      file: build.key.toLowerCase() + '.min.js.map',
+      root: '/',
+      orig: ''
+    }
+  };
+
+  browserify({
+      debug: true
+    })
+    .add(es6ify.runtime)
+    .transform(es6ify)
+    .add(build.entry)
+    .bundle()
+    .pipe(vinylSource(build.key.toLowerCase() + '.js'))
+    .pipe(vinylBuffer())
+    .pipe(gulp.dest(destinationFolder + '/' + build.key.toLowerCase()))
+    .pipe(extractor({
+      basedir: destinationFolder,
+      removeSourcesContent: true
     }))
-    .pipe($.sourcemaps.write('./'))
-    .pipe(gulp.dest(destinationFolder + '/' + build.key))
-    .pipe($.filter(['*', '!**/*.js.map']))
-    .pipe($.rename(build.key + '.min.js'))
-    .pipe($.sourcemaps.init({ loadMaps: true }))
-    .pipe($.uglify())
-    .pipe($.sourcemaps.write('./'))
-    .pipe(gulp.dest(destinationFolder+ '/' + build.key))
+    .on('postextract', function(sourceMap){
+      exchange.source_map.orig = sourceMap;
+    })
+    .pipe( filter('**/*.js') )
+    .pipe(uglify(build.key.toLowerCase() + '.min.js', {
+      outSourceMap: true,
+      basePath: destinationFolder,
+      output: {
+        source_map: exchange.source_map
+      }
+    }))
+    .pipe(gulp.dest(destinationFolder + '/' + build.key.toLowerCase()))
     .on('end', done);
 }
 

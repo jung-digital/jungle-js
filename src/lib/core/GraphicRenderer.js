@@ -253,7 +253,7 @@ class GraphicRenderer extends GraphicContainer {
     this.elapsed = Math.min(0.1, (timestamp - this.lastTime) / 1000);
     this.lastTime = timestamp;
 
-    this.onFrameHandler(this.elapsed);
+    super._onFrameHandler(this.elapsed);
 
     if (this.options.debug) {
       this.ctx.font = '12px Georgia white';

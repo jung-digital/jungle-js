@@ -3,7 +3,7 @@
 \*============================================*/
 import GraphicContainer from '../lib/core/GraphicContainer';
 import Spark from '../lib/gx/Spark';
-import hsvToRgb from '../lib/core/util/Color';
+import {hsvToRgb} from '../lib/core/util/Color';
 
 /*============================================*\
  * Constants
@@ -29,8 +29,10 @@ const SPARK_EDGE_BOTTOM_OFFSET = 200;  // Offset for bottom edge of spark source
  * @param {Embers} embers The parent Embers instance.
  */
 function sparkOnFrame(embers) {
+  var r = embers.renderer;
+
   // Note 'this' is the Spark itself.
-  var ran = (Math.random() * CHANGE_DIR_TIME_MAX_MS) + (embers.lastTime - this.options.lastAngleChangeTime);
+  var ran = (Math.random() * CHANGE_DIR_TIME_MAX_MS) + (r.lastTime - this.options.lastAngleChangeTime);
 
   if (ran > CHANGE_DIR_TIME_MAX_MS) {
     var angle = (Math.random() * (Math.PI / 3)) - (Math.PI / 6);
@@ -38,27 +40,27 @@ function sparkOnFrame(embers) {
 
     mat2.rotate(matrix, matrix, angle);
     vec2.transformMat2(this.options.vel, this.options.vel, matrix);
-    vec2.scale(this.options.vel, this.options.vel, 1 - (Math.random() * embers.elapsed * 0.2));
+    vec2.scale(this.options.vel, this.options.vel, 1 - (Math.random() * r.elapsed * 0.2));
 
-    this.options.lastAngleChangeTime = embers.lastTime;
+    this.options.lastAngleChangeTime = r.lastTime;
   }
 
   this.options.heatCurrent += (Math.random());
-  this.options.life -= embers.elapsed;
+  this.options.life -= r.elapsed;
   var sinGlow = ((Math.sin(this.options.life * this.options.glowFlickerSpeed) + 1.5) * 0.5);
-  this.options.glowFlickerSpeed += Math.random() * embers.elapsed;
+  this.options.glowFlickerSpeed += Math.random() * r.elapsed;
   this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow * sinGlow;
   this.options.lifeRatio = this.options.life / this.options.lifeTotal;
 
-  var elapsedScale = embers.elapsed * embers.scaleX;
+  var elapsedScale = r.elapsed * r.scaleX;
   var nextPos = vec2.scaleAndAdd(vec2.create(), this.pos, this.options.vel, elapsedScale);
   this.next(nextPos);
 
   if (this.options.life < 0 ||
-    nextPos[1] > embers.canvas.height + this.options.sparkEdgeBottomOffset ||
+    nextPos[1] > r.height + this.options.sparkEdgeBottomOffset ||
     nextPos[0] < 0 ||
     nextPos[1] < 0 ||
-    nextPos[0] > embers.canvas.width) {
+    nextPos[0] > r.width) {
     this.reset();
   }
 }
@@ -76,12 +78,11 @@ class Embers extends GraphicContainer {
   /**
    * Embers is a digital effect to display sparks on the screen.
    *
-   * @param {DOMNode} canvas The canvas on which to render the effects.
    * @param {Object} options The options for this special effect.
    * @param {String} id
    */
-  constructor(canvas, options, id) {
-    super(canvas, options, id || 'embers');
+  constructor(options, id) {
+    super(options, id || 'embers');
 
     var o = this.options;
 
@@ -167,24 +168,25 @@ class Embers extends GraphicContainer {
       throw 'Please provide a valid target type to Embers object.';
     }
 
-    spark.spark({
-      type: 2,
-      sparkResolution: SPARK_MAX_SEGMENTS,
-      size: (Math.random() * (this.options.maxSparkSize - this.options.minSparkSize)) + this.options.minSparkSize,
-      color: {
-        h: Math.random() * 28 + 15,
-        s: Math.random() * 0.4 + 0.6,
-        l: 1
-      },
-      pos: vec2.add(vec2.create(), source, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
-      vel: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
-      heatCurrent: 0,
-      lastAngleChangeTime: 0,
-      glow: (Math.random() * 0.8) + 0.2,
-      glowFlickerSpeed: (Math.random() * 5) + 2,
-      life: life,
-      lifeTotal: this.options.maxSparkLife
-    });
+    var options = {
+        type: 2,
+        sparkResolution: SPARK_MAX_SEGMENTS,
+        size: (Math.random() * (this.options.maxSparkSize - this.options.minSparkSize)) + this.options.minSparkSize,
+        color: {
+          h: Math.random() * 28 + 15,
+          s: Math.random() * 0.4 + 0.6,
+          l: 1
+        },
+        pos: vec2.add(vec2.create(), source, vec2.fromValues(Math.cos(sourceAngle) * sourceDistance, Math.sin(sourceAngle) * sourceDistance)),
+        vel: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
+        heatCurrent: 0,
+        lastAngleChangeTime: 0,
+        glow: (Math.random() * 0.8) + 0.2,
+        glowFlickerSpeed: (Math.random() * 5) + 2,
+        life: life,
+        lifeTotal: this.options.maxSparkLife
+      };
+    spark.spark(options);
   }
 
   //---------------------------------------------
@@ -203,8 +205,7 @@ class Embers extends GraphicContainer {
 
       sparkOnFrame.call(spark, this);
 
-      spark.onFrame(this.elapsed, this.ctx);
-
+      spark.onFrameHandler(this.elapsed, this.renderer.ctx);
     });
   }
 
