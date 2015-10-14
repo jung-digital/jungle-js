@@ -20,6 +20,8 @@ const browserSync = require('browser-sync');
 const manifest = require('./package.json');
 const destinationFolder = './dist';
 const builds = require('./src/packages.json');
+const fs = require('fs');
+const mkdirp = require('mkdirp');
 
 const config = manifest.babelBoilerplateOptions;
 
@@ -27,7 +29,6 @@ const config = manifest.babelBoilerplateOptions;
  * Task Definitions
 \*============================================*/
 gulp.task('clean', del.bind(undefined, [destinationFolder]));
-gulp.task('clean-tmp', del.bind(undefined, ['tmp']));
 
 // Send a notification when JSCS fails,
 // so that you know your changes didn't build
@@ -53,13 +54,19 @@ var _builds = [];
 builds.forEach(function (build) {
   var key = build.key.toLowerCase();
 
-  gulp.task('build-' + key, ['lint-src', 'clean'], buildComplete.bind(undefined, build));
+  // Clean the target folder
+  gulp.task('clean-' + key, del.bind(undefined, [destinationFolder + '/' + key]));
 
-  gulp.task('watch-' + key, ['build-' + key], function () {
+  // Clean the source and place in the target folder
+  gulp.task('build-' + key, ['lint-src', 'clean-' + key], buildComplete.bind(undefined, build));
+
+  // Watch all the JS files and run lint and build when a change is made.
+  gulp.task('watch-' + key, ['lint-src', 'build-' + key], function () {
     gulp.watch('src/**/*.js', ['build-' + key]);
   });
 
-  gulp.task('serve-' + key, ['build-' + key], function () {
+  // Serve, watch, lint, and build the
+  gulp.task('serve-' + key, ['lint-src', 'build-' + key], function () {
     browserSync({
       notify: false,
       port: 3030,
@@ -73,7 +80,7 @@ builds.forEach(function (build) {
       }
     });
 
-    gulp.watch(['src/**/*.js', './demos/' + key], ['build-' + key]).on('change', browserSync.reload);;
+    gulp.watch(['src/**/*.js', './demos/' + key], ['lint-src', 'build-' + key]).on('change', browserSync.reload);;
   });
 });
 
@@ -82,6 +89,8 @@ gulp.task('build', builds.map(function (b) {return 'build-' + b.key.toLowerCase(
 function buildComplete(build, done) {
   _builds.push(build);
 
+  var targetDir = destinationFolder + '/' + build.key.toLowerCase();
+
   var exchange = {
     source_map: {
       file: build.key.toLowerCase() + '.min.js.map',
@@ -89,6 +98,8 @@ function buildComplete(build, done) {
       orig: ''
     }
   };
+
+  mkdirp.sync(targetDir);
 
   browserify({
       debug: true
@@ -99,15 +110,16 @@ function buildComplete(build, done) {
     .bundle()
     .pipe(vinylSource(build.key.toLowerCase() + '.js'))
     .pipe(vinylBuffer())
-    .pipe(gulp.dest(destinationFolder + '/' + build.key.toLowerCase()))
     .pipe(extractor({
       basedir: destinationFolder,
       removeSourcesContent: true
     }))
     .on('postextract', function(sourceMap){
       exchange.source_map.orig = sourceMap;
+      fs.writeFileSync(targetDir + '/' + build.key.toLowerCase() + '.min.js');
     })
     .pipe( filter('**/*.js') )
+    .pipe(gulp.dest(targetDir))
     .pipe(uglify(build.key.toLowerCase() + '.min.js', {
       outSourceMap: true,
       basePath: destinationFolder,
@@ -115,7 +127,7 @@ function buildComplete(build, done) {
         source_map: exchange.source_map
       }
     }))
-    .pipe(gulp.dest(destinationFolder + '/' + build.key.toLowerCase()))
+    .pipe(gulp.dest(targetDir))
     .on('end', done);
 }
 

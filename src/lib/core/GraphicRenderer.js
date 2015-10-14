@@ -101,7 +101,10 @@ class GraphicRenderer extends GraphicContainer {
    * @returns {String} The debug text to display.
    */
   get debugText() {
-    return this.canvas.width + ', ' + this.canvas.height + ' FPS: ' + Math.round(1 / this.elapsed) + (this.options.debugText ? this.options.debugText : '');
+    return this.canvas.width + ', ' +
+           this.canvas.height + ' FPS: ' +
+           Math.round(1 / this.elapsed) + (this.options.debugText ? this.options.debugText : '') +
+           ' ' + this.options.canvasAutoClear;
   }
 
   /**
