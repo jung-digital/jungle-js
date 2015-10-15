@@ -5,6 +5,6 @@ window.Jungle = Lib;
 window.StarField = _StarField;
 
 export default {
-  Embers: _StarField,
+  StarField: _StarField,
   Lib: Lib
 };

@@ -2,6 +2,8 @@
  * Imports
 \*============================================*/
 import GraphicContainer from './GraphicContainer';
+import GraphicRendererEvents from './GraphicRendererEvents';
+import Event from './util/Event';
 
 /*============================================*\
  * Constants
@@ -127,6 +129,9 @@ class GraphicRenderer extends GraphicContainer {
    * @param {Event} event
    */
   _resizeHandler(event) {
+    let prevWidth = this.canvas.width;
+    let prevHeight = this.canvas.height;
+
     if (this.options.fillRenderer) {
       var w = window.innerWidth;
       var h = this.options.aspectRatio ? w / this.options.aspectRatio : window.innerHeight;
@@ -145,6 +150,12 @@ class GraphicRenderer extends GraphicContainer {
 
     this.scaleX = this.canvas.width / DEFAULT_WIDTH;
     this.scaleY = this.canvas.height / DEFAULT_WIDTH;
+
+    if (prevWidth != this.canvas.width || prevHeight != this.canvas.height) {
+      this.dispatch(new Event(GraphicRendererEvents.CANVAS_RESIZED));
+    }
+
+    this.dispatch(new Event(GraphicRendererEvents.WINDOW_RESIZED));
 
     this.resizeHandler();
   }

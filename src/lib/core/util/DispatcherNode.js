@@ -9,7 +9,9 @@ import Dispatcher from './Dispatcher';
  * Class
 \*============================================*/
 /**
- * A DispatcherNode is a Dispatcher class that can have children and a parent.
+ * A DispatcherNode is a Dispatcher class that can have children and a parent so that
+ * a tree of event listeners and dispatchers can be built. This allows for a bubble
+ * and capture phase.
  */
 class DispatcherNode extends Dispatcher {
   //---------------------------------------------
@@ -106,6 +108,13 @@ class DispatcherNode extends Dispatcher {
     }
   }
 
+  /**
+   * Internal dispatch method.
+   *
+   * @param {Event} event
+   * @param {Boolean} useCapture
+   * @private
+   */
   _dispatch(event, useCapture) {
     if (useCapture) {
       this.captureListeners[event.type] ? this.captureListeners[event.type].forEach(l => l(event)) : void 0;

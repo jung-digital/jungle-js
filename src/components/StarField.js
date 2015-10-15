@@ -8,11 +8,12 @@ import {hsvToRgb, rgbToFloat32, colorToHex, red, green, blue} from '../lib/core/
 import {ran} from '../lib/core/util/Number';
 import GraphicEvents from '../lib/core/GraphicEvents';
 import {PythagoreanCache} from '../lib/core/util/Trig';
+import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
 
 /*============================================*\
  * Constants
 \*============================================*/
-const STAR_DENSITY = 20;         // Stars per 10000 pixels (100 x 100)
+const STAR_DENSITY = 5;         // Stars per 10000 pixels (100 x 100)
 
 const STAR_MAX_SIZE = 5.0;       // Ideally star max size is an odd number
 const STAR_MIN_SIZE = 1.2;
@@ -63,6 +64,8 @@ class StarField extends GraphicContainer {
 
     o.scrollRatio = o.scrollRatio || 1;
 
+    o.fill = o.fill !== undefined ? o.fill : true;
+
     this.stars = [];
 
     this.pc = new PythagoreanCache(o.starMaxSize);
@@ -91,18 +94,48 @@ class StarField extends GraphicContainer {
     }
   }
 
+  _rebuildImageDataCache() {
+    let w = this.renderer.canvas.width;
+    let h = this.renderer.canvas.height;
+
+    this.cacheImDa = this.renderer.ctx.createImageData(w, h);
+    var tmp = this.renderer.ctx.getImageData(0, 0, w, h);
+    this.cacheImDa.data.set(tmp.data);
+  }
+
   //---------------------------------------------
   // Event Handlers
   //---------------------------------------------
   addedHandler() {
     var o = this.options;
 
-    o.fieldWidth = o.fieldWidth || this.renderer.canvas.width;
-    o.fieldHeight = o.fieldHeight || this.renderer.canvas.height;
+    if (o.fill) {
+      o.fieldWidth = this.renderer.canvas.width;
+      o.fieldHeight = this.renderer.canvas.height;
+    }
 
     var wh = Math.ceil(o.starMaxSize);
 
     this.wh = wh;
+
+    this.renderer.addListener(GraphicRendererEvents.CANVAS_RESIZED, this.canvasResizedHandler.bind(this));
+
+    this.updateStars();
+  }
+
+  canvasResizedHandler(event) {
+    let w = this.renderer.canvas.width;
+    let h = this.renderer.canvas.height;
+    let o = this.options;
+
+    if (o.fill) {
+      o.fieldWidth = this.renderer.canvas.width;
+      o.fieldHeight = this.renderer.canvas.height;
+    }
+
+    this._rebuildImageDataCache();
+
+    this.imda = this.renderer.ctx.createImageData(w, h);
 
     this.updateStars();
   }
@@ -116,8 +149,14 @@ class StarField extends GraphicContainer {
     let ctx = this.renderer.ctx;
     let w = this.renderer.canvas.width;
     let h = this.renderer.canvas.height;
-    let imda = this.renderer.ctx.getImageData(0, 0, w, h);
-    let d = imda.data;
+
+    if (!this.cacheImDa) {
+      this._rebuildImageDataCache();
+    }
+
+    this.imda.data.set(this.cacheImDa.data);
+
+    let d = this.imda.data;
     let x = 0;
     let y = 0;
     let cxy = Math.round(this.wh / 2);
@@ -142,28 +181,21 @@ class StarField extends GraphicContainer {
             d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
             d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
             d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
-            d[ix + 3] = 255; //Math.round(a * 255);
+            d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
           }
         }
       }
     });
 
     // Render stars to canvas
-    ctx.putImageData(imda, 0, 0);
+    ctx.putImageData(this.imda, 0.5, 0.5);
   }
 
   /**
    * @param {Number} deltaY The change in scroll position.
    */
   scrollHandler(deltaY) {
-    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
-    this.sparks.forEach(spark => {
-      if (spark.sparking) {
-        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
 
-        vec2.add(spark.pos, spark.pos, trans);
-      }
-    });
   }
 }
 
