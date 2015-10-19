@@ -1,8 +1,8 @@
 {
-  "name": "jd-js-lib",
+  "name": "jungle-js",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/jd-js-lib.js",
+  "main": "dist/jungle-js.js",
   "scripts": {
     "test": "gulp",
     "test-browser": "gulp test-browser",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jung-digital/jd-js-lib.git"
+    "url": "https://github.com/jung-digital/jungle-js.git"
   },
   "keywords": [],
   "author": "josh@jungdigital.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jung-digital/jd-js-lib/issues"
+    "url": "https://github.com/jung-digital/jungle-js/issues"
   },
-  "homepage": "https://github.com/jung-digital/jd-js-lib",
+  "homepage": "https://github.com/jung-digital/jungle-js",
   "devDependencies": {
     "babel-core": "^5.2.17",
     "babel-eslint": "^4.0.5",
@@ -52,15 +52,6 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
     "watchify": "^3.3.1"
-  },
-  "babelBoilerplateOptions": {
-    "entryFileName": "jd-js-lib",
-    "mainVarName": "jsLib",
-    "mochaGlobals": [
-      "stub",
-      "spy",
-      "expect"
-    ]
   },
   "dependencies": {
     "browser-sync": "^2.9.10",

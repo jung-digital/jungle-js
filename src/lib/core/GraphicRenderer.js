@@ -152,10 +152,10 @@ class GraphicRenderer extends GraphicContainer {
     this.scaleY = this.canvas.height / DEFAULT_WIDTH;
 
     if (prevWidth != this.canvas.width || prevHeight != this.canvas.height) {
-      this.dispatch(new Event(GraphicRendererEvents.CANVAS_RESIZED));
+      this.dispatch(new Event(GraphicRendererEvents.CANVAS_RESIZE));
     }
 
-    this.dispatch(new Event(GraphicRendererEvents.WINDOW_RESIZED));
+    this.dispatch(new Event(GraphicRendererEvents.WINDOW_RESIZE));
 
     this.resizeHandler();
   }
@@ -176,6 +176,13 @@ class GraphicRenderer extends GraphicContainer {
   _scrollHandler(event) {
     var deltaY = window.scrollY - this.lastScrollTop;
     this.lastScrollTop = window.scrollY;
+
+    this.dispatch(new Event(GraphicRendererEvents.WINDOW_SCROLL, {
+      deltaY: deltaY,
+      scrollTop: window.scrollY,
+      originalEvent: event
+    }));
+
     this.scrollHandler(deltaY, event);
   }
 

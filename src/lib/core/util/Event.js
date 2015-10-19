@@ -7,12 +7,13 @@
  * Represents an event that can bubble or use the capture phase.
  */
 class Event {
-  constructor(type, bubbles, useCapture) {
+  constructor(type, properties, bubbles, useCapture) {
     this.type = type;
     this.bubbles = bubbles;
     this.useCapture = useCapture;
     this.phase = -1;
     this.target = null;
+    this.properties = properties;
   }
 }
 
@@ -37,7 +38,7 @@ Event.typeId = 0x0;
  */
 Event.generateType = function(type, description) {
   return {
-    name: type,
+    type: type,
     description: description,
     typeId: Event.typeId++
   };

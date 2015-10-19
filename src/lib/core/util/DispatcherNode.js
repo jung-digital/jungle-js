@@ -69,8 +69,8 @@ class DispatcherNode extends Dispatcher {
    */
   addListener(type, callback, useCapture) {
     var la = useCapture ? this.captureListeners : this.listeners;
-    la[type] = la[type] || [];
-    la[type].push(callback);
+    la[type.type] = la[type.type] || [];
+    la[type.type].push(callback);
   }
 
   /**
@@ -83,7 +83,7 @@ class DispatcherNode extends Dispatcher {
     if (event.useCapture) {
       event.phase = 1;
       this.getAncestors().forEach(a => {
-        if (a.hasCaptureListener(event.type)) {
+        if (a.hasCaptureListener(event.type.type)) {
           event.currentTarget = a;
           a._dispatch(event);
         }
@@ -117,10 +117,10 @@ class DispatcherNode extends Dispatcher {
    */
   _dispatch(event, useCapture) {
     if (useCapture) {
-      this.captureListeners[event.type] ? this.captureListeners[event.type].forEach(l => l(event)) : void 0;
+      this.captureListeners[event.type.type] ? this.captureListeners[event.type.type].forEach(l => l(event)) : void 0;
       return;
     }
-    this.listeners[event.type] ? this.listeners[event.type].forEach(l => l(event)) : void 0;
+    this.listeners[event.type.type] ? this.listeners[event.type.type].forEach(l => l(event)) : void 0;
   }
 
   /**
