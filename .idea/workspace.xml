@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="271bf157-5246-416f-a7ea-b0dcefc4c60b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/util/DispatcherNode.js" afterPath="$PROJECT_DIR$/src/lib/core/util/DispatcherNode.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/util/Event.js" afterPath="$PROJECT_DIR$/src/lib/core/util/Event.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/StarField.js" afterPath="$PROJECT_DIR$/src/components/StarField.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/packages/Narrator.js" afterPath="$PROJECT_DIR$/src/packages/Narrator.js" />
     </list>
     <ignored path="jd-js-lib.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,21 +23,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="StarField.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="StarField.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/StarField.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.10445683">
+            <state vertical-scroll-proportion="-2.7777777">
               <caret line="93" column="74" selection-start-line="93" selection-start-column="74" selection-end-line="93" selection-end-column="74" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-12.5">
-              <caret line="20" column="4" selection-start-line="20" selection-start-column="4" selection-end-line="20" selection-end-column="4" />
               <folding />
             </state>
           </provider>
@@ -120,6 +105,16 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="Narrator.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/packages/Narrator.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.020134227">
+              <caret line="1" column="43" selection-start-line="1" selection-start-column="43" selection-end-line="1" selection-end-column="43" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="DispatcherNode.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lib/core/util/DispatcherNode.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -181,7 +176,6 @@
         <option value="$PROJECT_DIR$/src/lib/core/util/Color.js" />
         <option value="$PROJECT_DIR$/gulpfile.js" />
         <option value="$PROJECT_DIR$/src/packages/StarField.js" />
-        <option value="$PROJECT_DIR$/src/packages/Narrator.js" />
         <option value="$PROJECT_DIR$/src/lib/core/GraphicEvents.js" />
         <option value="$PROJECT_DIR$/src/lib/core/GraphicRendererEvents.js" />
         <option value="$PROJECT_DIR$/package.json" />
@@ -189,6 +183,7 @@
         <option value="$PROJECT_DIR$/src/lib/core/util/DispatcherNode.js" />
         <option value="$PROJECT_DIR$/src/lib/core/util/Event.js" />
         <option value="$PROJECT_DIR$/src/components/StarField.js" />
+        <option value="$PROJECT_DIR$/src/packages/Narrator.js" />
       </list>
     </option>
   </component>
@@ -265,6 +260,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jd-js-lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jungle-js" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="packages" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -798,14 +811,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/packages/Narrator.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="10" column="22" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/demos/starfield/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -906,8 +911,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/StarField.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.10445683">
+        <state vertical-scroll-proportion="-2.7777777">
           <caret line="93" column="74" selection-start-line="93" selection-start-column="74" selection-end-line="93" selection-end-column="74" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/packages/Narrator.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.020134227">
+          <caret line="1" column="43" selection-start-line="1" selection-start-column="43" selection-end-line="1" selection-end-column="43" />
           <folding />
         </state>
       </provider>

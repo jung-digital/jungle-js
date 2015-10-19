@@ -1,5 +1,5 @@
 import _Embers from '../components/Embers';
-import _Starfield from '../components/Starfield';
+import _Starfield from '../components/StarField';
 import Lib from '../lib/Lib';
 
 window.Jungle = Lib;
