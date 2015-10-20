@@ -33,6 +33,24 @@ const STAR_VIEW_HEIGHT = 600;
 
 const STAR_VIEW_SCROLL_RATIO = 1.0;
 
+const STAR_TWINKLE_TIME = 1.0;
+const STAR_TWINKLE_RATE = 0.001;
+const STAR_TWINKLE_TEMPLATE_1 = [[0.0, 0.0, 0.5, 0.0, 0.0],
+                                [0.0, 0.2, 0.7, 0.2, 0.0],
+                                [0.5, 0.7, 1.0, 0.7, 0.5],
+                                [0.0, 0.2, 0.7, 0.2, 0.0],
+                                [0.0, 0.0, 0.5, 0.0, 0.0]];
+
+const STAR_TWINKLE_TEMPLATE_2 = [[0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0],
+                                [0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0],
+                                [0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0],
+                                [0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0],
+                                [0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.7, 0.6],
+                                [0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0],
+                                [0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0],
+                                [0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0],
+                                [0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0]];
+
 /*============================================*\
  * Class
 \*============================================*/
@@ -206,21 +224,44 @@ class StarField extends GraphicContainer {
       if (star.p[0] >= 0 && star.p[0] <= w &&
           star.p[1] >= 0 && star.p[1] <= h) {
 
-        // Draw each pixel of the star.
-        for (x = 0; x < wh; x++) {
-          for (y = 0; y < wh; y++) {
-            // Calculate the alpha value based on the distance of the pixel from
-            // the center of the star.
+        if (Math.random() < STAR_TWINKLE_RATE || star.t) {
+          star.t = star.t || 0.00001;
+          star.t += elapsed; 
+          let intensity = Math.sin((star.t / STAR_TWINKLE_TIME) * Math.PI);
+          for (x = 0; x < STAR_TWINKLE_TEMPLATE_2.length; x++) {
+            for (y = 0; y < STAR_TWINKLE_TEMPLATE_2.length; y++) {
 
-            let a = 1 - this.pc.calc(x - cxy, y - cxy) / (star.d / 2);
-            let ia = 1 - a;
+              let a = STAR_TWINKLE_TEMPLATE_2[x][y] * intensity;
+              let ia = 1 - a;
 
-            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+              ix = Math.round(((((y - 1) + star.p[1]) * w) + ((x - 1) + star.p[0])) * 4);
 
-            d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
-            d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
-            d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
+              d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
+              d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
+              d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
+              d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
+            }
+          }
+          if (star.t > STAR_TWINKLE_TIME) {
+            star.t = 0;
+          }
+        } else {
+          // Draw each pixel of the star.
+          for (x = 0; x < wh; x++) {
+            for (y = 0; y < wh; y++) {
+              // Calculate the alpha value based on the distance of the pixel from
+              // the center of the star.
+
+              let a = 1 - this.pc.calc(x - cxy, y - cxy) / (star.d / 2);
+              let ia = 1 - a;
+
+              ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+
+              d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
+              d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
+              d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
+              d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
+            }
           }
         }
       }
