@@ -66,7 +66,7 @@ class GraphicRenderer extends GraphicContainer {
     canvas.setAttribute('height', DEFAULT_HEIGHT);
 
     window.addEventListener('resize', this._resizeHandler.bind(this));
-    this.lastScrollTop = window.scrollY;
+    this.lastScrollTop = window.pageYOffset;
 
     window.addEventListener('scroll', this._scrollHandler.bind(this));
 
@@ -174,12 +174,12 @@ class GraphicRenderer extends GraphicContainer {
    * @private
    */
   _scrollHandler(event) {
-    var deltaY = window.scrollY - this.lastScrollTop;
-    this.lastScrollTop = window.scrollY;
+    var deltaY = window.pageYOffset - this.lastScrollTop;
+    this.lastScrollTop = window.pageYOffset;
 
     this.dispatch(new Event(GraphicRendererEvents.WINDOW_SCROLL, {
       deltaY: deltaY,
-      scrollTop: window.scrollY,
+      scrollTop: window.pageYOffset,
       originalEvent: event
     }));
 

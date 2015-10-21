@@ -8,10 +8,6 @@
     "entry": "src/packages/Narrator.js"
   },
   {
-    "key": "Embers",
-    "entry": "src/packages/Ember.js"
-  },
-  {
     "key": "StarField",
     "entry": "src/packages/StarField.js"
   },
