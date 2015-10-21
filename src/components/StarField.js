@@ -35,13 +35,17 @@ const STAR_VIEW_SCROLL_RATIO = 1.0;
 
 const STAR_TWINKLE_TIME = 1.0;
 const STAR_TWINKLE_RATE = 0.01;
-const STAR_TWINKLE_TEMPLATE_1 = [[0.0, 0.0, 0.5, 0.0, 0.0],
-                                [0.0, 0.2, 0.7, 0.2, 0.0],
-                                [0.5, 0.7, 1.0, 0.7, 0.5],
-                                [0.0, 0.2, 0.7, 0.2, 0.0],
-                                [0.0, 0.0, 0.5, 0.0, 0.0]];
+const STAR_TEMPLATE = [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                        [0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0],
+                        [0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0],
+                        [0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0],
+                        [0.0, 0.1, 0.4, 0.6, 1.0, 0.6, 0.4, 0.1, 0.0],
+                        [0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0],
+                        [0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0],
+                        [0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0],
+                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]];
 
-const STAR_TWINKLE_TEMPLATE_2 = [[0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0],
+const STAR_TWINKLE_TEMPLATE = [[0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0],
                                 [0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0],
                                 [0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0],
                                 [0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0],
@@ -55,7 +59,7 @@ const STAR_TWINKLE_TEMPLATE_2 = [[0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0],
  * Class
 \*============================================*/
 /**
- * The embers class display photo-realistic sparks rising as if from a fire.
+ * The StarField class displays uniformly random stars that twinkle occasionally.
  */
 class StarField extends GraphicContainer {
   //---------------------------------------------
@@ -220,25 +224,27 @@ class StarField extends GraphicContainer {
     let d = this.imda.data;
     let x = 0;
     let y = 0;
-    let cxy = Math.round(this.wh / 2);
+    let cxy = Math.floor(this.wh / 2);
     let ix = 0;
     let wh = this.wh;
+    let templateSize = STAR_TWINKLE_TEMPLATE.length;
 
     this.stars.forEach(star => {
       if (star.p[0] >= 0 && star.p[0] <= w &&
           star.p[1] >= 0 && star.p[1] <= h) {
 
-        if (Math.random() < (o.starTwinkleRate * elapsed) || star.t) {
+        if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
           star.t = star.t || 0.00001;
           star.t += elapsed; 
           let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
-          for (x = 0; x < STAR_TWINKLE_TEMPLATE_2.length; x++) {
-            for (y = 0; y < STAR_TWINKLE_TEMPLATE_2.length; y++) {
+          for (x = 0; x < templateSize; x++) {
+            for (y = 0; y < templateSize; y++) {
 
-              let a = STAR_TWINKLE_TEMPLATE_2[x][y] * intensity;
+              let base = (STAR_TEMPLATE[x][y] / (star.d / 2)) * (1 - intensity);
+              let a = ((STAR_TWINKLE_TEMPLATE[x][y] * intensity) + base);
               let ia = 1 - a;
 
-              ix = Math.round(((((y - 1) + star.p[1]) * w) + ((x - 1) + star.p[0])) * 4);
+              ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
               d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
               d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
@@ -251,12 +257,12 @@ class StarField extends GraphicContainer {
           }
         } else {
           // Draw each pixel of the star.
-          for (x = 0; x < wh; x++) {
-            for (y = 0; y < wh; y++) {
+          for (x = 0; x < templateSize; x++) {
+            for (y = 0; y < templateSize; y++) {
               // Calculate the alpha value based on the distance of the pixel from
               // the center of the star.
 
-              let a = 1 - this.pc.calc(x - cxy, y - cxy) / (star.d / 2);
+              let a = (STAR_TEMPLATE[x][y] / (star.d / 2));
               let ia = 1 - a;
 
               ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
