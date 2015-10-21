@@ -35,25 +35,25 @@ const STAR_VIEW_SCROLL_RATIO = 1.0;
 
 const STAR_TWINKLE_TIME = 1.0;
 const STAR_TWINKLE_RATE = 0.01;
-const STAR_TEMPLATE = [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0],
-                        [0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0],
-                        [0.0, 0.1, 0.4, 0.6, 1.0, 0.6, 0.4, 0.1, 0.0],
-                        [0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0],
-                        [0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]];
+const STAR_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0,
+                        0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0,
+                        0.0, 0.1, 0.4, 0.6, 1.0, 0.6, 0.4, 0.1, 0.0,
+                        0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0,
+                        0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0,
+                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
-const STAR_TWINKLE_TEMPLATE = [[0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0],
-                                [0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0],
-                                [0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0],
-                                [0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0],
-                                [0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.7, 0.6],
-                                [0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0],
-                                [0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0],
-                                [0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0],
-                                [0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0]];
+const STAR_TWINKLE_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0,
+                                0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0,
+                                0.6, 0.7, 0.8, 0.9, 1.0, 0.9, 0.8, 0.7, 0.6,
+                                0.0, 0.1, 0.1, 0.7, 0.9, 0.7, 0.1, 0.1, 0.0,
+                                0.0, 0.0, 0.5, 0.1, 0.8, 0.1, 0.5, 0.0, 0.0,
+                                0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0,
+                                0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0];
 
 /*============================================*\
  * Class
@@ -224,10 +224,12 @@ class StarField extends GraphicContainer {
     let d = this.imda.data;
     let x = 0;
     let y = 0;
+    let i = 0;
     let cxy = Math.floor(this.wh / 2);
     let ix = 0;
     let wh = this.wh;
     let templateSize = STAR_TWINKLE_TEMPLATE.length;
+    let tempWidth = Math.round(Math.sqrt(templateSize));
 
     this.stars.forEach(star => {
       if (star.p[0] >= 0 && star.p[0] <= w &&
@@ -237,41 +239,41 @@ class StarField extends GraphicContainer {
           star.t = star.t || 0.00001;
           star.t += elapsed; 
           let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
-          for (x = 0; x < templateSize; x++) {
-            for (y = 0; y < templateSize; y++) {
+          for (i = 0; i < templateSize; i++) {
+            y = Math.floor(i / tempWidth);
+            x = i % tempWidth;
 
-              let base = (STAR_TEMPLATE[x][y] / (star.d / 2)) * (1 - intensity);
-              let a = ((STAR_TWINKLE_TEMPLATE[x][y] * intensity) + base);
-              let ia = 1 - a;
+            let base = (STAR_TEMPLATE[i] / (star.d / 2)) * (1 - intensity);
+            let a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
+            let ia = 1 - a;
 
-              ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-              d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
-              d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
-              d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
-              d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
-            }
+            d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
+            d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
+            d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
+            d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
           }
           if (star.t > o.starTwinkleTime) {
             star.t = 0;
           }
         } else {
           // Draw each pixel of the star.
-          for (x = 0; x < templateSize; x++) {
-            for (y = 0; y < templateSize; y++) {
-              // Calculate the alpha value based on the distance of the pixel from
-              // the center of the star.
+          for (i = 0; i < templateSize; i++) {
+            y = Math.floor(i / tempWidth);
+            x = i % tempWidth;
+            // Calculate the alpha value based on the distance of the pixel from
+            // the center of the star.
 
-              let a = (STAR_TEMPLATE[x][y] / (star.d / 2));
-              let ia = 1 - a;
+            let a = (STAR_TEMPLATE[i] / (star.d / 2));
+            let ia = 1 - a;
 
-              ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-              d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
-              d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
-              d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
-              d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
-            }
+            d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
+            d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
+            d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
+            d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
           }
         }
       }

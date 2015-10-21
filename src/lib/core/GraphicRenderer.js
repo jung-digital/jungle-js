@@ -52,6 +52,10 @@ class GraphicRenderer extends GraphicContainer {
     this.options.fillRenderer = this.options.fillRenderer === false ? false : true;
     this.options.aspectRatio = this.options.aspectRatio;
 
+    this.options.debugPosX = this.options.debugPosX || 10;
+    this.options.debugPosY = this.options.debugPosY || 50;
+    this.fps = 0;
+
     // lastTime is the previous time that the render loop was called
     this.lastTime = 0;
 
@@ -103,9 +107,11 @@ class GraphicRenderer extends GraphicContainer {
    * @returns {String} The debug text to display.
    */
   get debugText() {
+    let fpsNow = Math.round(1 / this.elapsed);
+    this.fps = Math.ceil(this.fps * 0.90 + fpsNow * 0.10);
     return this.canvas.width + ', ' +
            this.canvas.height + ' FPS: ' +
-           Math.round(1 / this.elapsed) + (this.options.debugText ? this.options.debugText : '') +
+           this.fps + (this.options.debugText ? this.options.debugText : '') +
            ' ' + this.options.canvasAutoClear;
   }
 
@@ -279,7 +285,7 @@ class GraphicRenderer extends GraphicContainer {
     if (this.options.debug) {
       this.ctx.font = '12px Georgia white';
       this.ctx.fillStyle = 'orange';
-      this.ctx.fillText(this.debugText, 10, 50);
+      this.ctx.fillText(this.debugText, this.options.debugPosX, this.options.debugPosY);
     }
   }
 }
