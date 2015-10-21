@@ -34,7 +34,7 @@ const STAR_VIEW_HEIGHT = 600;
 const STAR_VIEW_SCROLL_RATIO = 1.0;
 
 const STAR_TWINKLE_TIME = 1.0;
-const STAR_TWINKLE_RATE = 0.001;
+const STAR_TWINKLE_RATE = 0.01;
 const STAR_TWINKLE_TEMPLATE_1 = [[0.0, 0.0, 0.5, 0.0, 0.0],
                                 [0.0, 0.2, 0.7, 0.2, 0.0],
                                 [0.5, 0.7, 1.0, 0.7, 0.5],
@@ -88,6 +88,9 @@ class StarField extends GraphicContainer {
 
     o.starViewWidth = o.starViewWidth || STAR_VIEW_WIDTH;
     o.starViewHeight = o.starViewHeight || STAR_VIEW_HEIGHT;
+
+    o.starTwinkleTime = o.starTwinkleTime || STAR_TWINKLE_TIME;
+    o.starTwinkleRate = o.starTwinkleRate || STAR_TWINKLE_RATE;
 
     o.starViewScrollRatio = o.starViewScrollRatio || STAR_VIEW_SCROLL_RATIO;
 
@@ -206,6 +209,7 @@ class StarField extends GraphicContainer {
     let ctx = this.renderer.ctx;
     let w = this.renderer.canvas.width;
     let h = this.renderer.canvas.height;
+    let o = this.options;
 
     if (!this.cacheImDa) {
       this._rebuildImageDataCache();
@@ -224,10 +228,10 @@ class StarField extends GraphicContainer {
       if (star.p[0] >= 0 && star.p[0] <= w &&
           star.p[1] >= 0 && star.p[1] <= h) {
 
-        if (Math.random() < STAR_TWINKLE_RATE || star.t) {
+        if (Math.random() < (o.starTwinkleRate * elapsed) || star.t) {
           star.t = star.t || 0.00001;
           star.t += elapsed; 
-          let intensity = Math.sin((star.t / STAR_TWINKLE_TIME) * Math.PI);
+          let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
           for (x = 0; x < STAR_TWINKLE_TEMPLATE_2.length; x++) {
             for (y = 0; y < STAR_TWINKLE_TEMPLATE_2.length; y++) {
 
@@ -242,7 +246,7 @@ class StarField extends GraphicContainer {
               d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
             }
           }
-          if (star.t > STAR_TWINKLE_TIME) {
+          if (star.t > o.starTwinkleTime) {
             star.t = 0;
           }
         } else {
