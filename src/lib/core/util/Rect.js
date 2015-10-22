@@ -21,8 +21,8 @@ class Rect {
    * @param {Number} height Height of rectangle
    */
   constructor(x, y, width, height) {
-    this.x = x;
-    this.y = y;
+    this.x = this.left = x;
+    this.y = this.top = y;
     this.width = width;
     this.height = height;
   }

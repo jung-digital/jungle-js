@@ -8,10 +8,6 @@
     "entry": "src/packages/Narrator.js"
   },
   {
-    "key": "Embers",
-    "entry": "src/packages/Ember.js"
-  },
-  {
     "key": "StarField",
     "entry": "src/packages/StarField.js"
   },
@@ -22,5 +18,9 @@
   {
     "key": "Surge",
     "entry": "src/components/Surge.js"
+  },
+  {
+    "key": "Playbar",
+    "entry": "src/components/Playbar.js"
   }
 ]

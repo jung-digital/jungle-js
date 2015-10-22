@@ -4,7 +4,8 @@ var canvas = $('#canvas')[0];
 
 window.renderer = new Jungle.GraphicRenderer(canvas, {
   debug: true,
-  canvasAutoClear: 'rgba(0,0,0,1)'
+  canvasAutoClear: '#000000'
 });
+
 window.starField = new StarField();
 renderer.addChild(starField);

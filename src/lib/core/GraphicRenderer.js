@@ -1,9 +1,10 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import GraphicContainer from './GraphicContainer';
+import GraphicComponent from './GraphicComponent';
 import GraphicRendererEvents from './GraphicRendererEvents';
 import Event from './util/Event';
+import Rect from './util/Rect';
 
 /*============================================*\
  * Constants
@@ -27,7 +28,7 @@ const DEFAULT_HEIGHT = 800 / 1.618;  // Golden Ratio
  * - Organizing the components so they draw themselves at the proper times and in
  *   the proper order.
  */
-class GraphicRenderer extends GraphicContainer {
+class GraphicRenderer extends GraphicComponent {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
@@ -69,8 +70,10 @@ class GraphicRenderer extends GraphicContainer {
     canvas.setAttribute('width', DEFAULT_WIDTH);
     canvas.setAttribute('height', DEFAULT_HEIGHT);
 
+    this.bounds = new Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+
     window.addEventListener('resize', this._resizeHandler.bind(this));
-    this.lastScrollTop = window.scrollY;
+    this.lastScrollTop = window.pageYOffset;
 
     window.addEventListener('scroll', this._scrollHandler.bind(this));
 
@@ -90,7 +93,7 @@ class GraphicRenderer extends GraphicContainer {
       window.jd[id] = this;
     }
 
-    // GraphicContainer properties
+    // GraphicComponent properties
     this.renderer = this;
     this.parent = undefined;
 
@@ -157,6 +160,9 @@ class GraphicRenderer extends GraphicContainer {
     this.scaleX = this.canvas.width / DEFAULT_WIDTH;
     this.scaleY = this.canvas.height / DEFAULT_WIDTH;
 
+    this.bounds.width = this.canvas.width;
+    this.bounds.height = this.canvas.height;
+
     if (prevWidth != this.canvas.width || prevHeight != this.canvas.height) {
       this.dispatch(new Event(GraphicRendererEvents.CANVAS_RESIZE));
     }
@@ -180,12 +186,12 @@ class GraphicRenderer extends GraphicContainer {
    * @private
    */
   _scrollHandler(event) {
-    var deltaY = window.scrollY - this.lastScrollTop;
-    this.lastScrollTop = window.scrollY;
+    var deltaY = window.pageYOffset - this.lastScrollTop;
+    this.lastScrollTop = window.pageYOffset;
 
     this.dispatch(new Event(GraphicRendererEvents.WINDOW_SCROLL, {
       deltaY: deltaY,
-      scrollTop: window.scrollY,
+      scrollTop: window.pageYOffset,
       originalEvent: event
     }));
 
