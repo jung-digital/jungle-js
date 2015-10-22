@@ -20,16 +20,16 @@ const STAR_MAX_SIZE = 5.0;       // Ideally star max size is an odd number
 const STAR_MIN_SIZE = 1.2;
 
 const STAR_MIN_SATURATION = 0.0;
-const STAR_MAX_SATURATION = 0.15;
+const STAR_MAX_SATURATION = 0.25;
 
 const STAR_MIN_HUE = 0;
 const STAR_MAX_HUE = 360;
 
-const STAR_MIN_VALUE = 0.1;
+const STAR_MIN_VALUE = 0.5;
 const STAR_MAX_VALUE = 1.0;
 
-const STAR_VIEW_WIDTH = 800;
-const STAR_VIEW_HEIGHT = 600;
+const STAR_VIEW_WIDTH = 1920;
+const STAR_VIEW_HEIGHT = 1080;
 
 const STAR_VIEW_SCROLL_RATIO = 1.0;
 
@@ -237,7 +237,7 @@ class StarField extends GraphicContainer {
 
         if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
           star.t = star.t || 0.00001;
-          star.t += elapsed; 
+          star.t += elapsed;
           let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
           for (i = 0; i < templateSize; i++) {
             y = Math.floor(i / tempWidth);

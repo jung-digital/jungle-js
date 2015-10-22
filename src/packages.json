@@ -18,5 +18,9 @@
   {
     "key": "Surge",
     "entry": "src/components/Surge.js"
+  },
+  {
+    "key": "Playbar",
+    "entry": "src/components/Playbar.js"
   }
 ]

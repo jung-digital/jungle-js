@@ -88,7 +88,7 @@ class GraphicContainer extends Graphic {
 
     child.renderer = undefined;
     child.parent = undefined;
-    
+
     child.dispatch(new Event(GraphicEvents.REMOVED));
     this.dispatch(new Event(GraphicEvents.CHILD_REMOVED));
   }
