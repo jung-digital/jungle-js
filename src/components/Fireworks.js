@@ -76,8 +76,7 @@ class Fireworks extends GraphicContainer {
   }
 }
 
-if (window)
-{
+if (window) {
   window.Fireworks = Fireworks;
 }
 
