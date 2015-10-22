@@ -13,7 +13,7 @@
   },
   {
     "key": "Fireworks",
-    "entry": "src/components/Fireworks.js"
+    "entry": "src/packages/FireworksDemo.js"
   },
   {
     "key": "Surge",

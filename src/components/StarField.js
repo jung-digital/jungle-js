@@ -249,10 +249,10 @@ class StarField extends GraphicContainer {
 
             ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-            d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
-            d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
-            d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
+            d[ix + 0] = (star.c.r * 255);
+            d[ix + 1] = (star.c.g * 255);
+            d[ix + 2] = (star.c.b * 255);
+            d[ix + 3] = Math.max(d[ix + 3], a * 255);
           }
           if (star.t > o.starTwinkleTime) {
             star.t = 0;
@@ -270,10 +270,10 @@ class StarField extends GraphicContainer {
 
             ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-            d[ix + 0] = (d[ix + 0] * ia) + (star.c.r * a * 255);
-            d[ix + 1] = (d[ix + 1] * ia) + (star.c.g * a * 255);
-            d[ix + 2] = (d[ix + 2] * ia) + (star.c.b * a * 255);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255); //Math.round(a * 255);
+            d[ix + 0] = (star.c.r * 255);
+            d[ix + 1] = (star.c.g * 255);
+            d[ix + 2] = (star.c.b * 255);
+            d[ix + 3] = Math.max(d[ix + 3], a * 255);
           }
         }
       }
