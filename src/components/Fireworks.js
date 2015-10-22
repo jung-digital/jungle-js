@@ -1,8 +1,6 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import util from '../lib/core/util/util.js';
-
 import GraphicContainer from '../lib/core/GraphicContainer.js';
 import Firework from '../lib/gx/Firework.js';
 
@@ -76,6 +74,11 @@ class Fireworks extends GraphicContainer {
       fw.onFrame(elapsed);
     });
   }
+}
+
+if (window)
+{
+  window.Fireworks = Fireworks;
 }
 
 export default Fireworks;
