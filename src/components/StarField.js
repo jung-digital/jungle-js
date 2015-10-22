@@ -129,7 +129,9 @@ class StarField extends GraphicContainer {
       let star = {
         g: vec2.fromValues(Math.round(ran(0, o.starViewWidth)), Math.round(ran(0, relativeHeight))),
         d: ran(o.starMinSize, o.starMaxSize),
-        c: hsvToRgb(ran(o.starMinHue, o.starMaxHue), ran(o.starMinSaturation, o.starMaxSaturation), ran(o.starMinValue, o.starMaxValue))
+        c: hsvToRgb(ran(o.starMinHue, o.starMaxHue), ran(o.starMinSaturation, o.starMaxSaturation), ran(o.starMinValue, o.starMaxValue)),
+        t: 0,
+        p: 0
       };
 
       this.allStars.push(star);
