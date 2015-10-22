@@ -7,5 +7,8 @@ window.renderer = new Jungle.GraphicRenderer(canvas, {
   canvasAutoClear: '#000000'
 });
 
-window.starField = new StarField();
+window.starField = new StarField({
+  starDensity: 2,
+  starTwinkleRate: 0.01
+});
 renderer.addChild(starField);
