@@ -233,9 +233,12 @@ class StarField extends GraphicContainer {
     let templateSize = STAR_TWINKLE_TEMPLATE.length;
     let tempWidth = Math.round(Math.sqrt(templateSize));
 
-    this.stars.forEach(star => {
+    var starDraw = function(star) {
       if (star.p[0] >= 0 && star.p[0] <= w &&
           star.p[1] >= 0 && star.p[1] <= h) {
+        let red = star.c.r * 255;
+        let green = star.c.g * 255;
+        let blue = star.c.b * 255;
 
         if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
           star.t = star.t || 0.00001;
@@ -251,9 +254,9 @@ class StarField extends GraphicContainer {
 
             ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-            d[ix + 0] = (star.c.r * 255);
-            d[ix + 1] = (star.c.g * 255);
-            d[ix + 2] = (star.c.b * 255);
+            d[ix + 0] = (red);
+            d[ix + 1] = (green);
+            d[ix + 2] = (blue);
             d[ix + 3] = Math.max(d[ix + 3], a * 255);
           }
           if (star.t > o.starTwinkleTime) {
@@ -272,14 +275,15 @@ class StarField extends GraphicContainer {
 
             ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-            d[ix + 0] = (star.c.r * 255);
-            d[ix + 1] = (star.c.g * 255);
-            d[ix + 2] = (star.c.b * 255);
+            d[ix + 0] = (red);
+            d[ix + 1] = (green);
+            d[ix + 2] = (blue);
             d[ix + 3] = Math.max(d[ix + 3], a * 255);
           }
         }
       }
-    });
+    };
+    this.stars.forEach(starDraw);
 
     // Render stars to canvas
     ctx.putImageData(this.imda, 0.5, 0.5);
