@@ -1,8 +1,12 @@
+'use strict';
+
 /*============================================*\
  * Imports
 \*============================================*/
 import GraphicContainer from '../lib/core/GraphicContainer.js';
 import Firework from '../lib/gx/Firework.js';
+import GraphicEvents from '../lib/core/GraphicEvents';
+import MouseEvents from '../lib/core/events/MouseEvents';
 
 /*============================================*\
  * Class
@@ -21,8 +25,6 @@ class Fireworks extends GraphicContainer {
    * @param {String} id
    */
   constructor(options, id) {
-    options.canvasAutoClear = 'black';
-
     super(options, id || 'fireworks');
 
     this.fireworks = [];
@@ -31,36 +33,35 @@ class Fireworks extends GraphicContainer {
     this.fireworkDuration = options.fireworkDuration || 5;
     this.duration = options.duration || 3;
 
-    if (!this.launchPads.length) {
-      this.launchPads.push(vec2.create(canvas.width / 2, canvas.height));
-    }
+    this.addListener(GraphicEvents.ADDED, this.addedHandler.bind(this));
   }
 
   //---------------------------------------------
-  // Methods
+  // Events
   //---------------------------------------------
-  /**
-   * Called when the mouse clicks the canvas.
-   *
-   * @param {ClickEvent} event
-   */
-  canvasOnMouseClickHandler(event) {
-    var self = this;
+  addedHandler() {
+    this.renderer.addListener(MouseEvents.CLICK, this.canvasMouseClickHandler.bind(this));
 
+    if (!this.launchPads.length) {
+      this.launchPads.push(vec2.fromValues(this.renderer.canvas.width / 2, this.renderer.canvas.height));
+    }
+  }
+
+  canvasMouseClickHandler(event) {
     console.log('Launching', this.launchPads);
 
     // Launch a firework from each launchpad
     this.launchPads.forEach(lp => {
-      var dX = (event.clientX - lp[0]);
-      var vX = dX / self.duration;
-      var vY = 100;
+      var dX = (event.properties.clientX - lp[0]);
+      var vX = dX / this.duration;
+      var vY = -200;
 
       var firework = new Firework({});
 
-      self.fireworks.push(firework);
+      this.fireworks.push(firework);
 
       firework.launch(vec2.fromValues(lp[0], lp[1]),
-                      vec2.fromValues(vX, vY));
+        vec2.fromValues(vX, vY));
     });
   }
 
@@ -70,14 +71,13 @@ class Fireworks extends GraphicContainer {
    * @param {Number} elapsed time in seconds
    */
   onFrameHandler(elapsed) {
-    this.fireworks.forEach(function(fw) {
-      fw.onFrame(elapsed);
+    this.fireworks.forEach(fw => {
+      fw.onFrameHandler(elapsed, this.renderer.ctx);
     });
   }
 }
 
-if (window)
-{
+if (window) {
   window.Fireworks = Fireworks;
 }
 

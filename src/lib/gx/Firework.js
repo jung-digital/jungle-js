@@ -24,23 +24,17 @@ class Firework extends Object2D {
   constructor(options) {
     super(options);
 
-    this.options = options;
+    let o = this.options = options;
 
-    this.options.minSparks = options.minSparks || 30;
-    this.options.maxSparks = options.maxSparks || 50;
-    this.options.gravity = options.gravity || vec2.create(0, 50);
+    o.minSparks = o.minSparks || 30;
+    o.maxSparks = o.maxSparks || 50;
+    o.gravity = o.gravity || vec2.fromValues(0, 98);
 
-    this.forces = [this.options.gravity];
+    this.forces = [o.gravity];
 
     this.sparks = [];
     this.tail = new Spark({
-      type: 1,
-      redrawSegment: this.renderSmokeTrailSegment.bind(this),
-      color: {
-        h: 1,
-        s: 1,
-        l: 1
-      }
+      redrawSegment: this.renderSmokeTrailSegment.bind(this)
     });
   }
 
@@ -63,7 +57,9 @@ class Firework extends Object2D {
    * Reset all the firework properties immediately.
    */
   reset() {
-    super.reset();
+    super.reset({
+      forces: [this.options.gravity]
+    });
   }
 
   /**
@@ -78,12 +74,10 @@ class Firework extends Object2D {
    * @param {RenderingContext} context The Canvas context on which to render.
    */
   renderSparkSegment(spark, start, end, curLen, ratio, elapsed, context) {
-    ratio = 1 - (curLen / this.options.maxTailLength);
-
     var rgb = hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
-    context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
-    context.lineWidth = spark.options.size * ratio * this.scaleX;
+    context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ', 1)';
+    context.lineWidth = spark.options.size * ratio;
 
     context.beginPath();
     context.moveTo(start[0], start[1]);
@@ -103,11 +97,8 @@ class Firework extends Object2D {
    * @param {RenderingContext} context The Canvas context on which to render.
    */
   renderSmokeTrailSegment(spark, start, end, curLen, ratio, elapsed, context) {
-    console.log('drawing');
-    ratio = 1 - (curLen / this.options.maxTailLength);
-
-    context.strokeStyle = 'rgba(255, 255, 255, 1)';
-    context.lineWidth = spark.options.size * ratio * this.scaleX;
+    context.strokeStyle = 'rgba(255, 255, 255, ' + (1 - ratio) + ')';
+    context.lineWidth = 2 * (1 - ratio);
 
     context.beginPath();
     context.moveTo(start[0], start[1]);
@@ -143,8 +134,17 @@ class Firework extends Object2D {
 
     this.launchTime = 0;
     this.start = vec2.clone(start);
-    this.vel = vel;
-    this.pos = this.tail.pos = vec2.clone(start);
+    this.vel = vec2.clone(vel);
+    this.pos = vec2.clone(start);
+
+    this.tail.spark({
+      color: {
+        h: 1,
+        s: 1,
+        l: 1
+      },
+      pos: this.pos
+    });
   }
 
   //------------------------------------
@@ -158,10 +158,9 @@ class Firework extends Object2D {
    */
   onFrameHandler(elapsed, context) {
     if (this.launched) {
-      console.log(this.pos, this.vel);
-      super.onFrame(elapsed, context);
+      super.onFrameHandler(elapsed, context);
 
-      this.tail.next(this.pos);
+      this.tail.next(vec2.clone(this.pos));
 
       this.launchTime += elapsed;
 
@@ -169,7 +168,7 @@ class Firework extends Object2D {
         this.burst();
       }
 
-      this.tail.onFrame(elapsed, context);
+      this.tail.onFrameHandler(elapsed, context);
     }
   }
 }

@@ -12,7 +12,7 @@ class Object2D {
     this.forces = forces || this.forces;
   }
 
-  onFrame(elapsed, context) {
+  onFrameHandler(elapsed, context) {
     // Add forces to velocity
     if (this.forces) {
       this.forces.forEach(force => {
