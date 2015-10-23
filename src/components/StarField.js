@@ -19,6 +19,9 @@ const STAR_DENSITY = 2;         // Stars per 10000 pixels (100 x 100)
 const STAR_MAX_SIZE = 5.0;       // Ideally star max size is an odd number
 const STAR_MIN_SIZE = 1.2;
 
+const STAR_MAX_INTENSITY = 5.0;       
+const STAR_MIN_INTENSITY = 1.2;
+
 const STAR_MIN_SATURATION = 0.0;
 const STAR_MAX_SATURATION = 0.25;
 
@@ -35,15 +38,24 @@ const STAR_VIEW_SCROLL_RATIO = 1.0;
 
 const STAR_TWINKLE_TIME = 1.0;
 const STAR_TWINKLE_RATE = 0.01;
+const STAR_TEMPLATE_255 = new Uint8ClampedArray([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                                0x00, 0x00, 0x00, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00,
+                                                0x00, 0x00, 0x18, 0x4a, 0x66, 0x4a, 0x18, 0x00, 0x00,
+                                                0x00, 0x18, 0x4a, 0x80, 0x99, 0x80, 0x4a, 0x18, 0x00,
+                                                0x00, 0x18, 0x66, 0x99, 0xff, 0x99, 0x66, 0x18, 0x00,
+                                                0x00, 0x18, 0x4a, 0x80, 0x99, 0x80, 0x4a, 0x18, 0x00,
+                                                0x00, 0x00, 0x18, 0x4a, 0x66, 0x4a, 0x18, 0x00, 0x00,
+                                                0x00, 0x00, 0x00, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00,
+                                                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 const STAR_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0,
-                        0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0,
-                        0.0, 0.1, 0.4, 0.6, 1.0, 0.6, 0.4, 0.1, 0.0,
-                        0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0,
-                        0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+                      0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0,
+                      0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0,
+                      0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0,
+                      0.0, 0.1, 0.4, 0.6, 1.0, 0.6, 0.4, 0.1, 0.0,
+                      0.0, 0.1, 0.3, 0.5, 0.6, 0.5, 0.3, 0.1, 0.0,
+                      0.0, 0.0, 0.1, 0.3, 0.4, 0.3, 0.1, 0.0, 0.0,
+                      0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0,
+                      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
 const STAR_TWINKLE_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0,
                                 0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0,
@@ -222,8 +234,8 @@ class StarField extends GraphicContainer {
     }
 
     this.imda.data.set(this.cacheImDa.data);
-
-    let d = this.imda.data;
+    let d32 = new Uint32Array(this.imda.data.buffer);
+    //let d = this.imda.data;
     let x = 0;
     let y = 0;
     let i = 0;
@@ -233,6 +245,7 @@ class StarField extends GraphicContainer {
     let templateSize = STAR_TWINKLE_TEMPLATE.length;
     let tempWidth = Math.round(Math.sqrt(templateSize));
 
+    let crap = [];
     var starDraw = function(star) {
       if (star.p[0] >= 0 && star.p[0] <= w &&
           star.p[1] >= 0 && star.p[1] <= h) {
@@ -240,52 +253,146 @@ class StarField extends GraphicContainer {
         let green = star.c.g * 255;
         let blue = star.c.b * 255;
 
-        if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
-          star.t = star.t || 0.00001;
-          star.t += elapsed;
-          let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
-          for (i = 0; i < templateSize; i++) {
-            y = Math.floor(i / tempWidth);
-            x = i % tempWidth;
+        // if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
+        //   star.t = star.t || 0.00001;
+        //   star.t += elapsed;
+        //   let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
+        //   for (i = 0; i < templateSize; i++) {
+        //     y = Math.floor(i / tempWidth);
+        //     x = i % tempWidth;
 
-            let base = (STAR_TEMPLATE[i] / (star.d / 2)) * (1 - intensity);
-            let a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
-            let ia = 1 - a;
+        //     let base = (STAR_TEMPLATE[i] / (star.d / 2)) * (1 - intensity);
+        //     let a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
+        //     let ia = 1 - a;
 
-            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+        //     ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
 
-            d[ix + 0] = (red);
-            d[ix + 1] = (green);
-            d[ix + 2] = (blue);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255);
-          }
-          if (star.t > o.starTwinkleTime) {
-            star.t = 0;
-          }
-        } else {
-          // Draw each pixel of the star.
-          for (i = 0; i < templateSize; i++) {
-            y = Math.floor(i / tempWidth);
-            x = i % tempWidth;
-            // Calculate the alpha value based on the distance of the pixel from
-            // the center of the star.
+        //     d[ix + 0] = (red);
+        //     d[ix + 1] = (green);
+        //     d[ix + 2] = (blue);
+        //     d[ix + 3] = Math.max(d[ix + 3], a * 255);
+        //   }
+        //   if (star.t > o.starTwinkleTime) {
+        //     star.t = 0;
+        //   }
+        // } else {
+        // Draw each pixel of the star.
+        let pos = 0;
+        let posY = star.p[1];
+        let posX = star.p[0];
+        let M = Math.max;
+        let ST = STAR_TEMPLATE_255;
+        let sD = (star.d / 2);
+        let bgr = (blue << 16) | (green << 8) | red;
 
-            let a = (STAR_TEMPLATE[i] / (star.d / 2));
-            let ia = 1 - a;
+        pos = (0 + posY) * w + posX;
+        d32[(pos + 0)] = ((ST[0] / sD) << 24) | bgr;
+        d32[(pos + 1)] = ((ST[1] / sD) << 24) | bgr;
+        d32[(pos + 2)] = ((ST[2] / sD) << 24) | bgr;
+        d32[(pos + 3)] = ((ST[3] / sD) << 24) | bgr;
+        d32[(pos + 4)] = ((ST[4] / sD) << 24) | bgr;
+        d32[(pos + 5)] = ((ST[5] / sD) << 24) | bgr;
+        d32[(pos + 6)] = ((ST[6] / sD) << 24) | bgr;
+        d32[(pos + 7)] = ((ST[7] / sD) << 24) | bgr;
+        d32[(pos + 8)] = ((ST[8] / sD) << 24) | bgr;
 
-            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+        pos = (1 + posY) * w + posX;
+        d32[(pos + 0)] = ((ST[9] / sD) << 24) | bgr;
+        d32[(pos + 1)] = ((ST[10] / sD) << 24) | bgr;
+        d32[(pos + 2)] = ((ST[11] / sD) << 24) | bgr;
+        d32[(pos + 3)] = ((ST[12] / sD) << 24) | bgr;
+        d32[(pos + 4)] = ((ST[13] / sD) << 24) | bgr;
+        d32[(pos + 5)] = ((ST[14] / sD) << 24) | bgr;
+        d32[(pos + 6)] = ((ST[15] / sD) << 24) | bgr;
+        d32[(pos + 7)] = ((ST[16] / sD) << 24) | bgr;
+        d32[(pos + 8)] = ((ST[17] / sD) << 24) | bgr;
 
-            d[ix + 0] = (red);
-            d[ix + 1] = (green);
-            d[ix + 2] = (blue);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255);
-          }
-        }
+        pos = (2 + posY) * w + posX;
+        d32[(pos + 0)] = ((ST[18] / sD) << 24) | bgr;
+        d32[(pos + 1)] = ((ST[19] / sD) << 24) | bgr;
+        d32[(pos + 2)] = ((ST[20] / sD) << 24) | bgr;
+        d32[(pos + 3)] = ((ST[21] / sD) << 24) | bgr;
+        d32[(pos + 4)] = ((ST[22] / sD) << 24) | bgr;
+        d32[(pos + 5)] = ((ST[23] / sD) << 24) | bgr;
+        d32[(pos + 6)] = ((ST[24] / sD) << 24) | bgr;
+        d32[(pos + 7)] = ((ST[25] / sD) << 24) | bgr;
+        d32[(pos + 8)] = ((ST[26] / sD) << 24) | bgr;
+
+        pos = (3 + posY) * w + posX;
+        d32[(pos + 0)] = ((ST[27] / sD) << 24) | bgr;
+        d32[(pos + 1)] = ((ST[28] / sD) << 24) | bgr;
+        d32[(pos + 2)] = ((ST[29] / sD) << 24) | bgr;
+        d32[(pos + 3)] = ((ST[30] / sD) << 24) | bgr;
+        d32[(pos + 4)] = ((ST[31] / sD) << 24) | bgr;
+        d32[(pos + 5)] = ((ST[32] / sD) << 24) | bgr;
+        d32[(pos + 6)] = ((ST[33] / sD) << 24) | bgr;
+        d32[(pos + 7)] = ((ST[34] / sD) << 24) | bgr;
+        d32[(pos + 8)] = ((ST[35] / sD) << 24) | bgr;
+
+        pos = (4 + posY) * w + posX;
+        d32[(pos + 0)] = ((ST[36] / sD) << 24) | bgr;
+        d32[(pos + 1)] = ((ST[37] / sD) << 24) | bgr;
+        d32[(pos + 2)] = ((ST[38] / sD) << 24) | bgr;
+        d32[(pos + 3)] = ((ST[39] / sD) << 24) | bgr;
+        d32[(pos + 4)] = ((ST[40] / sD) << 24) | bgr;
+        // if (((ST[40] / sD) << 24) | bgr < 0) {
+        //   console.log((ST[40] / sD) << 24);
+        // }
+        d32[(pos + 5)] = ((ST[41] / sD) << 24) | bgr;
+        d32[(pos + 6)] = ((ST[42] / sD) << 24) | bgr;
+        d32[(pos + 7)] = ((ST[43] / sD) << 24) | bgr;
+        d32[(pos + 8)] = ((ST[44] / sD) << 24) | bgr;
+
+        pos = (5 + posY) * w + posX;
+        d32[(pos + 0)] = ((ST[45] / sD) << 24) | bgr;
+        d32[(pos + 1)] = ((ST[46] / sD) << 24) | bgr;
+        d32[(pos + 2)] = ((ST[47] / sD) << 24) | bgr;
+        d32[(pos + 3)] = ((ST[48] / sD) << 24) | bgr;
+        d32[(pos + 4)] = ((ST[49] / sD) << 24) | bgr;
+        d32[(pos + 5)] = ((ST[50] / sD) << 24) | bgr;
+        d32[(pos + 6)] = ((ST[51] / sD) << 24) | bgr;
+        d32[(pos + 7)] = ((ST[52] / sD) << 24) | bgr;
+        d32[(pos + 8)] = ((ST[53] / sD) << 24) | bgr;
+
+        pos = (6 + posY) * w + posX;
+        d32[(pos + 0)] = ((~~(ST[54] / sD)) << 24) | bgr;
+        d32[(pos + 1)] = ((~~(ST[55] / sD)) << 24) | bgr;
+        d32[(pos + 2)] = ((~~(ST[56] / sD)) << 24) | bgr;
+        d32[(pos + 3)] = ((~~(ST[57] / sD)) << 24) | bgr;
+        d32[(pos + 4)] = ((~~(ST[58] / sD)) << 24) | bgr;
+        d32[(pos + 5)] = ((~~(ST[59] / sD)) << 24) | bgr;
+        d32[(pos + 6)] = ((~~(ST[60] / sD)) << 24) | bgr;
+        d32[(pos + 7)] = ((~~(ST[61] / sD)) << 24) | bgr;
+        d32[(pos + 8)] = ((~~(ST[62] / sD)) << 24) | bgr;
+
+        pos = (7 + posY) * w + posX;
+        d32[(pos + 0)] = ((~~(ST[63] / sD)) << 24) | bgr;
+        d32[(pos + 1)] = ((~~(ST[64] / sD)) << 24) | bgr;
+        d32[(pos + 2)] = ((~~(ST[65] / sD)) << 24) | bgr;
+        d32[(pos + 3)] = ((~~(ST[66] / sD)) << 24) | bgr;
+        d32[(pos + 4)] = ((~~(ST[67] / sD)) << 24) | bgr;
+        d32[(pos + 5)] = ((~~(ST[68] / sD)) << 24) | bgr;
+        d32[(pos + 6)] = ((~~(ST[69] / sD)) << 24) | bgr;
+        d32[(pos + 7)] = ((~~(ST[70] / sD)) << 24) | bgr;
+        d32[(pos + 8)] = ((~~(ST[71] / sD)) << 24) | bgr;
+
+        pos = (8 + posY) * w + posX;
+        d32[(pos + 0)] = ((~~(ST[72] / sD)) << 24) | bgr;
+        d32[(pos + 1)] = ((~~(ST[73] / sD)) << 24) | bgr;
+        d32[(pos + 2)] = ((~~(ST[74] / sD)) << 24) | bgr;
+        d32[(pos + 3)] = ((~~(ST[75] / sD)) << 24) | bgr;
+        d32[(pos + 4)] = ((~~(ST[76] / sD)) << 24) | bgr;
+        d32[(pos + 5)] = ((~~(ST[77] / sD)) << 24) | bgr;
+        d32[(pos + 6)] = ((~~(ST[78] / sD)) << 24) | bgr;
+        d32[(pos + 7)] = ((~~(ST[79] / sD)) << 24) | bgr;
+        d32[(pos + 8)] = ((~~(ST[80] / sD)) << 24) | bgr;
+        // }
       }
     };
     this.stars.forEach(starDraw);
-
+    //console.log(crap);
     // Render stars to canvas
+    this.imda.data.set(new Uint8ClampedArray(d32.buffer));
     ctx.putImageData(this.imda, 0.5, 0.5);
   }
 
