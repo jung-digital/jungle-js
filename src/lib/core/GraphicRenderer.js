@@ -3,6 +3,7 @@
 \*============================================*/
 import GraphicComponent from './GraphicComponent';
 import GraphicRendererEvents from './GraphicRendererEvents';
+import MouseEvents from './events/MouseEvents';
 import Event from './util/Event';
 import Rect from './util/Rect';
 
@@ -48,21 +49,22 @@ class GraphicRenderer extends GraphicComponent {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
 
-    this.options = options || {};
-    this.options.canvasAutoClear = this.options.canvasAutoClear !== undefined ? this.options.canvasAutoClear : true;
-    this.options.fillRenderer = this.options.fillRenderer === false ? false : true;
-    this.options.aspectRatio = this.options.aspectRatio;
+    let o = this.options = options || {};
+    o.canvasAutoClear = o.canvasAutoClear !== undefined ? o.canvasAutoClear : true;
+    o.fillRenderer = o.fillRenderer === false ? false : true;
+    o.aspectRatio = o.aspectRatio;
 
-    this.options.debugPosX = this.options.debugPosX || 10;
-    this.options.debugPosY = this.options.debugPosY || 50;
+    o.debugPosX = o.debugPosX || 10;
+    o.debugPosY = o.debugPosY || 50;
+
     this.fps = 0;
 
     // lastTime is the previous time that the render loop was called
     this.lastTime = 0;
 
-    if (!this.options.fillRenderer) {
-      this.canvasTargetWidth = this.width = this.options.width || DEFAULT_WIDTH;
-      this.canvasTargetHeight = this.height = this.options.height || DEFAULT_HEIGHT;
+    if (!o.fillRenderer) {
+      this.canvasTargetWidth = this.width = o.width || DEFAULT_WIDTH;
+      this.canvasTargetHeight = this.height = o.height || DEFAULT_HEIGHT;
     } else {
       setTimeout(this._resizeHandler.bind(this), 1);
     }
@@ -77,14 +79,17 @@ class GraphicRenderer extends GraphicComponent {
 
     window.addEventListener('scroll', this._scrollHandler.bind(this));
 
-    if (this.options.mouseEnabled !== false) {
-      canvas.addEventListener('mousemove', this.canvasOnMouseMoveHandler.bind(this));
-      canvas.addEventListener('mouseout', this.canvasOnMouseOutHandler.bind(this));
-      canvas.addEventListener('click', this.canvasOnMouseClickHandler.bind(this));
+    if (o.mouseEnabled !== false) {
+      canvas.addEventListener('mousemove', this._canvasOnMouseMoveHandler.bind(this));
+      canvas.addEventListener('mouseout', this._canvasOnMouseOutHandler.bind(this));
+      canvas.addEventListener('click', this._canvasOnMouseClickHandler.bind(this));
+      canvas.addEventListener('mousedown', this._canvasOnMouseDownHandler.bind(this));
+      canvas.addEventListener('mouseup', this._canvasOnMouseUpHandler.bind(this));
     }
-    if (this.options.touchEnabled !== false) {
-      canvas.addEventListener('touchstart', this.canvasOnTouchStartHandler.bind(this));
-      canvas.addEventListener('touchmove', this.canvasOnTouchMoveHandler.bind(this));
+
+    if (o.touchEnabled !== false) {
+      canvas.addEventListener('touchstart', this._canvasOnTouchStartHandler.bind(this));
+      canvas.addEventListener('touchmove', this._canvasOnTouchMoveHandler.bind(this));
     }
 
     if (id) {
@@ -212,8 +217,26 @@ class GraphicRenderer extends GraphicComponent {
    *
    * Not called when options.mouseEnabled is false.
    */
-  canvasOnMouseClickHandler() {
-    // noop
+  _canvasOnMouseClickHandler(event) {
+    this.dispatch(new Event(MouseEvents.CLICK, event));
+  }
+
+  /**
+   * Called when the canvas has a mouse down.
+   *
+   * Not called when options.mouseEnabled is false.
+   */
+  _canvasOnMouseDownHandler(event) {
+    this.dispatch(new Event(MouseEvents.MOUSE_DOWN, event));
+  }
+
+  /**
+   * Called when the canvas has a mouse up.
+   *
+   * Not called when options.mouseEnabled is false.
+   */
+  _canvasOnMouseUpHandler(event) {
+    this.dispatch(new Event(MouseEvents.MOUSE_UP, event));
   }
 
   /**
@@ -221,8 +244,8 @@ class GraphicRenderer extends GraphicComponent {
    *
    * Not called when options.mouseEnabled is false.
    */
-  canvasOnMouseMoveHandler() {
-    // noop
+  _canvasOnMouseMoveHandler(event) {
+    this.dispatch(new Event(MouseEvents.MOUSE_MOVE, event));
   }
 
   /**
@@ -230,8 +253,8 @@ class GraphicRenderer extends GraphicComponent {
    *
    * Not called when options.mouseEnabled is false.
    */
-  canvasOnMouseOutHandler() {
-    // noop
+  _canvasOnMouseOutHandler() {
+    this.dispatch(new Event(MouseEvents.MOUSE_OUT));
   }
 
   /**
@@ -239,7 +262,7 @@ class GraphicRenderer extends GraphicComponent {
    *
    * Not called when options.touchEnabled is false.
    */
-  canvasOnTouchStartHandler() {
+  _canvasOnTouchStartHandler() {
     // noop
   }
 
@@ -248,7 +271,7 @@ class GraphicRenderer extends GraphicComponent {
    *
    * Not called when options.touchEnabled is false.
    */
-  canvasOnTouchMoveHandler() {
+  _canvasOnTouchMoveHandler() {
     // noop
   }
 

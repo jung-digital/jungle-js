@@ -31,7 +31,7 @@ const STAR_MAX_VALUE = 1.0;
 const STAR_VIEW_WIDTH = 1920;
 const STAR_VIEW_HEIGHT = 1080;
 
-const STAR_VIEW_SCROLL_RATIO = 1.0;
+const STAR_VIEW_SCROLL_RATIO = 0.0;
 
 const STAR_TWINKLE_TIME = 1.0;
 const STAR_TWINKLE_RATE = 0.01;
@@ -186,7 +186,10 @@ class StarField extends GraphicContainer {
     this.wh = wh;
 
     this.renderer.addListener(GraphicRendererEvents.CANVAS_RESIZE, this.canvasResizedHandler.bind(this));
-    this.renderer.addListener(GraphicRendererEvents.WINDOW_SCROLL, this.windowScrollHandler.bind(this));
+
+    if (o.starViewScrollRatio) {
+      this.renderer.addListener(GraphicRendererEvents.WINDOW_SCROLL, this.windowScrollHandler.bind(this));
+    }
 
     this.viewStars(0, window.scrollY);
   }

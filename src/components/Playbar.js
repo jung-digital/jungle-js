@@ -10,6 +10,8 @@ import {ran} from '../lib/core/util/Number';
 import GraphicEvents from '../lib/core/GraphicEvents';
 import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
 import Rect from '../lib/core/util/Rect';
+import PlaybarEvents from './events/PlaybarEvents';
+import MouseEvents from '../lib/core/events/MouseEvents';
 
 /*============================================*\
  * Constants
@@ -36,11 +38,20 @@ class Playbar extends GraphicComponent {
 
     let o = this.options;
 
-    o.playedColor = o.playedColor || '#6666FF';
+    o.bgColor = '#dddddd';
+    o.playedColor = o.playedColor || '#365dbf';
+    o.chapterRadius = o.chapterRadius || 10;
+    o.chapterFillColor = o.chapterFillColor || 'white';
+    o.playPointRadius = o.playPointRadius || 12;
+    o.playPointWidth = o.playPointWidth || 5;
+    o.playPointBorderColor = o.playPointBorderColor || '#365dbf';
+    o.playPointFillColor = o.playPointFillColor || 'white';
+    o.clickToAdvance = o.clickToAdvance === false ? false : true;
 
     this.total = o.total || 100;
     this.current = o.current || 0;
     this.bounds = o.bounds || new Rect(0,0, 100, 10);
+    this._chapters = o.chapters || [];
 
     this.addListener(GraphicEvents.ADDED, this.addedHandler.bind(this));
   }
@@ -62,11 +73,11 @@ class Playbar extends GraphicComponent {
    * The current time.
    */
   get current() {
-    return this._total;
+    return this._current;
   }
 
   set current(value) {
-    this._total = value;
+    this._current = value;
   }
 
   /**
@@ -80,9 +91,25 @@ class Playbar extends GraphicComponent {
     this._bounds = value;
   }
 
+  /**
+   * The Rect component boundaries on the canvas (left, right, top, bottom).
+   */
+  get chapters() {
+    return this._chapters;
+  }
+
+  set chapters(value) {
+    this._chapters = value;
+  }
+
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  _updateFromMouse(localVec2) {
+    if (localVec2[0] >= 0 && localVec2[0] <= this.width) {
+      this.current = (localVec2[0] / this.width) * this.total;
+    }
+  }
 
   //---------------------------------------------
   // Event Handlers
@@ -90,15 +117,36 @@ class Playbar extends GraphicComponent {
   addedHandler() {
     let o = this.options;
 
-    this.renderer.addListener(GraphicRendererEvents.CANVAS_RESIZE, this.canvasResizedHandler.bind(this));
+    if (o.clickToAdvance) {
+      this.renderer.addListener(MouseEvents.MOUSE_DOWN, this.canvasMouseDownHandler.bind(this));
+      this.renderer.addListener(MouseEvents.MOUSE_MOVE, this.canvasMouseMoveHandler.bind(this));
+      this.renderer.addListener(MouseEvents.MOUSE_UP, this.canvasMouseUpHandler.bind(this));
+    }
   }
 
-  canvasResizedHandler(event) {
+  canvasMouseDownHandler(event) {
+    if (this.globalInBounds(event.properties.clientX, event.properties.clientY)) {
+      this.mouseDown = true;
 
+      this._updateFromMouse(this.globalToLocal(event.properties.clientX, event.properties.clientY));
+    }
+  }
+
+  canvasMouseUpHandler(event) {
+    if (this.mouseDown) {
+      this._updateFromMouse(this.globalToLocal(event.properties.clientX, event.properties.clientY));
+      this.mouseDown = false;
+    }
+  }
+
+  canvasMouseMoveHandler(event) {
+    if (this.mouseDown) {
+      this._updateFromMouse(this.globalToLocal(event.properties.clientX, event.properties.clientY));
+    }
   }
 
   /**
-   * Render every single star that is within the viewport.
+   * Render the Playbar.
    *
    * @param {Number} elapsed
    */
@@ -107,11 +155,35 @@ class Playbar extends GraphicComponent {
     let ctx = this.renderer.ctx;
     let b = this.bounds;
 
+    this.beginClip();
+
     this.renderBackground();
 
     let ratio = this.current / this.total;
     ctx.fillStyle = o.playedColor;
-    ctx.fillRect(b.left, b.top, b.width * ratio, b.height);
+    ctx.fillRect(this.globalX, this.globalY, this.width * ratio, this.height);
+
+    if (this.chapters) {
+      this.chapters.forEach(chapter => {
+        ctx.fillStyle = o.chapterFillColor;
+        ctx.beginPath();
+        ctx.arc(this.globalX + this.width * (chapter / this.total), this.globalY + this.height / 2, o.chapterRadius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+      });
+    }
+
+    ctx.fillStyle = o.playPointFillColor;
+    ctx.strokeStyle = o.playPointBorderColor;
+    ctx.lineWidth = o.playPointWidth;
+    ctx.beginPath();
+    ctx.arc(this.globalX + this.width * ratio, this.globalY + this.height / 2, o.playPointRadius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.closePath();
+
+    ctx.fill();
+
+    this.endClip();
   }
 }
 

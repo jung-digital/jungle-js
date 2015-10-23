@@ -21,12 +21,14 @@ class Spark extends Object2D {
    * @param {Object} options Spark options.
    */
   constructor(options) {
+    options = options || {};
+
     super(options);
 
     this.id = options.id || -1; // index of this spark
     this.redrawSegment = options.redrawSegment; // A function to call to redraw each segment as the spark moves.
 
-    this.sparkResolution = options.sparkResolution || 20; // Resolution (number of segments) of the spark
+    this.sparkResolution = options.sparkResolution || 100; // Resolution (number of segments) of the spark
 
     this.options = options;
 
@@ -87,7 +89,7 @@ class Spark extends Object2D {
     let deltaNorm = vec2.normalize(vec2.create(), delta);
     let len = vec2.len(delta);
 
-    for (var i = 1; i < len; i += 1.0) {
+    for (var i = 1; i < len; i += Math.min(1.0, len - i)) {
       let tmp = vec2.create();
       let p = vec2.add(tmp, vec2.scale(tmp, deltaNorm, i), this.pos);
       this.points.push(p);
