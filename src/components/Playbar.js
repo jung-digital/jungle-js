@@ -41,7 +41,11 @@ class Playbar extends GraphicComponent {
     o.bgColor = '#dddddd';
     o.playedColor = o.playedColor || '#365dbf';
     o.chapterRadius = o.chapterRadius || 10;
+    o.chapterFillColor = o.chapterFillColor || 'white';
     o.playPointRadius = o.playPointRadius || 12;
+    o.playPointWidth = o.playPointWidth || 5;
+    o.playPointBorderColor = o.playPointBorderColor || '#365dbf';
+    o.playPointFillColor = o.playPointFillColor || 'white';
     o.clickToAdvance = o.clickToAdvance === false ? false : true;
 
     this.total = o.total || 100;
@@ -161,7 +165,7 @@ class Playbar extends GraphicComponent {
 
     if (this.chapters) {
       this.chapters.forEach(chapter => {
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = o.chapterFillColor;
         ctx.beginPath();
         ctx.arc(this.globalX + this.width * (chapter / this.total), this.globalY + this.height / 2, o.chapterRadius, 0, Math.PI * 2);
         ctx.closePath();
@@ -169,9 +173,9 @@ class Playbar extends GraphicComponent {
       });
     }
 
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = o.playedColor;
-    ctx.lineWidth = 5;
+    ctx.fillStyle = o.playPointFillColor;
+    ctx.strokeStyle = o.playPointBorderColor;
+    ctx.lineWidth = o.playPointWidth;
     ctx.beginPath();
     ctx.arc(this.globalX + this.width * ratio, this.globalY + this.height / 2, o.playPointRadius, 0, Math.PI * 2);
     ctx.stroke();
