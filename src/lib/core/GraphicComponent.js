@@ -73,13 +73,46 @@ class GraphicComponent extends GraphicContainer {
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  /**
+   * Converts global coordinates of the canvas into local coordinates of this component.
+   *
+   * @param {Number} x The global canvas x position.
+   * @param {Number} y The global canvas y position.
+   * @returns {vec2}
+   */
+  globalToLocal(x, y) {
+    return vec2.fromValues(x - this.globalX, y - this.globalY);
+  }
+
+  globalInBounds(x, y) {
+    return x >= this.globalX && x <= this.globalX + this.width &&
+        y >= this.globalY && y <= this.globalY + this.height;
+  }
+
+  beginClip() {
+    let ctx = this.renderer.ctx;
+    let x = this.globalX;
+    let y = this.globalY;
+
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.rect(x, y, this.width, this.height);
+    ctx.clip();
+  }
+
+  endClip() {
+    let ctx = this.renderer.ctx;
+
+    ctx.restore();
+  }
+
   renderBackground() {
     let ctx = this.renderer.ctx;
     let o = this.options;
 
     ctx.fillStyle = o.bgColor;
 
-    console.log('filling', this.globalX, this.globalY, this.width, this.height);
     ctx.fillRect(this.globalX, this.globalY, this.width, this.height);
   }
 }
