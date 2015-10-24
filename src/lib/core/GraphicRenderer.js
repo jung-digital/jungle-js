@@ -1,3 +1,5 @@
+'use strict';
+
 /*============================================*\
  * Imports
 \*============================================*/
@@ -47,11 +49,11 @@ class GraphicRenderer extends GraphicComponent {
     super(options, id);
 
     this.canvas = canvas;
-    this.ctx = canvas.getContext('2d');
 
     let o = this.options = options || {};
     o.canvasAutoClear = o.canvasAutoClear !== undefined ? o.canvasAutoClear : true;
-    o.fillRenderer = o.fillRenderer === false ? false : true;
+    o.fillWindowWidth = o.fillWindowWidth === true ? true : false;
+    o.stretchToCanvas = o.stretchToCanvas === true ? true : false;
     o.aspectRatio = o.aspectRatio;
 
     o.debugPosX = o.debugPosX || 10;
@@ -62,17 +64,12 @@ class GraphicRenderer extends GraphicComponent {
     // lastTime is the previous time that the render loop was called
     this.lastTime = 0;
 
-    if (!o.fillRenderer) {
-      this.canvasTargetWidth = this.width = o.width || DEFAULT_WIDTH;
-      this.canvasTargetHeight = this.height = o.height || DEFAULT_HEIGHT;
-    } else {
-      setTimeout(this._resizeHandler.bind(this), 1);
+    if (!o.fillWindowWidth) {
+      this.canvasTargetWidth = this.width = (o.width || DEFAULT_WIDTH);
+      this.canvasTargetHeight = this.height = (o.height || DEFAULT_HEIGHT);
     }
 
-    canvas.setAttribute('width', DEFAULT_WIDTH);
-    canvas.setAttribute('height', DEFAULT_HEIGHT);
-
-    this.bounds = new Rect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    setTimeout(this._resizeHandler.bind(this), 1);
 
     window.addEventListener('resize', this._resizeHandler.bind(this));
     this.lastScrollTop = window.pageYOffset;
@@ -146,24 +143,33 @@ class GraphicRenderer extends GraphicComponent {
     let prevWidth = this.canvas.width;
     let prevHeight = this.canvas.height;
 
-    if (this.options.fillRenderer) {
+    if (this.options.fillWindowWidth) {
       var w = window.innerWidth;
       var h = this.options.aspectRatio ? w / this.options.aspectRatio : window.innerHeight;
 
-      this.canvas.width = this.canvasTargetWidth = this.width = w;
-      this.canvas.style.width = w + 'px';
+      this.canvasTargetWidth = this.width = w;
+      this.canvasTargetHeight = this.height = h;
 
-      this.canvas.height = this.canvasTargetHeight = this.height = h;
-      this.canvas.style.height = h + 'px';
+      this.canvas.setAttribute('width', this.canvasTargetWidth);
+      this.canvas.setAttribute('height', this.canvasTargetHeight);
+
+      if (this.options.stretchToCanvas) {
+        this.canvas.style.width = w + 'px';
+        this.canvas.style.height = h + 'px';
+      }
     } else {
-      var i = Math.min(800, window.innerWidth);
 
-      this.canvas.style.width = this.canvasTargetWidth = i;
-      this.canvas.style.height = this.canvasTargetHeight = i / 1.618;
+      this.canvas.setAttribute('width', this.canvasTargetWidth);
+      this.canvas.setAttribute('height', this.canvasTargetHeight);
+
+      if (!this.options.stretchToCanvas) {
+        this.canvas.style.width = this.canvasTargetWidth + 'px';
+        this.canvas.style.height = this.canvasTargetHeight + 'px';
+      }
     }
 
-    this.scaleX = this.canvas.width / DEFAULT_WIDTH;
-    this.scaleY = this.canvas.height / DEFAULT_WIDTH;
+    this.scaleX = this.canvas.width / parseFloat(this.canvas.style.width);
+    this.scaleY = this.canvas.height / parseFloat(this.canvas.style.height);
 
     this.bounds.width = this.canvas.width;
     this.bounds.height = this.canvas.height;
@@ -182,6 +188,14 @@ class GraphicRenderer extends GraphicComponent {
    */
   resizeHandler() {
     this.debug('Resized!', this.canvasTargetWidth, this.canvasTargetHeight);
+  }
+
+  processMouseEvent(event) {
+    return {
+      event: event,
+      canvasX: event.clientX - (canvas.offsetLeft - window.pageXOffset),
+      canvasY: event.clientY - (canvas.offsetTop - window.pageYOffset)
+    };
   }
 
   /**
@@ -218,7 +232,7 @@ class GraphicRenderer extends GraphicComponent {
    * Not called when options.mouseEnabled is false.
    */
   _canvasOnMouseClickHandler(event) {
-    this.dispatch(new Event(MouseEvents.CLICK, event));
+    this.dispatch(new Event(MouseEvents.CLICK, this.processMouseEvent(event)));
   }
 
   /**
@@ -227,7 +241,7 @@ class GraphicRenderer extends GraphicComponent {
    * Not called when options.mouseEnabled is false.
    */
   _canvasOnMouseDownHandler(event) {
-    this.dispatch(new Event(MouseEvents.MOUSE_DOWN, event));
+    this.dispatch(new Event(MouseEvents.MOUSE_DOWN, this.processMouseEvent(event)));
   }
 
   /**
@@ -236,7 +250,7 @@ class GraphicRenderer extends GraphicComponent {
    * Not called when options.mouseEnabled is false.
    */
   _canvasOnMouseUpHandler(event) {
-    this.dispatch(new Event(MouseEvents.MOUSE_UP, event));
+    this.dispatch(new Event(MouseEvents.MOUSE_UP, this.processMouseEvent(event)));
   }
 
   /**
@@ -245,7 +259,7 @@ class GraphicRenderer extends GraphicComponent {
    * Not called when options.mouseEnabled is false.
    */
   _canvasOnMouseMoveHandler(event) {
-    this.dispatch(new Event(MouseEvents.MOUSE_MOVE, event));
+    this.dispatch(new Event(MouseEvents.MOUSE_MOVE, this.processMouseEvent(event)));
   }
 
   /**
@@ -253,8 +267,8 @@ class GraphicRenderer extends GraphicComponent {
    *
    * Not called when options.mouseEnabled is false.
    */
-  _canvasOnMouseOutHandler() {
-    this.dispatch(new Event(MouseEvents.MOUSE_OUT));
+  _canvasOnMouseOutHandler(event) {
+    this.dispatch(new Event(MouseEvents.MOUSE_OUT, this.processMouseEvent(event)));
   }
 
   /**
@@ -295,6 +309,8 @@ class GraphicRenderer extends GraphicComponent {
    * @private
    */
   _onFrameHandler(timestamp) {
+    this.ctx = this.ctx || canvas.getContext('2d');
+
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
 
     if (this.options.canvasAutoClear !== undefined) {

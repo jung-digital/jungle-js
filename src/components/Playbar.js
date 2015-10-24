@@ -125,23 +125,25 @@ class Playbar extends GraphicComponent {
   }
 
   canvasMouseDownHandler(event) {
-    if (this.globalInBounds(event.properties.clientX, event.properties.clientY)) {
+    if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
       this.mouseDown = true;
 
-      this._updateFromMouse(this.globalToLocal(event.properties.clientX, event.properties.clientY));
+      this._updateFromMouse(this.globalToLocal(event.properties.canvasX, event.properties.canvasY));
     }
   }
 
   canvasMouseUpHandler(event) {
     if (this.mouseDown) {
-      this._updateFromMouse(this.globalToLocal(event.properties.clientX, event.properties.clientY));
+      this._updateFromMouse(this.globalToLocal(event.properties.canvasX, event.properties.canvasY));
       this.mouseDown = false;
     }
   }
 
   canvasMouseMoveHandler(event) {
+    this.mouseLoc = vec2.fromValues(event.properties.canvasX, event.properties.canvasY);
+
     if (this.mouseDown) {
-      this._updateFromMouse(this.globalToLocal(event.properties.clientX, event.properties.clientY));
+      this._updateFromMouse(this.globalToLocal(event.properties.canvasX, event.properties.canvasY));
     }
   }
 
@@ -184,6 +186,11 @@ class Playbar extends GraphicComponent {
     ctx.fill();
 
     this.endClip();
+
+    ctx.fillStyle = 'black';
+    if (this.mouseLoc) {
+      ctx.fillRect(this.mouseLoc[0], this.mouseLoc[1], 10, 10);
+    }
   }
 }
 

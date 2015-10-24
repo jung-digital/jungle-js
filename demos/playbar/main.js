@@ -12,7 +12,8 @@ window.renderer = new Lib.GraphicRenderer(canvas, {
 window.playbar = new Playbar({
   total: 100,
   current: 0,
-  boundsPercent: new Lib.util.Rect(0.1, 0.1, 0.8, 0.8),
+  boundsPercent: new Lib.util.Rect(0.1, 0.1, 0.8, NaN),
+  bounds: new Lib.util.Rect(0, 0, 0, 20),
   chapters: [25,50,75]
 }, 'playbar');
 
