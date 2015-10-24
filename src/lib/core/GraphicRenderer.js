@@ -44,7 +44,7 @@ class GraphicRenderer extends GraphicComponent {
    */
   constructor(canvas, options, id) {
     if (!canvas) {
-      throw 'Please provide a canvas to GraphicRenderer.';
+      throw 'Please provide a canvas to GraphicRenderer. Thank you and have a nice day.';
     }
     super(options, id);
 
@@ -54,6 +54,7 @@ class GraphicRenderer extends GraphicComponent {
     o.canvasAutoClear = o.canvasAutoClear !== undefined ? o.canvasAutoClear : true;
     o.fillWindowWidth = o.fillWindowWidth === true ? true : false;
     o.stretchToCanvas = o.stretchToCanvas === true ? true : false;
+    o.adjustSizeToCSS = o.adjustSizeToCSS === true ? true : false;
     o.aspectRatio = o.aspectRatio;
 
     o.debugPosX = o.debugPosX || 10;
@@ -143,7 +144,14 @@ class GraphicRenderer extends GraphicComponent {
     let prevWidth = this.canvas.width;
     let prevHeight = this.canvas.height;
 
-    if (this.options.fillWindowWidth) {
+    if (this.options.adjustSizeToCSS) {
+
+      this.canvasTargetWidth = parseFloat(this.canvas.clientWidth);
+      this.canvasTargetHeight = parseFloat(this.canvas.clientHeight);
+
+      this.canvas.setAttribute('width', this.canvasTargetWidth);
+      this.canvas.setAttribute('height', this.canvasTargetHeight);
+    } else if (this.options.fillWindowWidth) {
       var w = window.innerWidth;
       var h = this.options.aspectRatio ? w / this.options.aspectRatio : window.innerHeight;
 

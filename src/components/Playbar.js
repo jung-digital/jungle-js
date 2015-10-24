@@ -187,10 +187,7 @@ class Playbar extends GraphicComponent {
 
     this.endClip();
 
-    ctx.fillStyle = 'black';
-    if (this.mouseLoc) {
-      ctx.fillRect(this.mouseLoc[0], this.mouseLoc[1], 10, 10);
-    }
+    this.renderAfterEffects();
   }
 }
 

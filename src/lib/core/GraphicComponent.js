@@ -115,6 +115,38 @@ class GraphicComponent extends GraphicContainer {
 
     ctx.fillRect(this.globalX, this.globalY, this.width, this.height);
   }
+
+  renderAfterEffects() {
+    let o = this.options;
+    let ctx = this.renderer.ctx;
+
+    if (o.shadow) {
+      ctx.save();
+      this.beginClip();
+
+      ctx.shadowColor   = o.shadow.shadowColor || 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowOffsetX = o.shadow.offsetX || 2;
+      ctx.shadowOffsetY = o.shadow.offsetY || 2;
+      ctx.shadowBlur    = o.shadow.shadowBlur || 6;
+
+      ctx.beginPath();
+
+      ctx.moveTo(this.globalX - 1, this.globalY - 1);
+      ctx.lineTo(this.globalX + this.width + 1, this.globalY - 1);
+      ctx.lineTo(this.globalX + this.width + 1, this.globalY + this.height + 1);
+      ctx.lineTo(this.globalX - 1, this.globalY + this.height + 1);
+      ctx.lineTo(this.globalX - 1, this.globalY - 1);
+
+      ctx.closePath();
+
+      ctx.lineWidth = 0;
+      ctx.strokeStyle = 'rgba(255,0,0,1)';
+      ctx.stroke();
+
+      this.endClip();
+      ctx.restore();
+    }
+  }
 }
 
 export default GraphicComponent;
