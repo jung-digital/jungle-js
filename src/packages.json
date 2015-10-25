@@ -22,5 +22,9 @@
   {
     "key": "Playbar",
     "entry": "src/components/Playbar.js"
+  },
+  {
+    "key": "Callout",
+    "entry": "src/components/Callout.js"
   }
 ]

@@ -7,6 +7,7 @@ import GraphicContainer from './GraphicContainer';
 import GraphicEvents from './GraphicEvents';
 import Event from './util/Event';
 import Rect from './util/Rect';
+import {fillRectRadius} from './util/Graphics';
 
 /*============================================*\
  * Class
@@ -30,6 +31,10 @@ class GraphicComponent extends GraphicContainer {
     let o = this.options;
 
     o.bgColor = o.bgColor || '#AAAAAA';
+    o.strokeStyle = o.strokeStyle || '#333333';
+    o.lineWidth = o.lineWidth || 2;
+    o.cornerRadius = o.cornerRadius || 0;
+    o.clip = o.clip === true ? true : false;
 
     this.bounds = o.bounds || new Rect(0,0,0,0);
     this.boundsPercent = o.boundsPercent || new Rect(NaN, NaN, NaN, NaN);
@@ -90,21 +95,25 @@ class GraphicComponent extends GraphicContainer {
   }
 
   beginClip() {
-    let ctx = this.renderer.ctx;
-    let x = this.globalX;
-    let y = this.globalY;
+    if (this.options.clip) {
+      let ctx = this.renderer.ctx;
+      let x = this.globalX;
+      let y = this.globalY;
 
-    ctx.save();
+      ctx.save();
 
-    ctx.beginPath();
-    ctx.rect(x, y, this.width, this.height);
-    ctx.clip();
+      ctx.beginPath();
+      ctx.rect(x - 1, y - 1, this.width + 2, this.height + 2);
+      ctx.clip();
+    }
   }
 
   endClip() {
-    let ctx = this.renderer.ctx;
+    if (this.options.clip) {
+      let ctx = this.renderer.ctx;
 
-    ctx.restore();
+      ctx.restore();
+    }
   }
 
   renderBackground() {
@@ -112,10 +121,19 @@ class GraphicComponent extends GraphicContainer {
     let o = this.options;
 
     ctx.fillStyle = o.bgColor;
+    ctx.strokeStyle = o.strokeStyle;
+    ctx.lineWidth = o.lineWidth;
 
-    ctx.fillRect(this.globalX, this.globalY, this.width, this.height);
+    if (o.cornerRadius) {
+      fillRectRadius(ctx, this.globalX, this.globalY, this.width, this.height, o.cornerRadius);
+    } else {
+      ctx.fillRect(this.globalX, this.globalY, this.width, this.height);
+    }
   }
 
+  /**
+   * Render the after effects like a shadow.
+   */
   renderAfterEffects() {
     let o = this.options;
     let ctx = this.renderer.ctx;

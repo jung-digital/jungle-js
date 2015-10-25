@@ -35,18 +35,20 @@ class Playbar extends GraphicComponent {
    * @param {String} id The id of the playbar.
    */
   constructor(options, id) {
+    this.default('clip', true);
+    
     super(options, id || 'starfield');
 
     let o = this.options;
 
     o.bgColor = '#dddddd';
-    o.playedColor = o.playedColor || '#365dbf';
-    o.chapterRadius = o.chapterRadius || 10;
-    o.chapterFillColor = o.chapterFillColor || '#365dbf';
+    o.playedColor = o.playedColor || '#5dbf36';
+    o.chapterRadius = o.chapterRadius || 4;
+    o.chapterFillColor = o.chapterFillColor || '#5dbf36';
     o.chapterFillColorPlayed = o.chapterFillColorPlayed || 'white';
-    o.playPointRadius = o.playPointRadius || 12;
-    o.playPointWidth = o.playPointWidth || 5;
-    o.playPointBorderColor = o.playPointBorderColor || '#365dbf';
+    o.playPointRadius = o.playPointRadius || 9;
+    o.playPointWidth = o.playPointWidth || 6;
+    o.playPointBorderColor = o.playPointBorderColor || '#5dbf36';
     o.playPointFillColor = o.playPointFillColor || 'white';
     o.clickToAdvance = o.clickToAdvance === false ? false : true;
 

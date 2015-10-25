@@ -34,11 +34,29 @@ class GraphicContainer extends Graphic {
     this.children = [];
 
     this.visible = true;
+
+    // Apply any defaults that are set up.
+    for (var k in this.defaults) {
+      if (this.options[k] === undefined) {
+        this.options[k] = this.defaults[k];
+      }
+    }
   }
 
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  /**
+   * Defaults a property value on the options object unless the user specifies otherwise.
+   *
+   * @param {String} prop The property name.
+   * @param {*} value The default value.
+   */
+  default(prop, value) {
+    this.defaults = this.defaults || {};
+    this.defaults[prop] = value;
+  }
+
   /**
    * Add a child to this GraphicContainer.
    *
