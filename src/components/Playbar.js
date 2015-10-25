@@ -12,6 +12,7 @@ import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
 import Rect from '../lib/core/util/Rect';
 import PlaybarEvents from './events/PlaybarEvents';
 import MouseEvents from '../lib/core/events/MouseEvents';
+import Event from '../lib/core/util/Event';
 
 /*============================================*\
  * Constants
@@ -41,7 +42,8 @@ class Playbar extends GraphicComponent {
     o.bgColor = '#dddddd';
     o.playedColor = o.playedColor || '#365dbf';
     o.chapterRadius = o.chapterRadius || 10;
-    o.chapterFillColor = o.chapterFillColor || 'white';
+    o.chapterFillColor = o.chapterFillColor || '#365dbf';
+    o.chapterFillColorPlayed = o.chapterFillColorPlayed || 'white';
     o.playPointRadius = o.playPointRadius || 12;
     o.playPointWidth = o.playPointWidth || 5;
     o.playPointBorderColor = o.playPointBorderColor || '#365dbf';
@@ -106,9 +108,15 @@ class Playbar extends GraphicComponent {
   // Methods
   //---------------------------------------------
   _updateFromMouse(localVec2) {
+    console.log('Updating from mouse');
     if (localVec2[0] >= 0 && localVec2[0] <= this.width) {
       this.current = (localVec2[0] / this.width) * this.total;
     }
+
+    this.dispatch(new Event(PlaybarEvents.CHANGE, {
+      current: this.current,
+      total: this.total
+    }));
   }
 
   //---------------------------------------------
@@ -125,6 +133,7 @@ class Playbar extends GraphicComponent {
   }
 
   canvasMouseDownHandler(event) {
+    console.log('Mouse Down!', event);
     if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
       this.mouseDown = true;
 
@@ -167,9 +176,9 @@ class Playbar extends GraphicComponent {
 
     if (this.chapters) {
       this.chapters.forEach(chapter => {
-        ctx.fillStyle = o.chapterFillColor;
+        ctx.fillStyle = chapter.position < this.current ? o.chapterFillColorPlayed : o.chapterFillColor;
         ctx.beginPath();
-        ctx.arc(this.globalX + this.width * (chapter / this.total), this.globalY + this.height / 2, o.chapterRadius, 0, Math.PI * 2);
+        ctx.arc(this.globalX + this.width * (chapter.position / this.total), this.globalY + this.height / 2, o.chapterRadius, 0, Math.PI * 2);
         ctx.closePath();
         ctx.fill();
       });
@@ -192,6 +201,7 @@ class Playbar extends GraphicComponent {
 }
 
 if (window) {
+  window.PlaybarEvents = PlaybarEvents;
   window.Playbar = Playbar;
   window.Lib = Lib;
 }

@@ -199,10 +199,12 @@ class GraphicRenderer extends GraphicComponent {
   }
 
   processMouseEvent(event) {
+    var rect = this.canvas.getBoundingClientRect();
+
     return {
       event: event,
-      canvasX: event.clientX - (canvas.offsetLeft - window.pageXOffset),
-      canvasY: event.clientY - (canvas.offsetTop - window.pageYOffset)
+      canvasX: event.clientX - rect.left,
+      canvasY: event.clientY - rect.top
     };
   }
 

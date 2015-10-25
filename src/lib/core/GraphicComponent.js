@@ -124,10 +124,10 @@ class GraphicComponent extends GraphicContainer {
       ctx.save();
       this.beginClip();
 
-      ctx.shadowColor   = o.shadow.shadowColor || 'rgba(0, 0, 0, 0.5)';
+      ctx.shadowColor   = o.shadow.color || 'rgba(0, 0, 0, 0.5)';
       ctx.shadowOffsetX = o.shadow.offsetX || 2;
       ctx.shadowOffsetY = o.shadow.offsetY || 2;
-      ctx.shadowBlur    = o.shadow.shadowBlur || 6;
+      ctx.shadowBlur    = o.shadow.blur || 6;
 
       ctx.beginPath();
 
