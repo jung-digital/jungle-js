@@ -36,6 +36,8 @@ class GraphicComponent extends GraphicContainer {
     o.cornerRadius = o.cornerRadius || 0;
     o.clip = o.clip === true ? true : false;
 
+    this.setupFontOptions(options);
+
     this.bounds = o.bounds || new Rect(0,0,0,0);
     this.boundsPercent = o.boundsPercent || new Rect(NaN, NaN, NaN, NaN);
   }
@@ -78,6 +80,34 @@ class GraphicComponent extends GraphicContainer {
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  /**
+   * Setup the font options and default them if necessary.
+   *
+   * @param {Object} options The options to setup.
+   */
+  setupFontOptions(options) {
+    let o = this.options;
+
+    o.font = options.font || o.font || '12px Georgia white';
+    o.color = options.color || o.color || 'black';
+  }
+
+  /**
+   * Renders text using this component's font styles from its options.
+   *
+   * @param {Number} x X coordinate of where to render the text.
+   * @param {Number} y X coordinate of where to render the text.
+   * @param {String} text The text to render.
+   */
+  renderText(x, y, text) {
+    let ctx = this.renderer.ctx;
+    let o = this.options;
+
+    ctx.font = o.font;
+    ctx.fillStyle = o.color;
+    ctx.fillText(text, x, y);
+  }
+
   /**
    * Converts global coordinates of the canvas into local coordinates of this component.
    *

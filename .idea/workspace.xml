@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="271bf157-5246-416f-a7ea-b0dcefc4c60b" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/components/Callout.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/lib/core/util/Graphics.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/demos/callout/index.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/demos/callout/main.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/Callout.js" afterPath="$PROJECT_DIR$/src/components/Callout.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicContainer.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicContainer.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/Playbar.js" afterPath="$PROJECT_DIR$/src/components/Playbar.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/packages.json" afterPath="$PROJECT_DIR$/src/packages.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="jd-js-lib.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,8 +39,8 @@
       <file leaf-file-name="Callout.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/Callout.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.2924791">
-              <caret line="79" column="3" selection-start-line="79" selection-start-column="3" selection-end-line="79" selection-end-column="3" />
+            <state vertical-scroll-proportion="0.5821727">
+              <caret line="87" column="12" selection-start-line="87" selection-start-column="12" selection-end-line="87" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -126,8 +119,8 @@
       <file leaf-file-name="GraphicComponent.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicComponent.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.111111">
-              <caret line="133" column="5" selection-start-line="133" selection-start-column="5" selection-end-line="133" selection-end-column="5" />
+            <state vertical-scroll-proportion="-6.037037">
+              <caret line="132" column="17" selection-start-line="132" selection-start-column="6" selection-end-line="132" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -188,9 +181,9 @@
         <option value="$PROJECT_DIR$/demos/callout/main.js" />
         <option value="$PROJECT_DIR$/src/components/Playbar.js" />
         <option value="$PROJECT_DIR$/src/lib/core/GraphicContainer.js" />
-        <option value="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" />
         <option value="$PROJECT_DIR$/demos/callout/index.html" />
         <option value="$PROJECT_DIR$/src/lib/core/util/Graphics.js" />
+        <option value="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" />
         <option value="$PROJECT_DIR$/src/components/Callout.js" />
       </list>
     </option>
@@ -898,16 +891,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicRenderer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.272727">
-          <caret line="342" column="88" selection-start-line="340" selection-start-column="6" selection-end-line="342" selection-end-column="88" />
-          <folding>
-            <element signature="e#15#123#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/core/Graphic.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -932,14 +915,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicComponent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.111111">
-          <caret line="133" column="5" selection-start-line="133" selection-start-column="5" selection-end-line="133" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/demos/callout/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-11.875">
@@ -956,10 +931,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicRenderer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.272727">
+          <caret line="342" column="88" selection-start-line="340" selection-start-column="6" selection-end-line="342" selection-end-column="88" />
+          <folding>
+            <element signature="e#15#123#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicComponent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.037037">
+          <caret line="132" column="17" selection-start-line="132" selection-start-column="6" selection-end-line="132" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/Callout.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.2924791">
-          <caret line="79" column="3" selection-start-line="79" selection-start-column="3" selection-end-line="79" selection-end-column="3" />
+        <state vertical-scroll-proportion="0.5821727">
+          <caret line="87" column="12" selection-start-line="87" selection-start-column="12" selection-end-line="87" selection-end-column="12" />
           <folding />
         </state>
       </provider>

@@ -79,6 +79,17 @@ class Callout extends GraphicComponent {
     fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, o.cornerRadius, o.calloutPointRatio, o.calloutSide, true, true);
   }
 
+  beginClip() {
+    let o = this.options;
+    let ctx = this.renderer.ctx;
+
+    ctx.save();
+
+    fillCallout(ctx, this.globalX - 1, this.globalY - 1, this.width + 2, this.height + 2, o.cornerRadius, o.calloutPointRatio, o.calloutSide, true, false);
+
+    ctx.clip();
+  }
+
   //---------------------------------------------
   // Event Handlers
   //---------------------------------------------
@@ -108,6 +119,7 @@ class Callout extends GraphicComponent {
     this.beginClip();
 
     this.renderBackground();
+    this.renderText(this.globalX + (o.cornerRadius / 2), this.globalY + (o.cornerRadius / 2), this._text);
 
     this.endClip();
 
