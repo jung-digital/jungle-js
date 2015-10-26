@@ -40,6 +40,7 @@ class GraphicComponent extends GraphicContainer {
 
     this.bounds = o.bounds || new Rect(0,0,0,0);
     this.boundsPercent = o.boundsPercent || new Rect(NaN, NaN, NaN, NaN);
+    this.padding = o.padding || new Rect(0, 0, 0, 0);
   }
 
   //---------------------------------------------
@@ -99,13 +100,16 @@ class GraphicComponent extends GraphicContainer {
    * @param {Number} y X coordinate of where to render the text.
    * @param {String} text The text to render.
    */
-  renderText(x, y, text) {
+  renderText(x, y, text, baseline) {
     let ctx = this.renderer.ctx;
     let o = this.options;
 
+    baseline = baseline || 'hanging';
+
     ctx.font = o.font;
     ctx.fillStyle = o.color;
-    ctx.fillText(text, x, y);
+    ctx.textBaseline = baseline;
+    ctx.fillText(text, this.globalX + x, this.globalY + y);
   }
 
   /**

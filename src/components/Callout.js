@@ -119,7 +119,7 @@ class Callout extends GraphicComponent {
     this.beginClip();
 
     this.renderBackground();
-    this.renderText(this.globalX + (o.cornerRadius / 2), this.globalY + (o.cornerRadius / 2), this._text);
+    this.renderText(this.padding.left, this.padding.top, this._text, true);
 
     this.endClip();
 

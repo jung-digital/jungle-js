@@ -7,10 +7,12 @@ import Lib from '../lib/Lib';
 import GraphicComponent from '../lib/core/GraphicComponent';
 import {hsvToRgb, rgbToFloat32, colorToHex, red, green, blue} from '../lib/core/util/Color';
 import {ran} from '../lib/core/util/Number';
+import {getFillCalloutOffset} from '../lib/core/util/Graphics';
 import GraphicEvents from '../lib/core/GraphicEvents';
 import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
 import Rect from '../lib/core/util/Rect';
 import PlaybarEvents from './events/PlaybarEvents';
+import Callout from './Callout';
 import MouseEvents from '../lib/core/events/MouseEvents';
 import Event from '../lib/core/util/Event';
 
@@ -36,7 +38,7 @@ class Playbar extends GraphicComponent {
    */
   constructor(options, id) {
     this.default('clip', true);
-    
+
     super(options, id || 'starfield');
 
     let o = this.options;
@@ -51,6 +53,8 @@ class Playbar extends GraphicComponent {
     o.playPointBorderColor = o.playPointBorderColor || '#5dbf36';
     o.playPointFillColor = o.playPointFillColor || 'white';
     o.clickToAdvance = o.clickToAdvance === false ? false : true;
+    o.calloutEnabled = o.calloutEnabled === false ? false : true;
+    o.chapterHoverDistance = o.chapterHoverDistance || 20;
 
     this.total = o.total || 100;
     this.current = o.current || 0;
@@ -110,7 +114,8 @@ class Playbar extends GraphicComponent {
   // Methods
   //---------------------------------------------
   _updateFromMouse(localVec2) {
-    console.log('Updating from mouse');
+    let o = this.options;
+
     if (localVec2[0] >= 0 && localVec2[0] <= this.width) {
       this.current = (localVec2[0] / this.width) * this.total;
     }
@@ -119,6 +124,55 @@ class Playbar extends GraphicComponent {
       current: this.current,
       total: this.total
     }));
+  }
+
+  /**
+   * Called whenever the mouse is moved to display a callout on the screen.
+   *
+   * @param {vec2} localVec2
+   * @private
+   */
+  _mouseMove(localVec2) {
+    let o = this.options;
+
+    if (o.calloutEnabled) {
+      let closestChapter = undefined;
+      let closestDis = Number.MAX_SAFE_INTEGER;
+      let w = this.width;
+
+      this.chapters.forEach(c => {
+        let dis = Math.abs(localVec2[0] - (this.globalX + (c.position / this.total) * w));
+        if (dis < closestDis) {
+          closestChapter = c;
+          closestDis = dis;
+        }
+      });
+
+      if (closestChapter && closestDis <= o.chapterHoverDistance) {
+        if (this._callout) {
+          this.removeChild(this._callout);
+        }
+
+        let offset = getFillCalloutOffset(130, 40, 5, 0.15);
+        let chapterX = (closestChapter.position / this.total) * w;
+
+        this._callout = new Callout({
+            text: closestChapter.text || 'Chapter text undefined.',
+            bounds: new Rect(chapterX + offset[0], offset[1], 130, 40),
+            color: 'white',
+            font: '12px Georgia',
+            bgColor: 'black',
+            padding: new Rect(20, 20, 20, 20),
+            cornerRadius: 5
+          });
+
+        this.addChild(this._callout);
+      } else {
+        if (this._callout) {
+          this.removeChild(this._callout);
+        }
+      }
+    }
   }
 
   //---------------------------------------------
@@ -152,6 +206,10 @@ class Playbar extends GraphicComponent {
 
   canvasMouseMoveHandler(event) {
     this.mouseLoc = vec2.fromValues(event.properties.canvasX, event.properties.canvasY);
+
+    if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
+      this._mouseMove(this.mouseLoc);
+    }
 
     if (this.mouseDown) {
       this._updateFromMouse(this.globalToLocal(event.properties.canvasX, event.properties.canvasY));

@@ -104,7 +104,30 @@ export function fillCallout(ctx, x, y, w, h, radius, calloutRatio, calloutSide, 
   }
 };
 
+/**
+ * Get the vec2 offset shift required to have a callout pointing at a particular location.
+ *
+ * @param {Number} w The callout width.
+ * @param {Number} h The callout height.
+ * @param {Number} radius The desired radius of the corners (needed for the calculation).
+ * @param {Number} calloutRatio Ratio of pointer location to side length.
+ * @param {String} calloutSide The side on which to have the callout pointer.
+ * @returns {vec2} A gl-matrix vec2 of the location.
+ */
+export function getFillCalloutOffset(w, h, radius, calloutRatio, calloutSide) {
+  calloutSide = calloutSide || 'bottom';
+
+  let wcr = w - (radius * 2);
+
+  if (calloutSide === 'bottom') {
+    return vec2.fromValues(-(radius + (wcr * (1 - calloutRatio))), -(h + (h * calloutRatio)));
+  }
+
+  return undefined;
+};
+
 export default {
   fillRectRadius: fillRectRadius,
-  fillCallout: fillCallout
+  fillCallout: fillCallout,
+  getFillCalloutOffset: getFillCalloutOffset
 };

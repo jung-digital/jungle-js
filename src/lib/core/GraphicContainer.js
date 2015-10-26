@@ -98,16 +98,19 @@ class GraphicContainer extends Graphic {
    * @param {Number} index
    */
   removeChildAt(index) {
-    if (ix < 0 || ix > this.children.length) {
+    if (index < 0 || index > this.children.length) {
       throw 'Child index out of bounds: ' + ix;
     }
 
-    var child = this.children.splice(ix, 1);
+    var child = this.children.splice(index, 1);
 
     child.renderer = undefined;
     child.parent = undefined;
 
-    child.dispatch(new Event(GraphicEvents.REMOVED));
+    if (child.hasOwnProperty('dispatch')) {
+      child.dispatch(new Event(GraphicEvents.REMOVED));
+    }
+
     this.dispatch(new Event(GraphicEvents.CHILD_REMOVED));
   }
 
