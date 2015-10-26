@@ -185,6 +185,13 @@ class Playbar extends GraphicComponent {
       this.renderer.addListener(MouseEvents.MOUSE_DOWN, this.canvasMouseDownHandler.bind(this));
       this.renderer.addListener(MouseEvents.MOUSE_MOVE, this.canvasMouseMoveHandler.bind(this));
       this.renderer.addListener(MouseEvents.MOUSE_UP, this.canvasMouseUpHandler.bind(this));
+      this.renderer.addListener(MouseEvents.MOUSE_OUT, this.canvasMouseOutHandler.bind(this));
+    }
+  }
+
+  canvasMouseOutHandler(event) {
+    if (this._callout) {
+      this.removeChild(this._callout);
     }
   }
 
@@ -209,6 +216,10 @@ class Playbar extends GraphicComponent {
 
     if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
       this._mouseMove(this.mouseLoc);
+    } else {
+      if (this._callout) {
+        this.removeChild(this._callout);
+      }
     }
 
     if (this.mouseDown) {
