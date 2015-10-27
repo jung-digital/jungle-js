@@ -6,9 +6,9 @@
 import GraphicContainer from '../lib/core/GraphicContainer';
 import {hsvToRgb, rgbToFloat32, colorToHex, red, green, blue} from '../lib/core/util/Color';
 import {ran} from '../lib/core/util/Number';
-import GraphicEvents from '../lib/core/GraphicEvents';
+import GraphicEvents from '../lib/core/events/GraphicEvents';
 import {PythagoreanCache} from '../lib/core/util/Trig';
-import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
+import GraphicRendererEvents from '../lib/core/events/GraphicRendererEvents';
 import Rect from '../lib/core/util/Rect';
 
 /*============================================*\

@@ -4,7 +4,7 @@
  * Imports
 \*============================================*/
 import Graphic from './Graphic';
-import GraphicEvents from './GraphicEvents';
+import GraphicEvents from './events/GraphicEvents';
 import Event from './util/Event';
 
 /*============================================*\

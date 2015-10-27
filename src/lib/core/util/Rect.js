@@ -39,6 +39,23 @@ class Rect {
     return this.x + this.width;
   }
 
+  set right(value) {
+    this.width = value - this.x;
+  }
+
+  /**
+   * Returns the left edge of the Rect.
+   *
+   * @returns {Number}
+   */
+  get left() {
+    return this.x;
+  }
+
+  set left(value) {
+    this.x = value;
+  }
+
   /**
    * Returns the bottom edge of the Rect.
    *
@@ -46,6 +63,23 @@ class Rect {
    */
   get bottom() {
     return this.y + this.height;
+  }
+
+  set bottom(value) {
+    this.height = value - this.y;
+  }
+
+  /**
+   * Returns the top edge of the Rect.
+   *
+   * @returns {Number}
+   */
+  get top() {
+    return this.y;
+  }
+
+  set top(value) {
+    this.y = value;
   }
 
   //------------------------------------

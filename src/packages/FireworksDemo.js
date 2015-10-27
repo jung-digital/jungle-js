@@ -1,6 +1,6 @@
 import _StarField from '../components/StarField';
 import _Fireworks from '../components/Fireworks';
-import Lib from '../lib/Lib';
+import Lib from '../lib/Jungle';
 
 window.Jungle = Lib;
 window.StarField = _StarField;

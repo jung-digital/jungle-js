@@ -5,7 +5,7 @@
 \*============================================*/
 import GraphicContainer from '../lib/core/GraphicContainer.js';
 import Firework from '../lib/gx/Firework.js';
-import GraphicEvents from '../lib/core/GraphicEvents';
+import GraphicEvents from '../lib/core/events/GraphicEvents';
 import MouseEvents from '../lib/core/events/MouseEvents';
 
 /*============================================*\

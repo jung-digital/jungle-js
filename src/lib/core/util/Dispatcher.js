@@ -27,6 +27,11 @@ class Dispatcher {
    * @param {Function} callback The function to call when the event is dispatched.
    */
   addListener(type, callback) {
+    if (!type) {
+      throw new Error('Expected a type object to be provided to Dispatcher.');
+    } else if (!type.type) {
+      throw new Error('Expected the provided type object to have a type property when provided to Dispatcher.');
+    }
     this.listeners[type] = this.listeners[type] || [];
     this.listeners[type].push(callback);
   }

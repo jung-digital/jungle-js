@@ -4,7 +4,7 @@
  * Imports
 \*============================================*/
 import GraphicComponent from './GraphicComponent';
-import GraphicRendererEvents from './GraphicRendererEvents';
+import GraphicRendererEvents from './events/GraphicRendererEvents';
 import MouseEvents from './events/MouseEvents';
 import Event from './util/Event';
 import Rect from './util/Rect';

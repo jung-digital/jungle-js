@@ -1,6 +1,12 @@
 'use strict';
 
 /**
+ * @type {Number} Width of the pointer on a callout.
+ */
+const CALLOUT_TAIL_GIRTH = 10;
+const CALLOUT_TAIL_LENGTH = 20;
+
+/**
  * Renders a rectangle with a single corner radius for all corners.
  *
  * @param {CanvasRenderingContext2D} ctx The context on which to render.
@@ -52,25 +58,35 @@ export function fillRectRadius(ctx, x, y, w, h, radius, autoStroke, autoFill) {
  * @param {Number} y The global y coordinate on the canvas.
  * @param {Number} w The width of the entire callout.
  * @param {Number} h The height of the entire callout. Includes the callout point.
+ * @param {Number} xTarget The xTarget of the callout to attempt to point at. For calloutSide 'top' and 'bottom'.
+ *   Default is undefined.
+ * @param {Number} yTarget The yTarget of the callout to attempt to point at. For calloutSide 'left' and 'right'.
+ *   Default is undefined.
  * @param {Number} radius The radius of the corners of the callout.
- * @param {Number} calloutRatio The ratio of the callout point's width / height to the width/height of the callout.
  * @param {String} calloutSide Under construction, but right now can only be 'bottom'.
  * @param {Boolean} autoStroke True if you want stroke() called. Default is true.
  * @param {Boolean} autoFill True if you want fill() called. Default is true.
  */
-export function fillCallout(ctx, x, y, w, h, radius, calloutRatio, calloutSide, autoStroke, autoFill) {
+export function fillCallout(ctx, x, y, w, h, xTarget, yTarget, radius, calloutSide, autoStroke, autoFill, calloutTailLength, calloutTailGirth) {
+  xTarget = xTarget || x + w - radius;
+
+  let ctl = calloutTailLength || CALLOUT_TAIL_LENGTH;
+  let ctg = calloutTailGirth || CALLOUT_TAIL_GIRTH;
+
   autoStroke = autoStroke === undefined ? true : autoStroke;
   autoFill = autoFill === undefined ? true : autoFill;
 
   calloutSide = calloutSide || 'bottom';
-  calloutRatio = calloutRatio || 0.15;
   radius = radius || 10;
 
   let cr = radius;
   let wcr = w - (cr * 2);
-  let pr = calloutRatio;
 
-  h = h - (h * pr);
+  if (calloutSide === 'top' || calloutSide === 'bottom') {
+    h = h - ctl;
+  } else {
+    w = w - ctg;
+  }
 
   ctx.beginPath();
   ctx.moveTo(x, y + cr);
@@ -84,9 +100,14 @@ export function fillCallout(ctx, x, y, w, h, radius, calloutRatio, calloutSide, 
   ctx.quadraticCurveTo(x + w, y + h, x + w - cr, y + h);
 
   if (calloutSide === 'bottom') {
-    ctx.lineTo(x + cr + (wcr * (1 - pr)), y + h);
-    ctx.lineTo(x + cr + (wcr * (1 - pr)), y + h + (h * pr));
-    ctx.lineTo(x + cr + (wcr * (1 - pr * 2)), y + h);
+    let xLim = Math.min(Math.max(x + cr, xTarget), x + w - cr);
+    let rl = xLim > x + (w / 2) ? 'r' : 'l'; // Right or left pointing tail?
+    let trx = rl === 'r' ? xLim : xLim + ctg;
+    let tlx = rl === 'r' ? xLim - ctg : xLim;
+
+    ctx.lineTo(trx, y + h);
+    ctx.lineTo(rl === 'r' ? trx : tlx, y + h + ctl);
+    ctx.lineTo(tlx, y + h);
     ctx.lineTo(x + cr, y + h);
   } else {
     ctx.lineTo(x + cr, y + h);  // Lower left, LR of curve
@@ -105,29 +126,32 @@ export function fillCallout(ctx, x, y, w, h, radius, calloutRatio, calloutSide, 
 };
 
 /**
- * Get the vec2 offset shift required to have a callout pointing at a particular location.
+ * Given a Rect A and a Rect B and a target vec2, returns a vec2 that assures that repositions Rect A so that
+ * the majority of it fits within Rect B.
  *
- * @param {Number} w The callout width.
- * @param {Number} h The callout height.
- * @param {Number} radius The desired radius of the corners (needed for the calculation).
- * @param {Number} calloutRatio Ratio of pointer location to side length.
- * @param {String} calloutSide The side on which to have the callout pointer.
- * @returns {vec2} A gl-matrix vec2 of the location.
+ * @param {Rect} rectA
+ * @param {Rect} rectB
+ * @return {vec2}
  */
-export function getFillCalloutOffset(w, h, radius, calloutRatio, calloutSide) {
-  calloutSide = calloutSide || 'bottom';
-
-  let wcr = w - (radius * 2);
-
-  if (calloutSide === 'bottom') {
-    return vec2.fromValues(-(radius + (wcr * (1 - calloutRatio))), -(h + (h * calloutRatio)));
+export function fit(rectA, rectB) {
+  let x = 0;
+  let y = 0;
+  if (rectA.left < rectB.left) {
+    x = rectB.left;
+  } else if (rectA.left + rectA.width > rectB.left + rectB.width) {
+    x = rectB.right - rectA.width;
+  }
+  if (rectA.top < rectB.top) {
+    y = rectB.top;
+  } else if (rectA.top + rectA.height > rectB.top + rectB.height) {
+    y = rectB.bottom - rectA.height;
   }
 
-  return undefined;
+  return vec2.fromValues(x, y);
 };
 
 export default {
   fillRectRadius: fillRectRadius,
   fillCallout: fillCallout,
-  getFillCalloutOffset: getFillCalloutOffset
+  fit: fit
 };

@@ -4,7 +4,7 @@
  * Imports
  \*============================================*/
 import GraphicContainer from './GraphicContainer';
-import GraphicEvents from './GraphicEvents';
+import GraphicEvents from './events/GraphicEvents';
 import Event from './util/Event';
 import Rect from './util/Rect';
 import {fillRectRadius} from './util/Graphics';

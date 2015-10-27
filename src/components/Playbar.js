@@ -3,22 +3,18 @@
 /*============================================*\
  * Imports
  \*============================================*/
-import Lib from '../lib/Lib';
+import Lib from '../lib/Jungle';
 import GraphicComponent from '../lib/core/GraphicComponent';
 import {hsvToRgb, rgbToFloat32, colorToHex, red, green, blue} from '../lib/core/util/Color';
 import {ran} from '../lib/core/util/Number';
-import {getFillCalloutOffset} from '../lib/core/util/Graphics';
-import GraphicEvents from '../lib/core/GraphicEvents';
-import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
+import {fit} from '../lib/core/util/Graphics';
+import GraphicEvents from '../lib/core/events/GraphicEvents';
+import GraphicRendererEvents from '../lib/core/events/GraphicRendererEvents';
 import Rect from '../lib/core/util/Rect';
 import PlaybarEvents from './events/PlaybarEvents';
 import Callout from './Callout';
 import MouseEvents from '../lib/core/events/MouseEvents';
 import Event from '../lib/core/util/Event';
-
-/*============================================*\
- * Constants
- \*============================================*/
 
 /*============================================*\
  * Class
@@ -153,12 +149,18 @@ class Playbar extends GraphicComponent {
           this.removeChild(this._callout);
         }
 
-        let offset = getFillCalloutOffset(130, 40, 5, 0.15);
         let chapterX = (closestChapter.position / this.total) * w;
+
+        let r = new Rect(chapterX - 70, this.globalY - 50, 130, 40);
+        let v = fit(r, this.renderer.bounds);
+        r.left = v[0] - this.globalX;
+        r.top = v[1] - this.globalY;
+
+        console.log(r);
 
         this._callout = new Callout({
             text: closestChapter.text || 'Chapter text undefined.',
-            bounds: new Rect(chapterX + offset[0], offset[1], 130, 40),
+            bounds: r,
             color: 'white',
             font: '12px Georgia',
             bgColor: 'black',
@@ -190,6 +192,8 @@ class Playbar extends GraphicComponent {
   }
 
   canvasMouseOutHandler(event) {
+    this.mouseDown = false;
+
     if (this._callout) {
       this.removeChild(this._callout);
     }
@@ -217,6 +221,8 @@ class Playbar extends GraphicComponent {
     if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
       this._mouseMove(this.mouseLoc);
     } else {
+      this.mouseDown = false;
+
       if (this._callout) {
         this.removeChild(this._callout);
       }

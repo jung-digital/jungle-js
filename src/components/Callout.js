@@ -3,11 +3,11 @@
 /*============================================*\
  * Imports
  \*============================================*/
-import Lib from '../lib/Lib';
+import Lib from '../lib/Jungle';
 import GraphicComponent from '../lib/core/GraphicComponent';
 import {hsvToRgb, rgbToFloat32, colorToHex, red, green, blue} from '../lib/core/util/Color';
-import GraphicEvents from '../lib/core/GraphicEvents';
-import GraphicRendererEvents from '../lib/core/GraphicRendererEvents';
+import GraphicEvents from '../lib/core/events/GraphicEvents';
+import GraphicRendererEvents from '../lib/core/events/GraphicRendererEvents';
 import Rect from '../lib/core/util/Rect';
 import MouseEvents from '../lib/core/events/MouseEvents';
 import Event from '../lib/core/util/Event';
@@ -40,8 +40,12 @@ class Callout extends GraphicComponent {
     o.strokeStyle = o.strokeStyle || '#555555';
     o.lineWidth = o.lineWidth || 2;
     o.cornerRadius = o.cornerRadius || 20;
-    o.calloutSide = o.calloutSide || 'bottom';
-    o.calloutPointRatio = o.calloutPointRatio || 0.15;
+
+    this.calloutSide = o.calloutSide || 'bottom';
+    this.target = o.target || this._getDefaultTargetForSide(this.calloutSide);
+
+    let cr2 = o.cornerRadius / 2;
+    this.padding = options.padding || new Rect(cr2, cr2, cr2, cr2);
 
     this._text = o.text || '[Callout:text not set]';
 
@@ -61,9 +65,50 @@ class Callout extends GraphicComponent {
     this._text = value;
   }
 
+  /**
+   * The side at which the tail of the callout points.
+   *
+   * @returns {String} 'top', 'bottom', 'right', or 'left'
+   */
+  get calloutSide() {
+    return this._calloutSide;
+  }
+
+  set calloutSide(value) {
+    this._calloutSide = value;
+  }
+
+  /**
+   * The target vec2 at which to point the tail.
+   *
+   * @returns {vec2}
+   */
+  get target() {
+    return this._target;
+  }
+
+  set target(value) {
+    this._target = value;
+  }
+
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  /**
+   * Returns a default target vec2 for the provided side.
+   *
+   * @param {String} side 'top', 'bottom', 'left', or 'right'
+   * @returns {vec2} A vec2 of the target location.
+   * @private
+   */
+  _getDefaultTargetForSide(side) {
+    switch (side) {
+      case 'bottom': return vec2.fromValues(this.globalX + this.width - this.options.cornerRadius, this.globalY + this.height);
+    }
+
+    return undefined;
+  }
+
   /**
    * Render the background of the callout. This will include a point of origin and
    * rounded corners.
@@ -76,16 +121,19 @@ class Callout extends GraphicComponent {
     ctx.strokeStyle = o.strokeStyle;
     ctx.lineWidth = o.lineWidth * 0.75;
 
-    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, o.cornerRadius, o.calloutPointRatio, o.calloutSide, true, true);
+    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, this.target[0], this.target[1], o.cornerRadius, o.calloutSide, true, true);
   }
 
+  /**
+   * Create a mask for the content to be drawn on the canvas that matches the edge of the Callout.
+   */
   beginClip() {
     let o = this.options;
     let ctx = this.renderer.ctx;
 
     ctx.save();
 
-    fillCallout(ctx, this.globalX - 1, this.globalY - 1, this.width + 2, this.height + 2, o.cornerRadius, o.calloutPointRatio, o.calloutSide, true, false);
+    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, this.target[0], this.target[1], o.cornerRadius, o.calloutSide, false, false);
 
     ctx.clip();
   }
@@ -116,10 +164,11 @@ class Callout extends GraphicComponent {
     let ctx = this.renderer.ctx;
     let b = this.bounds;
 
+    this.renderBackground();
+
     this.beginClip();
 
-    this.renderBackground();
-    this.renderText(this.padding.left, this.padding.top, this._text, true);
+    this.renderText(this.padding.left, this.padding.top, this._text);
 
     this.endClip();
 
