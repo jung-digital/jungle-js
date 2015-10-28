@@ -134,8 +134,8 @@ export function fillCallout(ctx, x, y, w, h, xTarget, yTarget, radius, calloutSi
  * @return {vec2}
  */
 export function fit(rectA, rectB) {
-  let x = 0;
-  let y = 0;
+  let x = rectA.left;
+  let y = rectA.top;
   if (rectA.left < rectB.left) {
     x = rectB.left;
   } else if (rectA.left + rectA.width > rectB.left + rectB.width) {

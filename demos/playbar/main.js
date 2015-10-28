@@ -13,17 +13,23 @@ window.renderer = new Lib.GraphicRenderer(canvas, {
 window.playbar = new Playbar({
   total: 100,
   current: 0,
-  boundsPercent: new Lib.util.Rect(0.1, 0.4, 0.8, NaN),
+  boundsPercent: new Lib.util.Rect(0.0, 0.4, 1.0, NaN),
   bounds: new Lib.util.Rect(0, 0, 0, 20),
   chapters: [{
+    position: 2,
+    text: '2nd percentile.'
+  },{
     position: 25,
     text: '25th percentile.'
   },{
     position: 50,
-    text: '50th percentile.'
+    text: '50th percentile. Super long text!'
   },{
     position: 75,
     text: '75th percentile.'
+  },{
+    position: 98,
+    text: '98th percentile.'
   }],
   shadow: {
 

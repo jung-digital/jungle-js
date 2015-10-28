@@ -146,15 +146,15 @@ class Playbar extends GraphicComponent {
 
       if (closestChapter && closestDis <= o.chapterHoverDistance) {
         if (this._callout) {
-          this.removeChild(this._callout);
+          this.renderer.removeChild(this._callout);
         }
 
         let chapterX = (closestChapter.position / this.total) * w;
 
-        let r = new Rect(chapterX - 70, this.globalY - 50, 130, 40);
+        let r = new Rect(this.globalX + chapterX - 100, this.globalY - 45, 110, 40);
         let v = fit(r, this.renderer.bounds);
-        r.left = v[0] - this.globalX;
-        r.top = v[1] - this.globalY;
+        r.left = v[0];
+        r.top = v[1];
 
         console.log(r);
 
@@ -164,14 +164,18 @@ class Playbar extends GraphicComponent {
             color: 'white',
             font: '12px Georgia',
             bgColor: 'black',
-            padding: new Rect(20, 20, 20, 20),
-            cornerRadius: 5
+            padding: new Rect(10),
+            cornerRadius: 5,
+            tailLength: 10,
+            tailGirth: 5,
+            autoWidth: true,
+            target: vec2.fromValues(this.globalX + chapterX, 0)
           });
 
-        this.addChild(this._callout);
+        this.renderer.addChild(this._callout);
       } else {
         if (this._callout) {
-          this.removeChild(this._callout);
+          this.renderer.removeChild(this._callout);
         }
       }
     }
@@ -195,7 +199,7 @@ class Playbar extends GraphicComponent {
     this.mouseDown = false;
 
     if (this._callout) {
-      this.removeChild(this._callout);
+      this.renderer.removeChild(this._callout);
     }
   }
 
@@ -224,7 +228,7 @@ class Playbar extends GraphicComponent {
       this.mouseDown = false;
 
       if (this._callout) {
-        this.removeChild(this._callout);
+        this.renderer.removeChild(this._callout);
       }
     }
 
@@ -264,7 +268,7 @@ class Playbar extends GraphicComponent {
     ctx.fillStyle = o.playPointFillColor;
     ctx.strokeStyle = o.playPointBorderColor;
     ctx.lineWidth = o.playPointWidth;
-    
+
     ctx.beginPath();
     ctx.arc(this.globalX + this.width * ratio, this.globalY + this.height / 2, o.playPointRadius, 0, Math.PI * 2);
     ctx.stroke();

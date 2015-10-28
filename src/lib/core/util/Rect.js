@@ -21,10 +21,10 @@ class Rect {
    * @param {Number} height Height of rectangle
    */
   constructor(x, y, width, height) {
-    this.x = this.left = x;
-    this.y = this.top = y;
-    this.width = width;
-    this.height = height;
+    this.x = x;
+    this.y = y === undefined ? x : y;
+    this.width = width === undefined ? x : width;
+    this.height = height === undefined ? x : height;
   }
 
   //------------------------------------

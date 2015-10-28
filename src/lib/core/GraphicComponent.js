@@ -94,6 +94,22 @@ class GraphicComponent extends GraphicContainer {
   }
 
   /**
+   * Measure the provided text using the current font settings of this component.
+   *
+   * @param {String} text The text to measure.
+   * @returns {*|TextMetrics}
+   */
+  measureText(text) {
+    let ctx = this.renderer.ctx;
+    let o = this.options;
+
+    ctx.font = o.font;
+    ctx.fillStyle = o.color;
+
+    return ctx.measureText(text);
+  }
+
+  /**
    * Renders text using this component's font styles from its options.
    *
    * @param {Number} x X coordinate of where to render the text.

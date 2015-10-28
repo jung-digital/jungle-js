@@ -40,6 +40,9 @@ class Callout extends GraphicComponent {
     o.strokeStyle = o.strokeStyle || '#555555';
     o.lineWidth = o.lineWidth || 2;
     o.cornerRadius = o.cornerRadius || 20;
+    o.tailLength = o.tailLength || 20;
+    o.tailGirth = o.tailGirth || 10;
+    o.autoWidth = o.autoWidth || true;
 
     this.calloutSide = o.calloutSide || 'bottom';
     this.target = o.target || this._getDefaultTargetForSide(this.calloutSide);
@@ -47,10 +50,11 @@ class Callout extends GraphicComponent {
     let cr2 = o.cornerRadius / 2;
     this.padding = options.padding || new Rect(cr2, cr2, cr2, cr2);
 
-    this._text = o.text || '[Callout:text not set]';
+    this.text = o.text || '[Callout:text not set]';
 
     this.addListener(GraphicEvents.ADDED, this.addedHandler.bind(this));
   }
+
   //---------------------------------------------
   // Properties
   //---------------------------------------------
@@ -121,7 +125,7 @@ class Callout extends GraphicComponent {
     ctx.strokeStyle = o.strokeStyle;
     ctx.lineWidth = o.lineWidth * 0.75;
 
-    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, this.target[0], this.target[1], o.cornerRadius, o.calloutSide, true, true);
+    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, this.target[0], this.target[1], o.cornerRadius, o.calloutSide, true, true, o.tailLength, o.tailGirth);
   }
 
   /**
@@ -133,7 +137,7 @@ class Callout extends GraphicComponent {
 
     ctx.save();
 
-    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, this.target[0], this.target[1], o.cornerRadius, o.calloutSide, false, false);
+    fillCallout(ctx, this.globalX, this.globalY, this.width, this.height, this.target[0], this.target[1], o.cornerRadius, o.calloutSide, false, false, o.tailLength, o.tailGirth);
 
     ctx.clip();
   }
@@ -151,6 +155,10 @@ class Callout extends GraphicComponent {
       this.renderer.addListener(MouseEvents.MOUSE_DOWN, this.canvasMouseDownHandler.bind(this));
       this.renderer.addListener(MouseEvents.MOUSE_MOVE, this.canvasMouseMoveHandler.bind(this));
       this.renderer.addListener(MouseEvents.MOUSE_UP, this.canvasMouseUpHandler.bind(this));
+    }
+
+    if (this.options.autoWidth) {
+      this.width = this.measureText(this._text).width + this.padding.left + this.padding.right - 9;
     }
   }
 
