@@ -151,7 +151,7 @@ class Playbar extends GraphicComponent {
 
         let chapterX = (closestChapter.position / this.total) * w;
 
-        let r = new Rect(this.globalX + chapterX - 100, this.globalY - 45, 110, 40);
+        let r = new Rect(this.globalX + chapterX - 20, this.globalY - 45, 110, 40);
         let v = fit(r, this.renderer.bounds);
         r.left = v[0];
         r.top = v[1];

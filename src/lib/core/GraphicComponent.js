@@ -153,7 +153,7 @@ class GraphicComponent extends GraphicContainer {
       ctx.save();
 
       ctx.beginPath();
-      ctx.rect(x - 1, y - 1, this.width + 2, this.height + 2);
+      ctx.rect(x, y, this.width, this.height);
       ctx.clip();
     }
   }
@@ -199,16 +199,16 @@ class GraphicComponent extends GraphicContainer {
 
       ctx.beginPath();
 
-      ctx.moveTo(this.globalX - 1, this.globalY - 1);
-      ctx.lineTo(this.globalX + this.width + 1, this.globalY - 1);
-      ctx.lineTo(this.globalX + this.width + 1, this.globalY + this.height + 1);
-      ctx.lineTo(this.globalX - 1, this.globalY + this.height + 1);
-      ctx.lineTo(this.globalX - 1, this.globalY - 1);
+      ctx.moveTo(this.globalX - 2, this.globalY - 2);
+      ctx.lineTo(this.globalX + this.width + 4, this.globalY - 2);
+      ctx.lineTo(this.globalX + this.width + 4, this.globalY + this.height + 4);
+      ctx.lineTo(this.globalX - 2, this.globalY + this.height + 4);
+      ctx.lineTo(this.globalX - 2, this.globalY - 2);
 
       ctx.closePath();
 
-      ctx.lineWidth = 0;
-      ctx.strokeStyle = 'rgba(255,0,0,1)';
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(255,255,255,1)';
       ctx.stroke();
 
       this.endClip();
