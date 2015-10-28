@@ -264,6 +264,7 @@ class Playbar extends GraphicComponent {
     ctx.fillStyle = o.playPointFillColor;
     ctx.strokeStyle = o.playPointBorderColor;
     ctx.lineWidth = o.playPointWidth;
+    
     ctx.beginPath();
     ctx.arc(this.globalX + this.width * ratio, this.globalY + this.height / 2, o.playPointRadius, 0, Math.PI * 2);
     ctx.stroke();

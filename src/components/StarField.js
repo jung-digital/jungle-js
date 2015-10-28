@@ -33,7 +33,9 @@ const STAR_VIEW_HEIGHT = 1080;
 
 const STAR_VIEW_SCROLL_RATIO = 0.0;
 
-const STAR_TWINKLE_TIME = 1.0;
+const STAR_TWINKLE_TIME_MIN = 0.6;
+const STAR_TWINKLE_TIME_MAX = 1.2;
+
 const STAR_TWINKLE_RATE = 0.01;
 const STAR_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -44,16 +46,6 @@ const STAR_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         0.0, 0.0, 0.0, 0.1, 0.2, 0.1, 0.0, 0.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-
-const STAR_TEMPLATE_SM = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.4, 0.5, 0.4, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.5, 1.0, 0.5, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.4, 0.5, 0.4, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
 const STAR_TWINKLE_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0,
                                 0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0,
@@ -103,7 +95,9 @@ class StarField extends GraphicContainer {
     o.starViewWidth = o.starViewWidth || STAR_VIEW_WIDTH;
     o.starViewHeight = o.starViewHeight || STAR_VIEW_HEIGHT;
 
-    o.starTwinkleTime = o.starTwinkleTime || STAR_TWINKLE_TIME;
+    o.starTwinkleTimeMin = o.starTwinkleTimeMin || STAR_TWINKLE_TIME_MIN;
+    o.starTwinkleTimeMax = o.starTwinkleTimeMax || STAR_TWINKLE_TIME_MAX;
+
     o.starTwinkleRate = o.starTwinkleRate || STAR_TWINKLE_RATE;
 
     o.starViewScrollRatio = o.starViewScrollRatio || STAR_VIEW_SCROLL_RATIO;
@@ -113,8 +107,6 @@ class StarField extends GraphicContainer {
     o.fill = o.fill !== undefined ? o.fill : true;
 
     this.stars = [];
-
-    this.pc = new PythagoreanCache(o.starMaxSize);
 
     this.buildStars();
 
@@ -134,7 +126,6 @@ class StarField extends GraphicContainer {
 
     console.log('Building ' + o.starCount + ' stars.');
 
-    // Star is Array: [X, Y, Diameter, 32-bit color]
     for (var i = 0; i < o.starCount; i++) {
       let star = {
         g: vec2.fromValues(Math.round(ran(0, o.starViewWidth)), Math.round(ran(0, relativeHeight))),
@@ -157,27 +148,28 @@ class StarField extends GraphicContainer {
     top = Math.round(top * o.starViewScrollRatio);
 
     this.stars = this.allStars.filter(s => {
-      return s.g[0] >= left && s.g[0] <= left + width &&
-        s.g[1] >= top && s.g[1] <= top + height;
+      if (s.g[1] >= top && s.g[1] <= top + height &&
+        s.g[0] >= left && s.g[0] <= left + width) {
+        s.p = vec2.fromValues(s.g[0] - left, s.g[1] - top);
+        return true;
+      }
+      return false;
     });
-
-    this.stars.forEach(s => {
-      s.p = vec2.fromValues(s.g[0] - left, s.g[1] - top);
-    });
-
-    console.log('Viewing ' + this.stars.length + '/' + this.allStars.length, left, top, width, height);
   }
 
   _rebuildImageDataCache() {
     console.log('rebuilding image data cache.');
-    let w = this.renderer.canvas.width;
-    let h = this.renderer.canvas.height;
 
-    this.cacheImDa = this.renderer.ctx.createImageData(w, h);
-    var tmp = this.renderer.ctx.getImageData(0, 0, w, h);
-    this.cacheImDa.data.set(tmp.data);
+    if (this.renderer && this.renderer.ctx) {
+      let w = this.renderer.canvas.width;
+      let h = this.renderer.canvas.height;
 
-    this.imda = this.renderer.ctx.createImageData(w, h);
+      this.cacheImDa = this.renderer.ctx.createImageData(w, h);
+      var tmp = this.renderer.ctx.getImageData(0, 0, w, h);
+      this.cacheImDa.data.set(tmp.data);
+
+      this.imda = this.renderer.ctx.createImageData(w, h);
+    }
   }
 
   //---------------------------------------------
@@ -247,52 +239,62 @@ class StarField extends GraphicContainer {
     let tempWidth = Math.round(Math.sqrt(templateSize));
 
     var starDraw = function(star) {
-      if (star.p[0] >= 0 && star.p[0] <= w &&
-          star.p[1] >= 0 && star.p[1] <= h) {
-        let red = star.c.r * 255;
-        let green = star.c.g * 255;
-        let blue = star.c.b * 255;
+      let red = star.c.r * 255;
+      let green = star.c.g * 255;
+      let blue = star.c.b * 255;
 
-        if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
-          star.t = star.t || 0.00001;
-          star.t += elapsed;
-          let intensity = Math.sin((star.t / o.starTwinkleTime) * Math.PI);
-          for (i = 0; i < templateSize; i++) {
-            y = Math.floor(i / tempWidth);
-            x = i % tempWidth;
+      if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
+        star.totTime = star.totTime || ran(o.starTwinkleTimeMin, o.starTwinkleTimeMax);
+        star.t = star.t + elapsed || elapsed;
 
-            let base = (STAR_TEMPLATE[i] / (star.d / 2)) * (1 - intensity);
-            let a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
-            let ia = 1 - a;
+        let intensity = Math.sin((star.t / star.totTime) * Math.PI);
+        let sd2 = star.d / 2;
+        let sp1 = star.p[1];
+        let sp0 = star.p[0];
+        let base = undefined;
+        let a = undefined;
+        let ia = undefined;
 
-            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
-
-            d[ix + 0] = (red);
-            d[ix + 1] = (green);
-            d[ix + 2] = (blue);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255);
+        for (i = 0; i < templateSize; i++) {
+          if (STAR_TEMPLATE[i] === 0 && STAR_TWINKLE_TEMPLATE[i] === 0) {
+            continue;
           }
-          if (star.t > o.starTwinkleTime) {
-            star.t = 0;
-          }
-        } else {
-          // Draw each pixel of the star.
-          for (i = 0; i < templateSize; i++) {
-            y = Math.floor(i / tempWidth);
-            x = i % tempWidth;
-            // Calculate the alpha value based on the distance of the pixel from
-            // the center of the star.
+          y = Math.floor(i / tempWidth);
+          x = i % tempWidth;
 
-            let a = (STAR_TEMPLATE[i] / (star.d / 2));
-            let ia = 1 - a;
+          base = (STAR_TEMPLATE[i] / sd2) * (1 - intensity);
+          a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
+          ia = 1 - a;
 
-            ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+          ix = Math.round((((y + sp1) * w) + (x + sp0)) * 4);
 
-            d[ix + 0] = (red);
-            d[ix + 1] = (green);
-            d[ix + 2] = (blue);
-            d[ix + 3] = Math.max(d[ix + 3], a * 255);
-          }
+          d[ix] = (red);
+          d[ix + 1] = (green);
+          d[ix + 2] = (blue);
+          d[ix + 3] = Math.max(d[ix + 3], a * 255);
+        }
+
+        if (star.t > star.totTime) {
+          star.t = 0;
+          star.totTime = undefined;
+        }
+      } else {
+        // Draw each pixel of the star.
+        for (i = 0; i < templateSize; i++) {
+          y = Math.floor(i / tempWidth);
+          x = i % tempWidth;
+          // Calculate the alpha value based on the distance of the pixel from
+          // the center of the star.
+
+          let a = (STAR_TEMPLATE[i] / (star.d / 2));
+          let ia = 1 - a;
+
+          ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+
+          d[ix + 0] = (red);
+          d[ix + 1] = (green);
+          d[ix + 2] = (blue);
+          d[ix + 3] = Math.max(d[ix + 3], a * 255);
         }
       }
     };

@@ -115,7 +115,8 @@ class GraphicRenderer extends GraphicComponent {
   get debugText() {
     let fpsNow = Math.round(1 / this.elapsed);
     this.fps = Math.ceil(this.fps * 0.90 + fpsNow * 0.10);
-    return this.canvas.width + ', ' +
+    return this.id + ': ' +
+           this.canvas.width + ', ' +
            this.canvas.height + ' FPS: ' +
            this.fps + (this.options.debugText ? this.options.debugText : '') +
            ' ' + this.options.canvasAutoClear;
