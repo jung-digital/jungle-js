@@ -12,6 +12,10 @@
     "entry": "src/packages/StarField.js"
   },
   {
+    "key": "Embers",
+    "entry": "src/packages/Embers.js"
+  },
+  {
     "key": "Fireworks",
     "entry": "src/packages/FireworksDemo.js"
   },
