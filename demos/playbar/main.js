@@ -4,7 +4,7 @@ console.log('its working');
 
 var canvas = $('#canvas')[0];
 
-window.renderer = new Lib.GraphicRenderer(canvas, {
+window.renderer = new Jungle.GraphicRenderer(canvas, {
   debug: true,
   fillRenderer: false,
   adjustSizeToCSS: true
@@ -13,8 +13,8 @@ window.renderer = new Lib.GraphicRenderer(canvas, {
 window.playbar = new Playbar({
   total: 100,
   current: 0,
-  boundsPercent: new Lib.util.Rect(0.0, 0.4, 1.0, NaN),
-  bounds: new Lib.util.Rect(0, 0, 0, 20),
+  boundsPercent: new Jungle.util.Rect(0.0, 0.4, 1.0, NaN),
+  bounds: new Jungle.util.Rect(0, 0, 0, 20),
   chapters: [{
     position: 2,
     text: '2nd percentile.'
@@ -36,6 +36,7 @@ window.playbar = new Playbar({
   }
 }, 'playbar');
 
+console.log('adding playbar');
 renderer.addChild(playbar);
 
 setInterval(function () {

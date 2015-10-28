@@ -270,6 +270,8 @@ class GraphicRenderer extends GraphicComponent {
    * Not called when options.mouseEnabled is false.
    */
   _canvasOnMouseMoveHandler(event) {
+    document.body.style.cursor = 'auto';
+
     this.dispatch(new Event(MouseEvents.MOUSE_MOVE, this.processMouseEvent(event)));
   }
 

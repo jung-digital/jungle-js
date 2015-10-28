@@ -5,6 +5,7 @@
  \*============================================*/
 import GraphicContainer from './GraphicContainer';
 import GraphicEvents from './events/GraphicEvents';
+import MouseEvents from './events/MouseEvents';
 import Event from './util/Event';
 import Rect from './util/Rect';
 import {fillRectRadius} from './util/Graphics';
@@ -35,12 +36,15 @@ class GraphicComponent extends GraphicContainer {
     o.lineWidth = o.lineWidth || 2;
     o.cornerRadius = o.cornerRadius || 0;
     o.clip = o.clip === true ? true : false;
+    o.cursor = o.cursor || 'auto';
 
     this.setupFontOptions(options);
 
     this.bounds = o.bounds || new Rect(0,0,0,0);
     this.boundsPercent = o.boundsPercent || new Rect(NaN, NaN, NaN, NaN);
     this.padding = o.padding || new Rect(0, 0, 0, 0);
+
+    this.addListener(GraphicEvents.ADDED, this._addedHandler.bind(this));
   }
 
   //---------------------------------------------
@@ -213,6 +217,28 @@ class GraphicComponent extends GraphicContainer {
 
       this.endClip();
       ctx.restore();
+    }
+  }
+
+  //---------------------------------------------
+  // Events
+  //---------------------------------------------
+  _addedHandler(event) {
+    let o = this.options;
+
+    if (o.cursor !== 'auto') {
+      console.log(o.cursor);
+      this.renderer.addListener(MouseEvents.MOUSE_MOVE, this._mouseMoveHandler.bind(this));
+    }
+  }
+
+  _mouseMoveHandler(event) {
+    let o = this.options;
+
+    console.log('mouse move');
+
+    if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
+      document.body.style.cursor = o.cursor;
     }
   }
 }

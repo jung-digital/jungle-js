@@ -51,6 +51,7 @@ class Playbar extends GraphicComponent {
     o.clickToAdvance = o.clickToAdvance === false ? false : true;
     o.calloutEnabled = o.calloutEnabled === false ? false : true;
     o.chapterHoverDistance = o.chapterHoverDistance || 20;
+    o.cursor = 'pointer';
 
     this.total = o.total || 100;
     this.current = o.current || 0;
@@ -156,8 +157,6 @@ class Playbar extends GraphicComponent {
         r.left = v[0];
         r.top = v[1];
 
-        console.log(r);
-
         this._callout = new Callout({
             text: closestChapter.text || 'Chapter text undefined.',
             bounds: r,
@@ -204,7 +203,6 @@ class Playbar extends GraphicComponent {
   }
 
   canvasMouseDownHandler(event) {
-    console.log('Mouse Down!', event);
     if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
       this.mouseDown = true;
 
@@ -285,7 +283,7 @@ class Playbar extends GraphicComponent {
 if (window) {
   window.PlaybarEvents = PlaybarEvents;
   window.Playbar = Playbar;
-  window.Lib = Lib;
+  window.Jungle = Lib;
 }
 
 export default Playbar;
