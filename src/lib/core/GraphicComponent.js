@@ -36,15 +36,12 @@ class GraphicComponent extends GraphicContainer {
     o.lineWidth = o.lineWidth || 2;
     o.cornerRadius = o.cornerRadius || 0;
     o.clip = o.clip === true ? true : false;
-    o.cursor = o.cursor || 'auto';
 
     this.setupFontOptions(options);
 
     this.bounds = o.bounds || new Rect(0,0,0,0);
     this.boundsPercent = o.boundsPercent || new Rect(NaN, NaN, NaN, NaN);
     this.padding = o.padding || new Rect(0, 0, 0, 0);
-
-    this.addListener(GraphicEvents.ADDED, this._addedHandler.bind(this));
   }
 
   //---------------------------------------------
@@ -85,6 +82,58 @@ class GraphicComponent extends GraphicContainer {
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  /**
+   * Call a named callback next frame. If the callback is set with another name, it overrides the first.
+   * Useful for setting things like the cursor, which multiple components may try to access and override but
+   * only one can win.
+   *
+   * @param {String} name Must be one of the
+   * @param {Function} callback
+   */
+  callNextFrame(name, callback) {
+    this.nextFrameCalls = this.nextFrameCalls || {};
+
+    this.nextFrameCalls[name] = callback;
+  }
+
+  /**
+   * Returns true if there is a callback set for the provided property.
+   *
+   * @param {String} name The callback name to query.
+   * @returns {Boolean}
+   */
+  hasCallNextFrame(name) {
+    return this.nextFrameCalls && this.nextFrameCalls[name] !== undefined;
+  }
+
+  /**
+   * Invalidate a property on this component with a new value. Value will be set at the beginning of the next frame.
+   *
+   * @param {String} prop The property to set.
+   * @param {*} newValue The new value to assign.
+   */
+  invalidateProperty(prop, newValue) {
+    this.invalidatedProps = this.invalidatedProps || {};
+
+    this.invalidatedProps[prop] = newValue;
+  }
+
+  /**
+   * Called once per frame by the frame handler before any drawing has begun.
+   */
+  validate() {
+    for (var key in this.invalidatedProps) {
+      this[prop] = this.invalidatedProps[prop];
+    }
+
+    for (var key in this.nextFrameCalls) {
+      this.nextFrameCalls[key]();
+    }
+
+    this.invalidatedProps = {};
+    this.nextFrameCalls = {};
+  }
+
   /**
    * Setup the font options and default them if necessary.
    *
@@ -223,23 +272,16 @@ class GraphicComponent extends GraphicContainer {
   //---------------------------------------------
   // Events
   //---------------------------------------------
-  _addedHandler(event) {
+  _onFrameHandler(elapsed) {
     let o = this.options;
 
-    if (o.cursor !== 'auto') {
-      console.log(o.cursor);
-      this.renderer.addListener(MouseEvents.MOUSE_MOVE, this._mouseMoveHandler.bind(this));
+    if (o.cursor && this.globalInBounds(this.renderer.mouse.canvasX, this.renderer.mouse.canvasY)) {
+      this.renderer.bodyCursor = o.cursor;
     }
-  }
 
-  _mouseMoveHandler(event) {
-    let o = this.options;
+    this.validate();
 
-    console.log('mouse move');
-
-    if (this.globalInBounds(event.properties.canvasX, event.properties.canvasY)) {
-      document.body.style.cursor = o.cursor;
-    }
+    super._onFrameHandler(elapsed);
   }
 }
 

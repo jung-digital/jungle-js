@@ -100,6 +100,13 @@ class GraphicRenderer extends GraphicComponent {
     this.renderer = this;
     this.parent = undefined;
 
+    this._cursor = 'auto';
+
+    this.mouse = {
+      canvasX: -1,
+      canvasY: -1
+    };
+
     // Set up our render loop
     window.requestAnimationFrame(this._onFrameFirstHandler.bind(this));
   }
@@ -131,6 +138,28 @@ class GraphicRenderer extends GraphicComponent {
     if (this.debug) {
       console.log.apply(console, args);
     }
+  }
+
+  /**
+   * Returns the currently assigned cursor for when the mouse is over the Renderer.
+   *
+   * @returns {String|*}
+   */
+  get bodyCursor() {
+    return this._cursor;
+  }
+
+  /**
+   * Set the cursor of the document body. Will not be actually set until next frame.
+   *
+   * @param {String} value 'auto', 'pointer', etc. See W3 specification.
+   */
+  set bodyCursor(value) {
+    this._cursor = value;
+
+    this.callNextFrame('setBodyCursor', function() {
+      document.body.style.cursor = value;
+    });
   }
 
   //---------------------------------------------
@@ -202,7 +231,7 @@ class GraphicRenderer extends GraphicComponent {
   processMouseEvent(event) {
     var rect = this.canvas.getBoundingClientRect();
 
-    return {
+    return this.mouse = {
       event: event,
       canvasX: event.clientX - rect.left,
       canvasY: event.clientY - rect.top
@@ -270,8 +299,6 @@ class GraphicRenderer extends GraphicComponent {
    * Not called when options.mouseEnabled is false.
    */
   _canvasOnMouseMoveHandler(event) {
-    document.body.style.cursor = 'auto';
-
     this.dispatch(new Event(MouseEvents.MOUSE_MOVE, this.processMouseEvent(event)));
   }
 
@@ -337,6 +364,11 @@ class GraphicRenderer extends GraphicComponent {
 
     this.elapsed = Math.min(0.1, (timestamp - this.lastTime) / 1000);
     this.lastTime = timestamp;
+
+    // Revert cursor to auto if no component has set it.
+    if (!this.hasCallNextFrame('setBodyCursor')) {
+      this.bodyCursor = 'auto';
+    }
 
     super._onFrameHandler(this.elapsed);
 
