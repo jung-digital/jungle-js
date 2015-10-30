@@ -181,8 +181,8 @@ class GraphicRenderer extends GraphicComponent {
 
     this.canvas.setAttribute('height', this.canvas.width * r);
 
-    this.scaleX = this.canvas.width / parseFloat(this.canvas.style.width);
-    this.scaleY = this.canvas.height / parseFloat(this.canvas.style.height);
+    this.scaleX = this.canvas.width / parseFloat(this.canvas.clientWidth);
+    this.scaleY = this.canvas.height / parseFloat(this.canvas.clientHeight);
 
     this.bounds.width = this.canvas.width;
     this.bounds.height = this.canvas.height;

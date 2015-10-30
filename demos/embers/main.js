@@ -4,7 +4,8 @@ var canvas = $('#canvas')[0];
 
 window.renderer = new Jungle.GraphicRenderer(canvas, {
   debug: true,
-  canvasAutoClear: true
+  canvasAutoClear: true,
+  resizeToCanvas: true
 });
 
 window.embers = new Embers({
