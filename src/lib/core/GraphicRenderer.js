@@ -228,17 +228,6 @@ class GraphicRenderer extends GraphicComponent {
       scrollTop: window.pageYOffset,
       originalEvent: event
     }));
-
-    this.scrollHandler(deltaY, event);
-  }
-
-  /**
-   * Scroll handler to be overridden by a sub-class.
-   *
-   * @param {Number} deltaY The change in scroll Y
-   */
-  scrollHandler(deltaY) {
-    // noop
   }
 
   /**
@@ -324,7 +313,7 @@ class GraphicRenderer extends GraphicComponent {
    * @private
    */
   _onFrameHandler(timestamp) {
-    this.ctx = this.ctx || canvas.getContext('2d');
+    this.ctx = this.ctx || this.canvas.getContext('2d');
 
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
 
