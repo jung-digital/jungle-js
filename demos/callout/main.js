@@ -3,9 +3,7 @@
 var canvas = $('#canvas')[0];
 
 window.renderer = new Jungle.GraphicRenderer(canvas, {
-  debug: true,
-  fillRenderer: false,
-  adjustSizeToCSS: true
+  debug: true
 });
 
 window.calloutBottom = new   Callout({

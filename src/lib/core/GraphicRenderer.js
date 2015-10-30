@@ -52,10 +52,7 @@ class GraphicRenderer extends GraphicComponent {
 
     let o = this.options = options || {};
     o.canvasAutoClear = o.canvasAutoClear !== undefined ? o.canvasAutoClear : true;
-    o.fillWindowWidth = o.fillWindowWidth === true ? true : false;
-    o.stretchToCanvas = o.stretchToCanvas === true ? true : false;
-    o.adjustSizeToCSS = o.adjustSizeToCSS === true ? true : false;
-    o.aspectRatio = o.aspectRatio;
+    o.resizeToCanvas = o.resizeToCanvas === true ? true : false;
 
     o.debugPosX = o.debugPosX || 10;
     o.debugPosY = o.debugPosY || 50;
@@ -65,7 +62,7 @@ class GraphicRenderer extends GraphicComponent {
     // lastTime is the previous time that the render loop was called
     this.lastTime = 0;
 
-    if (!o.fillWindowWidth) {
+    if (!o.fillWindow) {
       this.canvasTargetWidth = this.width = (o.width || DEFAULT_WIDTH);
       this.canvasTargetHeight = this.height = (o.height || DEFAULT_HEIGHT);
     }
@@ -174,37 +171,15 @@ class GraphicRenderer extends GraphicComponent {
     let prevWidth = this.canvas.width;
     let prevHeight = this.canvas.height;
 
-    if (this.options.adjustSizeToCSS) {
-
-      this.canvasTargetWidth = parseFloat(this.canvas.clientWidth);
-      this.canvasTargetHeight = parseFloat(this.canvas.clientHeight);
-
-      this.canvas.setAttribute('width', this.canvasTargetWidth);
-      this.canvas.setAttribute('height', this.canvasTargetHeight);
-    } else if (this.options.fillWindowWidth) {
-      var w = window.innerWidth;
-      var h = this.options.aspectRatio ? w / this.options.aspectRatio : window.innerHeight;
-
-      this.canvasTargetWidth = this.width = w;
-      this.canvasTargetHeight = this.height = h;
-
-      this.canvas.setAttribute('width', this.canvasTargetWidth);
-      this.canvas.setAttribute('height', this.canvasTargetHeight);
-
-      if (this.options.stretchToCanvas) {
-        this.canvas.style.width = w + 'px';
-        this.canvas.style.height = h + 'px';
-      }
+    if (this.options.resizeToCanvas) {
+      this.canvas.setAttribute('width', this.canvas.clientWidth);
     } else {
-
       this.canvas.setAttribute('width', this.canvasTargetWidth);
-      this.canvas.setAttribute('height', this.canvasTargetHeight);
-
-      if (!this.options.stretchToCanvas) {
-        this.canvas.style.width = this.canvasTargetWidth + 'px';
-        this.canvas.style.height = this.canvasTargetHeight + 'px';
-      }
     }
+
+    let r = parseFloat(this.canvas.clientHeight) / parseFloat(this.canvas.clientWidth);
+
+    this.canvas.setAttribute('height', this.canvas.width * r);
 
     this.scaleX = this.canvas.width / parseFloat(this.canvas.style.width);
     this.scaleY = this.canvas.height / parseFloat(this.canvas.style.height);
