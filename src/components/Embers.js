@@ -1,9 +1,13 @@
+'use strict';
+
 /*============================================*\
  * Imports
 \*============================================*/
 import GraphicContainer from '../lib/core/GraphicContainer';
 import Spark from '../lib/gx/Spark';
 import {hsvToRgb} from '../lib/core/util/Color';
+import GraphicRendererEvents from '../lib/core/events/GraphicRendererEvents';
+import GraphicEvents from '../lib/core/events/GraphicEvents';
 
 /*============================================*\
  * Constants
@@ -109,6 +113,8 @@ class Embers extends GraphicContainer {
         sparkResolution: 4
       }));
     }
+
+    this.addListener(GraphicEvents.ADDED, this.addedHandler.bind(this));
   }
 
   //---------------------------------------------
@@ -131,7 +137,7 @@ class Embers extends GraphicContainer {
     var rgb = hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
     context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
-    context.lineWidth = spark.options.size * ratio * this.scaleX;
+    context.lineWidth = spark.options.size * ratio * this.renderer.scaleX;
 
     context.beginPath();
     context.moveTo(start[0], start[1]);
@@ -181,7 +187,7 @@ class Embers extends GraphicContainer {
         vel: vec2.scale(vec2.create(), vec2.fromValues(Math.cos(velAngle), Math.sin(velAngle)), Math.random() * (this.options.maxSparkVelocity - this.options.minSparkVelocity) + this.options.minSparkVelocity),
         heatCurrent: 0,
         lastAngleChangeTime: 0,
-        glow: (Math.random() * 0.8) + 0.2,
+        glow: (Math.random() * 0.6) + 0.4,
         glowFlickerSpeed: (Math.random() * 5) + 2,
         life: life,
         lifeTotal: this.options.maxSparkLife
@@ -192,6 +198,23 @@ class Embers extends GraphicContainer {
   //---------------------------------------------
   // Event Handlers
   //---------------------------------------------
+  addedHandler() {
+    this.renderer.addListener(GraphicRendererEvents.WINDOW_SCROLL, this.windowScrollHandler.bind(this));
+  }
+
+  windowScrollHandler(event) {
+    let deltaY = event.properties.deltaY;
+
+    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
+    this.sparks.forEach(spark => {
+      if (spark.sparking) {
+        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
+
+        vec2.add(spark.pos, spark.pos, trans);
+      }
+    });
+  }
+
   /**
    * @param {Number} elapsed
    */
@@ -206,20 +229,6 @@ class Embers extends GraphicContainer {
       sparkOnFrame.call(spark, this);
 
       spark.onFrameHandler(this.elapsed, this.renderer.ctx);
-    });
-  }
-
-  /**
-   * @param {Number} deltaY The change in scroll position.
-   */
-  scrollHandler(deltaY) {
-    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
-    this.sparks.forEach(spark => {
-      if (spark.sparking) {
-        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
-
-        vec2.add(spark.pos, spark.pos, trans);
-      }
     });
   }
 }

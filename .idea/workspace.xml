@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="271bf157-5246-416f-a7ea-b0dcefc4c60b" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/components/Embers.js" afterPath="$PROJECT_DIR$/src/components/Embers.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" afterPath="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -48,7 +48,7 @@
       <file leaf-file-name="GraphicComponent.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicComponent.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.962963">
+            <state vertical-scroll-proportion="14.074074">
               <caret line="28" column="6" selection-start-line="28" selection-start-column="2" selection-end-line="28" selection-end-column="6" />
               <folding />
             </state>
@@ -60,16 +60,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="15" column="64" selection-start-line="15" selection-start-column="64" selection-end-line="15" selection-end-column="64" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GraphicEvents.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/lib/core/events/GraphicEvents.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="15" column="3" selection-start-line="15" selection-start-column="3" selection-end-line="15" selection-end-column="3" />
               <folding />
             </state>
           </provider>
@@ -88,8 +78,8 @@
       <file leaf-file-name="GraphicContainer.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicContainer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.5925927">
-              <caret line="124" column="17" selection-start-line="124" selection-start-column="2" selection-end-line="124" selection-end-column="17" />
+            <state vertical-scroll-proportion="-14.444445">
+              <caret line="26" column="19" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -118,8 +108,20 @@
       <file leaf-file-name="GraphicRenderer.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicRenderer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.89026546">
-              <caret line="159" column="52" selection-start-line="159" selection-start-column="52" selection-end-line="159" selection-end-column="52" />
+            <state vertical-scroll-proportion="0.6106195">
+              <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
+              <folding>
+                <element signature="e#15#123#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Embers.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/Embers.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-4.740741">
+              <caret line="54" column="33" selection-start-line="54" selection-start-column="33" selection-end-line="54" selection-end-column="33" />
               <folding>
                 <element signature="e#15#123#0" expanded="false" />
               </folding>
@@ -144,7 +146,6 @@
         <option value="$PROJECT_DIR$/dist/Embers/Embers.js" />
         <option value="$PROJECT_DIR$/dist/embers/Embers.min.js" />
         <option value="$PROJECT_DIR$/src/packages/Embers.js" />
-        <option value="$PROJECT_DIR$/src/components/Embers.js" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/src/lib/core/util/Trig.js" />
         <option value="$PROJECT_DIR$/src/lib/core/util/Color.js" />
@@ -181,10 +182,11 @@
         <option value="$PROJECT_DIR$/src/components/Callout.js" />
         <option value="$PROJECT_DIR$/demos/starfield/main.js" />
         <option value="$PROJECT_DIR$/src/components/StarField.js" />
-        <option value="$PROJECT_DIR$/src/lib/core/events/MouseEvents.js" />
         <option value="$PROJECT_DIR$/demos/playbar/main.js" />
         <option value="$PROJECT_DIR$/src/components/Playbar.js" />
         <option value="$PROJECT_DIR$/src/lib/core/GraphicComponent.js" />
+        <option value="$PROJECT_DIR$/src/lib/core/events/MouseEvents.js" />
+        <option value="$PROJECT_DIR$/src/components/Embers.js" />
         <option value="$PROJECT_DIR$/src/lib/core/GraphicRenderer.js" />
       </list>
     </option>
@@ -771,6 +773,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="1" column="43" selection-start-line="1" selection-start-column="43" selection-end-line="1" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -818,13 +821,6 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="20" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Embers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="36" selection-start-line="15" selection-start-column="36" selection-end-line="15" selection-end-column="36" />
         </state>
       </provider>
     </entry>
@@ -890,6 +886,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-11.592592">
           <caret line="110" column="5" selection-start-line="110" selection-start-column="5" selection-end-line="110" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1027,14 +1024,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/core/events/MouseEvents.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="64" selection-start-line="15" selection-start-column="64" selection-end-line="15" selection-end-column="64" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/StarField.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-78.888885">
@@ -1067,14 +1056,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicContainer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.5925927">
-          <caret line="124" column="17" selection-start-line="124" selection-start-column="2" selection-end-line="124" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/Playbar.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-11.962963">
@@ -1085,16 +1066,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicComponent.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.962963">
+        <state vertical-scroll-proportion="14.074074">
           <caret line="28" column="6" selection-start-line="28" selection-start-column="2" selection-end-line="28" selection-end-column="6" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicContainer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-14.444445">
+          <caret line="26" column="19" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/lib/core/events/MouseEvents.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="15" column="64" selection-start-line="15" selection-start-column="64" selection-end-line="15" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/Embers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.740741">
+          <caret line="54" column="33" selection-start-line="54" selection-start-column="33" selection-end-line="54" selection-end-column="33" />
+          <folding>
+            <element signature="e#15#123#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/lib/core/GraphicRenderer.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.89026546">
-          <caret line="159" column="52" selection-start-line="159" selection-start-column="52" selection-end-line="159" selection-end-column="52" />
+        <state vertical-scroll-proportion="0.6106195">
+          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="62" selection-end-column="0" />
           <folding>
             <element signature="e#15#123#0" expanded="false" />
           </folding>

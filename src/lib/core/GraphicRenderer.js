@@ -55,7 +55,6 @@ class GraphicRenderer extends GraphicComponent {
     o.fillWindowWidth = o.fillWindowWidth === true ? true : false;
     o.stretchToCanvas = o.stretchToCanvas === true ? true : false;
     o.adjustSizeToCSS = o.adjustSizeToCSS === true ? true : false;
-    o.aspectRatio = o.aspectRatio;
 
     o.debugPosX = o.debugPosX || 10;
     o.debugPosY = o.debugPosY || 50;
@@ -206,8 +205,8 @@ class GraphicRenderer extends GraphicComponent {
       }
     }
 
-    this.scaleX = this.canvas.width / parseFloat(this.canvas.style.width);
-    this.scaleY = this.canvas.height / parseFloat(this.canvas.style.height);
+    this.scaleX = this.canvas.getAttribute('width') / parseFloat(this.canvas.clientWidth);
+    this.scaleY = this.canvas.getAttribute('height') / parseFloat(this.canvas.clientHeight);
 
     this.bounds.width = this.canvas.width;
     this.bounds.height = this.canvas.height;
@@ -253,17 +252,6 @@ class GraphicRenderer extends GraphicComponent {
       scrollTop: window.pageYOffset,
       originalEvent: event
     }));
-
-    this.scrollHandler(deltaY, event);
-  }
-
-  /**
-   * Scroll handler to be overridden by a sub-class.
-   *
-   * @param {Number} deltaY The change in scroll Y
-   */
-  scrollHandler(deltaY) {
-    // noop
   }
 
   /**
@@ -349,7 +337,7 @@ class GraphicRenderer extends GraphicComponent {
    * @private
    */
   _onFrameHandler(timestamp) {
-    this.ctx = this.ctx || canvas.getContext('2d');
+    this.ctx = this.ctx || this.canvas.getContext('2d');
 
     window.requestAnimationFrame(this._onFrameHandler.bind(this));
 
