@@ -1,7 +1,7 @@
 [
   {
     "key": "Lib",
-    "entry": "src/lib/Lib.js"
+    "entry": "src/lib/Jungle.js"
   },
   {
     "key": "Narrator",
