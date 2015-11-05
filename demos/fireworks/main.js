@@ -12,7 +12,7 @@ window.starField = new StarField({
   starDensity: 2
 }, 'starfield');
 
-//renderer.addChild(starField);
+renderer.addChild(starField);
 
 window.fireworks = new Fireworks({
 }, 'fireworks');
