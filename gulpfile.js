@@ -131,5 +131,17 @@ function buildComplete(build, done) {
     .on('end', done);
 }
 
+gulp.task('list', function () {
+  console.log('Run build-[key] to build demo for production.');
+  console.log('Run serve-[key] to serve demo in browser.');
+  console.log('Run watch-[key] to build and watch the demo for changes.');
+  console.log('Keys:');
+  var l = builds.map(function (build) {
+    return build.key;
+  });
+
+  console.log(l.join('\n'));
+});
+
 // An alias of test
 gulp.task('default', ['test']);
