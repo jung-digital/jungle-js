@@ -1,10 +1,12 @@
+'use strict';
+
 /*============================================*\
  * Imports
 \*============================================*/
 import Object2D from '../physics/Object2D';
 import Spark from './Spark';
-import hsvToRgb from '../core/util/Color';
-import ran from '../core/util/Number';
+import {hsvToRgb} from '../core/util/Color';
+import {ran, ranSign, ranSkew} from '../core/util/Number';
 
 /*============================================*\
  * Class
@@ -30,7 +32,11 @@ class Firework extends Object2D {
     o.maxSparks = o.maxSparks || 50;
     o.gravity = o.gravity || vec2.fromValues(0, 98);
 
+    this.renderer = o.renderer;
     this.forces = [o.gravity];
+    this.duration = o.duration || 5;
+
+    this.exploded = false;
 
     this.sparks = [];
     this.tail = new Spark({
@@ -77,7 +83,7 @@ class Firework extends Object2D {
     var rgb = hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
     context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ', 1)';
-    context.lineWidth = spark.options.size * ratio;
+    context.lineWidth = spark.options.size * (1 - ratio);
 
     context.beginPath();
     context.moveTo(start[0], start[1]);
@@ -110,14 +116,32 @@ class Firework extends Object2D {
    * Tell the firework to explode.
    */
   burst() {
+    this.exploded = true;
+
     var sparkCount = ran(this.options.minSparks, this.options.maxSparks);
     var rs = this.renderSparkSegment.bind(this);
+    var color = {
+      h: ran(0, 360),
+      s: ran(0.5, 1),
+      l: ran(0.5, 1)
+    };
 
     for (var i = 0; i < sparkCount; i++) {
-      this.sparks.push(new Spark({
-        redrawSegment: rs,
-        sparkResolution: this.options.sparkResolution || 4
-      }));
+      var spark = new Spark({
+          redrawSegment: rs,
+          sparkResolution: this.options.sparkResolution || 20,
+          type: 2, // Setup to automate velocity changes,
+          forces: this.forces,
+          color: color,
+          size: ran(1,3)
+        });
+
+      this.sparks.push(spark);
+
+      spark.spark({
+        pos: vec2.clone(this.pos),
+        vel: vec2.fromValues(ranSign() * ranSkew(0, 150, -0.5), ranSign() * ranSkew(0, 150, -0.5))
+      });
     }
   }
 
@@ -160,15 +184,28 @@ class Firework extends Object2D {
     if (this.launched) {
       super.onFrameHandler(elapsed, context);
 
-      this.tail.next(vec2.clone(this.pos));
+      if (!this.exploded) {
+        this.tail.next(vec2.clone(this.pos));
+      }
 
       this.launchTime += elapsed;
 
       if (this.launchTime > this.duration) {
-        this.burst();
-      }
+        if (!this.exploded) {
+          this.burst();
+        }
 
-      this.tail.onFrameHandler(elapsed, context);
+        this.sparks = this.sparks.filter(spark => {
+          return spark.pos[0] >= 0 && spark.pos[0] <= this.renderer.canvas.width &&
+            spark.pos[1] >= 0 && spark.pos[1] <= this.renderer.canvas.height;
+        });
+
+        this.sparks.forEach(spark => {
+          spark.onFrameHandler(elapsed, context);
+        });
+      } else {
+        this.tail.onFrameHandler(elapsed, context);
+      }
     }
   }
 }

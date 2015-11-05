@@ -27,6 +27,7 @@ class Spark extends Object2D {
 
     this.id = options.id || -1; // index of this spark
     this.redrawSegment = options.redrawSegment; // A function to call to redraw each segment as the spark moves.
+    this.type = options.type || 1;
 
     this.sparkResolution = options.sparkResolution || 100; // Resolution (number of segments) of the spark
 
@@ -62,12 +63,10 @@ class Spark extends Object2D {
       this.options[a] = options[a];
     }
 
-    // TODO do not duplicate variable names, reference via 'this.options.blah'
-    this.onFrameCallback = options.onFrameCallback;
     this.vel = options.vel;
 
     this.sparking = true;
-    this.pos = this.options.pos;
+    this.pos = options.pos || this.options.pos;
 
     this.points = this.options.pos ? [this.options.pos] : undefined; // Reset points for manual mode
   }
@@ -137,8 +136,9 @@ class Spark extends Object2D {
    */
   onFrameHandler(elapsed, context) {
     if (this.sparking) {
-      if (this.onFrameCallback) {
-        this.onFrameCallback.call(this, elapsed, context);
+      if (this.type === 2) {
+        super.onFrameHandler(elapsed, context);
+        this.next(vec2.clone(this.pos));
       }
 
       this.renderTail(elapsed, context);

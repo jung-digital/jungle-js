@@ -29,9 +29,9 @@ class Fireworks extends GraphicContainer {
 
     this.fireworks = [];
     this.launchPads = options.launchPads || [];
-    this.gravity = options.gravity || 100;
+    this.gravity = options.gravity || 98;
     this.fireworkDuration = options.fireworkDuration || 5;
-    this.duration = options.duration || 3;
+    this.duration = options.duration || 2;
 
     this.addListener(GraphicEvents.ADDED, this.addedHandler.bind(this));
   }
@@ -52,11 +52,18 @@ class Fireworks extends GraphicContainer {
 
     // Launch a firework from each launchpad
     this.launchPads.forEach(lp => {
-      var dX = (event.properties.clientX - lp[0]);
-      var vX = dX / this.duration;
-      var vY = -200;
+      var t = this.duration;
+      var g = this.gravity;
+      var dX = (event.properties.canvasX - lp[0]);
+      var dY = (event.properties.canvasY - lp[1]);
+      var vX = dX / t;
+      var vY = (dY - 0.5 * g * t * t) / t;
 
-      var firework = new Firework({});
+      var firework = new Firework({
+        gravity: vec2.fromValues(0, g),
+        duration: this.duration,
+        renderer: this.renderer
+      });
 
       this.fireworks.push(firework);
 

@@ -55,7 +55,7 @@ class GraphicRenderer extends GraphicComponent {
     o.resizeToCanvas = o.resizeToCanvas === true ? true : false;
 
     o.debugPosX = o.debugPosX || 10;
-    o.debugPosY = o.debugPosY || 50;
+    o.debugPosY = o.debugPosY || 10;
 
     this.fps = 0;
 
@@ -119,7 +119,7 @@ class GraphicRenderer extends GraphicComponent {
   get debugText() {
     let fpsNow = Math.round(1 / this.elapsed);
     this.fps = Math.ceil(this.fps * 0.90 + fpsNow * 0.10);
-    return this.id + ': ' +
+    return (this.id ? this.id : '[no-id]') + ': ' +
            this.canvas.width + ', ' +
            this.canvas.height + ' FPS: ' +
            this.fps + (this.options.debugText ? this.options.debugText : '') +
