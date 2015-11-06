@@ -4,6 +4,10 @@
     "entry": "src/lib/Jungle.js"
   },
   {
+    "key": "All",
+    "entry": "src/packages/All.js"
+  },
+  {
     "key": "Narrator",
     "entry": "src/packages/Narrator.js"
   },

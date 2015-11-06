@@ -28,6 +28,7 @@ export function ranSkew(min, max, skew) {
 
 /**
  * Returns -1 or 1 randomly.
+ *
  * @returns {Number} -1 or 1.
  */
 export function ranSign() {
