@@ -43,12 +43,16 @@ class Fireworks extends GraphicContainer {
     this.renderer.addListener(MouseEvents.CLICK, this.canvasMouseClickHandler.bind(this));
 
     if (!this.launchPads.length) {
-      this.launchPads.push(vec2.fromValues(this.renderer.canvas.width / 2, this.renderer.canvas.height));
+      this.autoLaunchPad = true;
     }
   }
 
   canvasMouseClickHandler(event) {
     console.log('Launching', this.launchPads);
+
+    if (this.autoLaunchPad) {
+      this.launchPads = [vec2.fromValues(this.renderer.canvas.width / 2, this.renderer.canvas.height)];
+    }
 
     // Launch a firework from each launchpad
     this.launchPads.forEach(lp => {

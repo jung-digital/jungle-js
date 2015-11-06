@@ -28,9 +28,10 @@ class Firework extends Object2D {
 
     let o = this.options = options;
 
-    o.minSparks = o.minSparks || 30;
-    o.maxSparks = o.maxSparks || 50;
+    o.minSparks = o.minSparks || 40;
+    o.maxSparks = o.maxSparks || 90;
     o.gravity = o.gravity || vec2.fromValues(0, 98);
+    o.edgeLimitWidth = o.edgeLimitWidth || 250;
 
     this.renderer = o.renderer;
     this.forces = [o.gravity];
@@ -122,14 +123,17 @@ class Firework extends Object2D {
     var rs = this.renderSparkSegment.bind(this);
     var color = {
       h: ran(0, 360),
-      s: ran(0.5, 1),
-      l: ran(0.5, 1)
+      s: ran(0.5, 0.9),
+      l: ran(0.5, 0.9)
     };
 
     for (var i = 0; i < sparkCount; i++) {
+      color.h += ran(-20, 20);
+      color.s += ran(-0.05, 0.05);
+      color.l += ran(-0.05, 0.05);
       var spark = new Spark({
           redrawSegment: rs,
-          sparkResolution: this.options.sparkResolution || 20,
+          sparkResolution: this.options.sparkResolution || 8,
           type: 2, // Setup to automate velocity changes,
           forces: this.forces,
           color: color,
@@ -165,7 +169,7 @@ class Firework extends Object2D {
       color: {
         h: 1,
         s: 1,
-        l: 1
+        l: 0.3
       },
       pos: this.pos
     });
@@ -181,6 +185,8 @@ class Firework extends Object2D {
    * @param {RenderingContext} context The Canvas context on which to render.
    */
   onFrameHandler(elapsed, context) {
+    let o = this.options;
+
     if (this.launched) {
       super.onFrameHandler(elapsed, context);
 
@@ -196,8 +202,8 @@ class Firework extends Object2D {
         }
 
         this.sparks = this.sparks.filter(spark => {
-          return spark.pos[0] >= 0 && spark.pos[0] <= this.renderer.canvas.width &&
-            spark.pos[1] >= 0 && spark.pos[1] <= this.renderer.canvas.height;
+          return spark.pos[0] >= -o.edgeLimitWidth && spark.pos[0] <= this.renderer.canvas.width + o.edgeLimitWidth &&
+            spark.pos[1] >= -o.edgeLimitWidth && spark.pos[1] <= this.renderer.canvas.height + o.edgeLimitWidth;
         });
 
         this.sparks.forEach(spark => {
