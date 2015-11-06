@@ -99,9 +99,9 @@ class Embers extends GraphicContainer {
     o.sparkCount = o.sparkCount || SPARK_COUNT;
     o.maxSparkLife = o.maxSparkLife || SPARK_MAX_LIFE_S;
     o.sparkEdgeBottomOffset = o.sparkEdgeBottomOffset || SPARK_EDGE_BOTTOM_OFFSET;
-    o.scrollRatio = o.scrollRatio || 1;
+    o.scrollRatio = o.scrollRatio !== undefined ? o.scrollRatio : 0;
 
-    this.sparkSource = this.options.sparkSource ? this.options.sparkSource : new vec2.fromValues(this.width / 2, this.height / 5);
+    this.sparkSource = this.options.sparkSource;
 
     this.sparks = [];
 
@@ -155,9 +155,9 @@ class Embers extends GraphicContainer {
     var sourceAngle = Math.random() * Math.PI * 2;
     var sourceDistance = Math.random() * SPARK_SOURCE_RADIUS;
     var life = (Math.random() * this.options.maxSparkLife / 2) + this.options.maxSparkLife / 2;
-    var source = this.sparkSource;
+    var source = this.sparkSource || vec2.fromValues(this.renderer.canvas.width / 2, this.renderer.canvas.height);
 
-    if (source.target) {
+    if (source && source.target) {
       var boundingRect = source.target.getBoundingClientRect(); // Get rect ya'll
       var xOffset = 0;
       var yOffset = 0;
@@ -170,7 +170,7 @@ class Embers extends GraphicContainer {
       }
 
       source = vec2.fromValues(xOffset, Math.min(yOffset + boundingRect.top, window.innerHeight + this.options.sparkEdgeBottomOffset));
-    } else {
+    } else if (!source) {
       throw 'Please provide a valid target type to Embers object.';
     }
 
@@ -203,16 +203,18 @@ class Embers extends GraphicContainer {
   }
 
   windowScrollHandler(event) {
-    let deltaY = event.properties.deltaY;
+    if (this.options.scrollRatio) {
+      let deltaY = event.properties.deltaY;
 
-    var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
-    this.sparks.forEach(spark => {
-      if (spark.sparking) {
-        spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
+      var trans = vec2.fromValues(0, -deltaY * this.options.scrollRatio);
+      this.sparks.forEach(spark => {
+        if (spark.sparking) {
+          spark.points = spark.points.map(p => vec2.add(vec2.create(), p, trans));
 
-        vec2.add(spark.pos, spark.pos, trans);
-      }
-    });
+          vec2.add(spark.pos, spark.pos, trans);
+        }
+      });
+    }
   }
 
   /**
