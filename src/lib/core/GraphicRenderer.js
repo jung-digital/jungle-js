@@ -57,6 +57,8 @@ class GraphicRenderer extends GraphicComponent {
     o.debugPosX = o.debugPosX || 10;
     o.debugPosY = o.debugPosY || 10;
 
+    this.enabled = o.enabled === false ? false : true;
+
     this.fps = 0;
 
     // lastTime is the previous time that the render loop was called
@@ -313,6 +315,10 @@ class GraphicRenderer extends GraphicComponent {
    * @private
    */
   _onFrameHandler(timestamp) {
+    if (!this.enabled) {
+      return;
+    }
+
     this.ctx = this.ctx || this.canvas.getContext('2d');
 
     window.requestAnimationFrame(this._onFrameHandler.bind(this));

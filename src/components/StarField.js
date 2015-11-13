@@ -111,6 +111,8 @@ class StarField extends GraphicContainer {
     this.buildStars();
 
     this.addListener(GraphicEvents.ADDED, this.addedHandler.bind(this));
+
+    this._starFilterTimeout = 0;
   }
 
   //---------------------------------------------
@@ -123,8 +125,6 @@ class StarField extends GraphicContainer {
 
     o.starCount = (pixels / 10000) * o.starDensity;
     this.allStars = [];
-
-    console.log('Building ' + o.starCount + ' stars.');
 
     for (var i = 0; i < o.starCount; i++) {
       let star = {
@@ -150,16 +150,21 @@ class StarField extends GraphicContainer {
     this.stars = this.allStars.filter(s => {
       if (s.g[1] >= top && s.g[1] <= top + height &&
         s.g[0] >= left && s.g[0] <= left + width) {
-        s.p = vec2.fromValues(s.g[0] - left, s.g[1] - top);
+        if (s.p) {
+          s.p[0] = s.g[0] - left;
+          s.p[1] = s.g[1] - top;
+        } else {
+          s.p = vec2.fromValues(s.g[0] - left, s.g[1] - top);
+        }
         return true;
       }
       return false;
     });
+
+    this._starFilterTimeout = 0;
   }
 
   _rebuildImageDataCache() {
-    console.log('rebuilding image data cache.');
-
     if (this.renderer && this.renderer.ctx) {
       let w = this.renderer.canvas.width;
       let h = this.renderer.canvas.height;
@@ -309,7 +314,12 @@ class StarField extends GraphicContainer {
    */
   windowScrollHandler(event) {
     let o = this.options;
-    this.viewStars(0, window.scrollY);
+
+    if (this._starFilterTimeout) {
+      return;
+    }
+
+    this._starFilterTimeout = setTimeout(() => this.viewStars(0, window.scrollY), 40);
   }
 }
 

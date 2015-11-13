@@ -158,18 +158,19 @@ class Embers extends GraphicContainer {
     var source = this.sparkSource || vec2.fromValues(this.renderer.canvas.width / 2, this.renderer.canvas.height);
 
     if (source && source.target) {
-      var boundingRect = source.target.getBoundingClientRect(); // Get rect ya'll
+      var br = source.target.getBoundingClientRect(); // Get rect ya'll
+
       var xOffset = 0;
       var yOffset = 0;
 
       if (source.offset && source.offset.x) {
-        xOffset = source.offset.x.indexOf('%') != -1 ? source.target[source.widthProp] * (parseFloat(source.offset.x) / 100) : source.offset.x;
+        xOffset = source.offset.x.indexOf('%') != -1 ? br.left + br.width * (parseFloat(source.offset.x) / 100) : source.offset.x;
       }
       if (source.offset && source.offset.y) {
-        yOffset = source.offset.y.indexOf('%') != -1 ? source.target[source.heightProp] * (parseFloat(source.offset.y) / 100) : source.offset.y;
+        yOffset = source.offset.y.indexOf('%') != -1 ? br.top + br.height * (parseFloat(source.offset.y) / 100) : source.offset.y;
       }
 
-      source = vec2.fromValues(xOffset, Math.min(yOffset + boundingRect.top, window.innerHeight + this.options.sparkEdgeBottomOffset));
+      source = vec2.fromValues(xOffset, Math.min(yOffset + br.top, window.innerHeight + this.options.sparkEdgeBottomOffset));
     } else if (!source) {
       throw 'Please provide a valid target type to Embers object.';
     }
