@@ -56,7 +56,7 @@ function sparkOnFrame(embers) {
   this.options.color.l = (this.options.life / this.options.lifeTotal) * this.options.glow * sinGlow;
   this.options.lifeRatio = this.options.life / this.options.lifeTotal;
 
-  var elapsedScale = r.elapsed * r.scaleX;
+  var elapsedScale = r.elapsed * (r.canvas.width / 1000);
   var nextPos = vec2.scaleAndAdd(vec2.create(), this.pos, this.options.vel, elapsedScale);
   this.next(nextPos);
 
@@ -137,7 +137,7 @@ class Embers extends GraphicContainer {
     var rgb = hsvToRgb(spark.options.color.h, spark.options.color.s, spark.options.color.l);
 
     context.strokeStyle = 'rgba(' + ~~(rgb.r * 256) + ',' + ~~(rgb.g * 256) + ',' + ~~(rgb.b) * 256 + ',' + (ratio * spark.options.lifeRatio) + ')';
-    context.lineWidth = spark.options.size * ratio * this.renderer.scaleX;
+    context.lineWidth = spark.options.size * ratio * (this.renderer.canvas.width / 1000);
 
     context.beginPath();
     context.moveTo(start[0], start[1]);
@@ -170,7 +170,7 @@ class Embers extends GraphicContainer {
         yOffset = source.offset.y.indexOf('%') != -1 ? br.top + br.height * (parseFloat(source.offset.y) / 100) : source.offset.y;
       }
 
-      source = vec2.fromValues(xOffset, Math.min(yOffset + br.top, window.innerHeight + this.options.sparkEdgeBottomOffset));
+      source = vec2.fromValues(xOffset, Math.min(yOffset, window.innerHeight + this.options.sparkEdgeBottomOffset));
     } else if (!source) {
       throw 'Please provide a valid target type to Embers object.';
     }
