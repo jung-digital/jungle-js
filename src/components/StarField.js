@@ -4,7 +4,7 @@
  * Imports
 \*============================================*/
 import GraphicContainer from '../lib/core/GraphicContainer';
-import {hsvToRgb, rgbToFloat32, colorToHex, red, green, blue} from '../lib/core/util/Color';
+import {hsvToRgb, rgbaToFloat32, colorToHex, red, green, blue} from '../lib/core/util/Color';
 import {ran} from '../lib/core/util/Number';
 import GraphicEvents from '../lib/core/events/GraphicEvents';
 import {PythagoreanCache} from '../lib/core/util/Trig';
@@ -130,7 +130,7 @@ class StarField extends GraphicContainer {
       let star = {
         g: vec2.fromValues(Math.round(ran(0, o.starViewWidth)), Math.round(ran(0, relativeHeight))),
         d: ran(o.starMinSize, o.starMaxSize),
-        c: hsvToRgb(ran(o.starMinHue, o.starMaxHue), ran(o.starMinSaturation, o.starMaxSaturation), ran(o.starMinValue, o.starMaxValue)),
+        c: rgbaToFloat32(hsvToRgb(ran(o.starMinHue, o.starMaxHue), ran(o.starMinSaturation, o.starMaxSaturation), ran(o.starMinValue, o.starMaxValue))),
         t: 0,
         p: 0
       };
@@ -148,6 +148,7 @@ class StarField extends GraphicContainer {
     top = Math.round(top * o.starViewScrollRatio);
 
     this.stars = this.allStars.filter(s => {
+      s.ixs = undefined;
       if (s.g[1] >= top && s.g[1] <= top + height &&
         s.g[0] >= left && s.g[0] <= left + width) {
         if (s.p) {
@@ -233,7 +234,7 @@ class StarField extends GraphicContainer {
 
     this.imda.data.set(this.cacheImDa.data);
 
-    let d = this.imda.data;
+    let d = new Uint32Array(this.imda.data.buffer);
     let x = 0;
     let y = 0;
     let i = 0;
@@ -244,9 +245,8 @@ class StarField extends GraphicContainer {
     let tempWidth = Math.round(Math.sqrt(templateSize));
 
     var starDraw = function(star) {
-      let red = star.c.r * 255;
-      let green = star.c.g * 255;
-      let blue = star.c.b * 255;
+      let a = undefined;
+      let ia = undefined;
 
       if (star.t || Math.random() < (o.starTwinkleRate * elapsed)) {
         star.totTime = star.totTime || ran(o.starTwinkleTimeMin, o.starTwinkleTimeMax);
@@ -257,8 +257,6 @@ class StarField extends GraphicContainer {
         let sp1 = star.p[1];
         let sp0 = star.p[0];
         let base = undefined;
-        let a = undefined;
-        let ia = undefined;
 
         for (i = 0; i < templateSize; i++) {
           if (STAR_TEMPLATE[i] === 0 && STAR_TWINKLE_TEMPLATE[i] === 0) {
@@ -271,12 +269,9 @@ class StarField extends GraphicContainer {
           a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
           ia = 1 - a;
 
-          ix = Math.round((((y + sp1) * w) + (x + sp0)) * 4);
+          ix = Math.round(((y + sp1) * w) + (x + sp0));
 
-          d[ix] = (red);
-          d[ix + 1] = (green);
-          d[ix + 2] = (blue);
-          d[ix + 3] = Math.max(d[ix + 3], a * 255);
+          d[ix] = (star.c & 0x00FFFFFF) | Math.max((d[ix] & 0xFF000000) >> 24, Math.round(a * 255)) << 24;
         }
 
         if (star.t > star.totTime) {
@@ -284,22 +279,30 @@ class StarField extends GraphicContainer {
           star.totTime = undefined;
         }
       } else {
-        // Draw each pixel of the star.
-        for (i = 0; i < templateSize; i++) {
-          y = Math.floor(i / tempWidth);
-          x = i % tempWidth;
-          // Calculate the alpha value based on the distance of the pixel from
-          // the center of the star.
+        // Draw each pixel of the star. Pulling from cache if we can.
+        if (star.ixs) {
+          for (i = 0; i < templateSize; i++) {
+            d[star.ixs[i]] = star.cacheColor[i];
+          }
+        } else {
+          star.ixs = [];
+          star.cacheColor = [];
 
-          let a = (STAR_TEMPLATE[i] / (star.d / 2));
-          let ia = 1 - a;
+          for (i = 0; i < templateSize; i++) {
+            y = Math.floor(i / tempWidth);
+            x = i % tempWidth;
+            // Calculate the alpha value based on the distance of the pixel from
+            // the center of the star.
 
-          ix = Math.round((((y + star.p[1]) * w) + (x + star.p[0])) * 4);
+            a = Math.min(1, (STAR_TEMPLATE[i] / (star.d / 2)));
+            ia = 1 - a;
 
-          d[ix + 0] = (red);
-          d[ix + 1] = (green);
-          d[ix + 2] = (blue);
-          d[ix + 3] = Math.max(d[ix + 3], a * 255);
+            ix = Math.round(((y + star.p[1]) * w) + (x + star.p[0]));
+
+            d[ix] = (star.c & 0x00FFFFFF) | Math.max((d[ix] & 0xFF000000) >> 24, Math.floor(a * 255)) << 24;
+            star.ixs.push(ix);
+            star.cacheColor.push(d[ix]);
+          }
         }
       }
     };
@@ -315,11 +318,7 @@ class StarField extends GraphicContainer {
   windowScrollHandler(event) {
     let o = this.options;
 
-    if (this._starFilterTimeout) {
-      return;
-    }
-
-    this._starFilterTimeout = setTimeout(() => this.viewStars(0, window.scrollY), 40);
+    this.viewStars(0, window.scrollY);
   }
 }
 

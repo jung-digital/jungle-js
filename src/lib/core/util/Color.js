@@ -64,18 +64,19 @@ export function hsvToRgb(h, s, v) {
   return {
     r: r,
     g: g,
-    b: b
+    b: b,
+    a: 1
   };
 }
 
 /**
- * Converts an Object with r, g, and b properties to a 32-bit float.
+ * Converts an Object with [0,1] r, g, b, and a properties to a 32-bit float.
  *
- * @param {{r: Number, g: Number, b: Number}} rgb A Object with r, g, and b properties.
+ * @param {{r: Number, g: Number, b: Number, a: Number}} rgb A Object with r, g, b, and a (optional) properties.
  * @returns {Number}
  */
-export function rgbToFloat32(rgb) {
-  return rgb.r + rgb.g * 256 + rgb.b * 65536;
+export function rgbaToFloat32(rgb) {
+  return (rgb.r * 255) | (rgb.g * 255) << 8 | (rgb.b * 255) << 16 | (rgb.a !== undefined ? rgb.a << 24 : 0xFF000000);
 }
 
 export function colorToHex(v) {
@@ -105,7 +106,7 @@ export function blue(f) {
 
 export default {
   hsvToRgb: hsvToRgb,
-  rgbToFloat32: rgbToFloat32,
+  rgbaToFloat32: rgbaToFloat32,
   red: red,
   green: green,
   blue: blue
