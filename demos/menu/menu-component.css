@@ -20,6 +20,11 @@
 	padding: 6px 20px 3px 10px;
 	text-align: right;
 	border-bottom: 1px solid white;
+	
+	-webkit-user-select: none; 
+	-moz-user-select: none; 
+	-ms-user-select: none; 
+	user-select: none;
 }
 
 .menu-component a {
@@ -38,20 +43,34 @@
 }
 
 .menu-component .submenu {
-	display: none;
+	max-height: 0;
+    transition: max-height 0.4s ease-out;
+    overflow: hidden;
 }
 
 .menu-component .open .submenu {
 	display: block;
+	max-height: 500px;
+	transition: max-height 0.4s ease-in;
 }
 
 .form-component {
 	text-align: left;
 }
 
+.form-component form {
+	margin-bottom: 10px;
+}
+
 .form-component input,
 .form-component label {
 	width: 100%;
+	font-size: 12px;
+}
+
+.form-component input {
+	padding: 5px;
+	border: none;
 }
 
 iframe {

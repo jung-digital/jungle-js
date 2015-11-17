@@ -23,7 +23,13 @@ class Menu {
   constructor(container, $) {
 
     $(container).find(".item").on("click", function() {
-        $(this).toggleClass("open")
+        
+        var $this = $(this);
+
+        if ($this.find(".submenu").length > 0) {
+          $this.toggleClass("open");
+        }
+      
     });
 
   }
