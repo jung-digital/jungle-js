@@ -1,0 +1,69 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menu Example</title>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="/menu-component.css">
+<link href='https://fonts.googleapis.com/css?family=Hind:400,500,300,700' rel='stylesheet' type='text/css'>  </head>
+  <body>
+    <h1>JungleJS Menu Demo</h1>
+
+    <div class="menu-component">
+      <a href="http://www.interdompartners.com/welcome.html" target="main">
+        <div class="item">
+          home
+        </div>
+      </a>
+      <div class="item submenu-on-click">
+        login
+        <div class="form-component submenu">
+          <form>
+            <div class="form-group">
+              <label for="login-email">Email</label>
+              <input type="email" name="email" id="login-email" placeholder="email" required/>
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" name="password" id="login-password" placeholder="Please enter password" required/>
+            </div>
+          </form>
+        </div>
+      </div>
+      </a>
+      <a href="http://www.interdompartners.com/contact.html" target="main">
+        <div class="item">
+          contact us
+        </div>
+      </a>
+      <a href="http://interdom.dyndns.org:10010/InterdomWebsite/Container_Tracing.jsp" target="main">
+        <div class="item">
+          container tracing
+        </div>
+      </a>
+      <a href="http://www.interdompartners.com/download.html" target="main">
+        <div class="item">
+          download forms
+        </div>
+      </a>
+      <a href="http://www.interdompartners.com/RCT.html" target="main">
+        <div class="item">
+          railroad circulars
+        </div>
+      </a>
+      <a href="http://www.interdompartners.com/links.html" target="main">
+        <div class="item">
+          useful links
+        </div>
+      </a>
+    </div>
+
+    <iframe name="main" src="http://www.interdompartners.com/welcome.html"></iframe>
+
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/dist/menu.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
