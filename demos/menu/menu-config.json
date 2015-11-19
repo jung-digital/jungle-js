@@ -1,0 +1,34 @@
+{
+	"items": [
+		{
+			"name": "Home",
+			"href": "http://www.interdompartners.com/welcome.html"
+		},
+		{
+			"name": "Login",
+			"href": "",
+			"doesOpenSubmenu": true
+		},
+		{
+			"name": "Contact Us",
+			"href": "http://www.interdompartners.com/contact.html"
+		},
+		{
+			"name": "Container Tracing",
+			"href": "http://interdom.dyndns.org:10010/InterdomWebsite/Container_Tracing.jsp"
+		},
+		{
+			"name": "Download Forms",
+			"href": "http://www.interdompartners.com/download.html"
+		},
+		{
+			"name": "Railroad Circulars",
+			"href": "http://www.interdompartners.com/RCT.html"
+		}
+		,
+		{
+			"name": "Useful links",
+			"href": "http://www.interdompartners.com/links.html"
+		}
+	]
+}
