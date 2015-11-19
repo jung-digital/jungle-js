@@ -34,5 +34,9 @@
   {
     "key": "Callout",
     "entry": "src/components/Callout.js"
+  },
+  {
+    "key": "Menu",
+    "entry": "src/components/Menu.js"
   }
 ]
