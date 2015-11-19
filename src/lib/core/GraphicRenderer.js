@@ -3,6 +3,8 @@
 /*============================================*\
  * Imports
 \*============================================*/
+import Document from './Document';
+import DocumentEvents from './events/DocumentEvents';
 import GraphicComponent from './GraphicComponent';
 import GraphicRendererEvents from './events/GraphicRendererEvents';
 import MouseEvents from './events/MouseEvents';
@@ -49,6 +51,9 @@ class GraphicRenderer extends GraphicComponent {
     super(options, id);
 
     this.canvas = canvas;
+    this.document = new Document();
+
+    this.document.addListener(DocumentEvents.FOCUS_CHANGE, this._focusChangeHandler.bind(this));
 
     let o = this.options = options || {};
     o.canvasAutoClear = o.canvasAutoClear !== undefined ? o.canvasAutoClear : true;
@@ -56,6 +61,8 @@ class GraphicRenderer extends GraphicComponent {
 
     o.debugPosX = o.debugPosX || 10;
     o.debugPosY = o.debugPosY || 10;
+
+    o.pauseOnLoseFocus = o.pauseOnLoseFocus === false ? false : true;
 
     this.enabled = o.enabled === false ? false : true;
 
@@ -100,6 +107,7 @@ class GraphicRenderer extends GraphicComponent {
     this.parent = undefined;
 
     this._cursor = 'auto';
+    this._paused = false;
 
     this.mouse = {
       canvasX: -1,
@@ -161,9 +169,36 @@ class GraphicRenderer extends GraphicComponent {
     });
   }
 
+  /**
+   * Returns true if the renderer is paused and the entire window looping mechanism is stalled.
+   *
+   * @returns {Boolean}
+   */
+  get paused() {
+    return this._paused;
+  }
+
+  /**
+   * Set to true to stop all window loop management.
+   *
+   * @param {Boolean} value True or false.
+   */
+  set paused(value) {
+    if (this._paused === value) {
+      return;
+    }
+    this._paused = value;
+  }
+
   //---------------------------------------------
   // Event Handlers
   //---------------------------------------------
+  _focusChangeHandler(event) {
+    if (this.options.pauseOnLoseFocus) {
+      this.paused = !event.properties.focus;
+    }
+  }
+
   /**
    * Internal resize handler called when the browser window is resized.
    *
@@ -315,7 +350,7 @@ class GraphicRenderer extends GraphicComponent {
    * @private
    */
   _onFrameHandler(timestamp) {
-    if (!this.enabled) {
+    if (!this.enabled || this.paused === true) {
       return;
     }
 

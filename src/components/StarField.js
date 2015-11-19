@@ -266,12 +266,12 @@ class StarField extends GraphicContainer {
           x = i % tempWidth;
 
           base = (STAR_TEMPLATE[i] / sd2) * (1 - intensity);
-          a = ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base);
+          a = Math.min(1, ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base));
           ia = 1 - a;
 
           ix = Math.round(((y + sp1) * w) + (x + sp0));
 
-          d[ix] = (star.c & 0x00FFFFFF) | Math.max((d[ix] & 0xFF000000) >> 24, Math.round(a * 255)) << 24;
+          d[ix] = (star.c & 0x00FFFFFF) | Math.max((d[ix] & 0xFF000000) >> 24, Math.floor(a * 255)) << 24;
         }
 
         if (star.t > star.totTime) {

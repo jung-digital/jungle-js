@@ -31,7 +31,10 @@ class Dispatcher {
       throw new Error('Expected a type object to be provided to Dispatcher.');
     } else if (!type.type) {
       throw new Error('Expected the provided type object to have a type property when provided to Dispatcher.');
+    } else if (!this.listeners) {
+      throw new Error('Dispatcher constructor was not called before calling addListener.');
     }
+
     this.listeners[type] = this.listeners[type] || [];
     this.listeners[type].push(callback);
   }
