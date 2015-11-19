@@ -18,7 +18,7 @@
         <% items.forEach(function(item) { %>
             <% if (item.doesOpenSubmenu) { %>
                 <div class="item submenu-on-click">
-                    login
+                    <%= item.name %>
                     <div class="form-component submenu">
                         <form>
                             <div class="form-group">
@@ -36,10 +36,20 @@
                 <a href="<%= item.href %>" target="main">
                     <div class="item">
                         <%= item.name %>
+                        <% if (typeof item.subtitle !== "undefined") { %>
+                            <div class="subtitle"><%= item.subtitle %></div>
+                        <% }; %>
                     </div>
                 </a>
             <% }; %>
         <% }); %>
+        <div class="logo-container">
+            <div class="logo"></div>
+            <div><strong>Copyright 2014</strong></div>
+            <div>Interdom LLC</div>
+            <div>11800 S. 75th Ave · Suite 2N</div>
+            <div>Palos Heights, IL 60463</div>
+        </div>
     </script>
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>

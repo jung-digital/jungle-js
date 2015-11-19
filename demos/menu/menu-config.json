@@ -15,6 +15,7 @@
 		},
 		{
 			"name": "Container Tracing",
+			"subtitle": "no login required",
 			"href": "http://interdom.dyndns.org:10010/InterdomWebsite/Container_Tracing.jsp"
 		},
 		{
@@ -24,8 +25,7 @@
 		{
 			"name": "Railroad Circulars",
 			"href": "http://www.interdompartners.com/RCT.html"
-		}
-		,
+		},
 		{
 			"name": "Useful links",
 			"href": "http://www.interdompartners.com/links.html"
