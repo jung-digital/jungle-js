@@ -8,7 +8,7 @@
  * Class
 \*============================================*/
 /**
- * A layer that launches fireworks as directed.
+ * A configurable menu.
  */
 class Menu {
     //---------------------------------------------
