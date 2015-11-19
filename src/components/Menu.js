@@ -74,10 +74,8 @@ class Menu {
     }
 
 }
-
-if (typeof window.Menu === "undefined") {
-    window.Jungle = window.Jungle || {};
-    window.Jungle.Menu = Menu;
-}
+    
+window.Jungle = window.Jungle || {};
+window.Jungle.Menu = Menu;
 
 export default Menu;
