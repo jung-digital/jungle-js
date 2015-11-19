@@ -1,10 +1,12 @@
 import GraphicRenderer from './core/GraphicRenderer.js';
 import GraphicContainer from './core/GraphicContainer.js';
 import Graphic from './core/Graphic.js';
+import Document from './core/Document.js';
 
 import GraphicRendererEvents from './core/events/GraphicRendererEvents.js';
 import GraphicEvents from './core/events/GraphicEvents.js';
 import MouseEvents from './core/events/MouseEvents.js';
+import DocumentEvents from './core/events/DocumentEvents.js';
 
 import Array from './core/util/Array';
 import Color from './core/util/Color';
@@ -19,10 +21,12 @@ export default {
   GraphicRenderer: GraphicRenderer,
   GraphicContainer: GraphicContainer,
   Graphic: Graphic,
+  Document: Document,
   events: {
     GraphicEvents: GraphicEvents,
     GraphicRendererEvents: GraphicRendererEvents,
-    MouseEvents: MouseEvents
+    MouseEvents: MouseEvents,
+    DocumentEvents: DocumentEvents
   },
   util: {
     Array: Array,
