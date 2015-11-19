@@ -299,7 +299,7 @@ class StarField extends GraphicContainer {
 
             ix = Math.round(((y + star.p[1]) * w) + (x + star.p[0]));
 
-            d[ix] = (star.c & 0x00FFFFFF) | Math.max((d[ix] & 0xFF000000) >> 24, Math.floor(a * 255)) << 24;
+            d[ix] = (star.c & 0x00FFFFFF) | Math.min(255, Math.max((d[ix] & 0xFF000000) >> 24, Math.floor(a * 255))) << 24;
             star.ixs.push(ix);
             star.cacheColor.push(d[ix]);
           }
