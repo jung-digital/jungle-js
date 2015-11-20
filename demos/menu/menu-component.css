@@ -6,12 +6,12 @@
 
 .menu-component .item {
 	color: white;
-	text-transform: uppercase;
-	padding: 6px 20px 3px 10px;
-	text-align: right;
-	border-bottom: 1px solid white;
-	position: relative;
-	font-size: 18px;
+    text-transform: uppercase;
+    padding: 4px 18px 1px 10px;
+    text-align: right;
+    border-bottom: 1px solid rgba(118, 195, 255, 0.59);
+    position: relative;
+    font-size: 18px;
 	
 	-webkit-user-select: none; 
 	-moz-user-select: none; 
@@ -33,13 +33,18 @@
 	text-decoration: none;
 }
 
+.menu-component .item:hover,
+.menu-component .item.active {
+	background: rgba(255,255,255, .25);
+}
+
 .menu-component .item:hover {
-	background: rgba(255,255,255, .5);
 	cursor: pointer;
 }
 
 .menu-component .open:hover {
 	background: none;
+	cursor: none;
 }
 
 .menu-component .submenu {
@@ -54,15 +59,17 @@
 	transition: max-height 0.4s ease-in;
 }
 
+
+
 .menu-component .item:hover:after,
 .menu-component .item.active:after {
     content: " ";
-    border-top: 7px solid transparent;
-    border-bottom: 7px solid transparent;
-    border-right: 10px solid #555;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 10px solid #1D1D1D;
     position: absolute;
     right: 0px;
-    top: 12px;   
+    top: 11px;   
 }
 
 .menu-component .logo-container {

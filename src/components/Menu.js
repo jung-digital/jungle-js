@@ -63,9 +63,11 @@ class Menu {
         var $el = $(e.currentTarget);
 
         this.$container.find(".item").removeClass("active");
-        $el.addClass("active");
+        this.$container.find(".submenu").closest(".item").removeClass("open");
 
-        if ($el.find(".submenu").length > 0) {
+        $el.addClass("active");
+        
+        if ($el.find(".submenu").length > 0) {    
             $el.toggleClass("open");
         }
 
