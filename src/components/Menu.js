@@ -40,8 +40,9 @@ class Menu {
      * bind all event handlers needed.
      */
     bindDOMElements() {
-        this.$container.find(".item").on("click", this.onMenuItemClick);
-        this.$container.find(".submenu").on("click", this.onSubMenuContainerClick);
+
+        this.$container.find(".item").on("click", this.onMenuItemClick.bind(this));
+        this.$container.find(".submenu").on("click", this.onSubMenuContainerClick.bind(this));
     }
     
     /**
@@ -57,12 +58,15 @@ class Menu {
     /**
      * Handle jquery event when a user clicks on a menu item.
      */
-    onMenuItemClick() {
+    onMenuItemClick(e) {
 
-        var $this = $(this);
+        var $el = $(e.currentTarget);
 
-        if ($this.find(".submenu").length > 0) {
-            $this.toggleClass("open");
+        this.$container.find(".item").removeClass("active");
+        $el.addClass("active");
+
+        if ($el.find(".submenu").length > 0) {
+            $el.toggleClass("open");
         }
 
     }

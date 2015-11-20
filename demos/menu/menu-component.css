@@ -1,17 +1,7 @@
 .menu-component {
 	width: 200px;
 	float: left;
-	background: #0267FF;
 	font-family: 'Hind', sans-serif;
-
-	background: rgba(2,103,255,1);
-	background: -moz-linear-gradient(left, rgba(2,103,255,1) 0%, rgba(2,103,255,1) 82%, rgba(107,166,255,1) 100%);
-	background: -webkit-gradient(left top, right top, color-stop(0%, rgba(2,103,255,1)), color-stop(82%, rgba(2,103,255,1)), color-stop(100%, rgba(107,166,255,1)));
-	background: -webkit-linear-gradient(left, rgba(2,103,255,1) 0%, rgba(2,103,255,1) 82%, rgba(107,166,255,1) 100%);
-	background: -o-linear-gradient(left, rgba(2,103,255,1) 0%, rgba(2,103,255,1) 82%, rgba(107,166,255,1) 100%);
-	background: -ms-linear-gradient(left, rgba(2,103,255,1) 0%, rgba(2,103,255,1) 82%, rgba(107,166,255,1) 100%);
-	background: linear-gradient(to right, rgba(2,103,255,1) 0%, rgba(2,103,255,1) 82%, rgba(107,166,255,1) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0267ff', endColorstr='#6ba6ff', GradientType=1 );
 }
 
 .menu-component .item {
@@ -64,7 +54,8 @@
 	transition: max-height 0.4s ease-in;
 }
 
-.menu-component .item:hover:after {
+.menu-component .item:hover:after,
+.menu-component .item.active:after {
     content: " ";
     border-top: 7px solid transparent;
     border-bottom: 7px solid transparent;
@@ -115,4 +106,14 @@ iframe {
 	width: 700px;
 	height: 500px;
 	float: left;
+}
+
+html, body {
+	padding: 0px;
+	margin: 0px;
+}
+
+body {
+	background-image: url('http://www.interdompartners.com/pics/botslice.JPG');
+    background-repeat: repeat-y;
 }

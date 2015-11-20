@@ -2,7 +2,8 @@
 	"items": [
 		{
 			"name": "Home",
-			"href": "http://www.interdompartners.com/welcome.html"
+			"href": "http://www.interdompartners.com/welcome.html",
+			"isSelected": true
 		},
 		{
 			"name": "Login",
