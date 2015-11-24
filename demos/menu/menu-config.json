@@ -2,12 +2,12 @@
 	"items": [
 		{
 			"name": "Home",
-			"href": "http://www.interdompartners.com/welcome.html"
+			"href": "http://www.interdompartners.com/welcome.html",
+			"isSelected": true
 		},
 		{
 			"name": "Login",
-			"href": "",
-			"doesOpenSubmenu": true
+			"href": "http://173.164.36.5:10000/InterdomWebsiteTest/login.jsp"
 		},
 		{
 			"name": "Contact Us",
@@ -30,5 +30,6 @@
 			"name": "Useful links",
 			"href": "http://www.interdompartners.com/links.html"
 		}
-	]
+	],
+	"queryStringPassThrough": "sesval"
 }
