@@ -27,6 +27,7 @@ class Menu {
         
         $.get(configFile, function(data) {
             _this.menuConfigData = data;
+            _this.prepareHrefs();
             $(document).ready(_this.onRenderReady.bind(_this));
         });
 
@@ -55,6 +56,16 @@ class Menu {
         this.bindDOMElements();
 
     }
+
+    prepareHrefs() {
+        if (typeof this.menuConfigData.queryStringPassThrough !== "undefined") {
+            var queryStringPT = this.menuConfigData.queryStringPassThrough;
+            this.menuConfigData.items.forEach(function(item) {
+                item.href += "?" + queryStringPT + "=" + this.getParameterByName(queryStringPT);
+            }.bind(this));
+        }
+    }
+
     /**
      * Handle jquery event when a user clicks on a menu item.
      */
@@ -77,6 +88,13 @@ class Menu {
      */
     onSubMenuContainerClick(e) {
          e.stopPropagation();
+    }
+
+    getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
 }
