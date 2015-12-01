@@ -142,7 +142,7 @@ class GraphicRenderer extends GraphicComponent {
    * @param {Object} args The arguments in order to send to the console.
    */
   debug(...args) {
-    if (this.debug) {
+    if (this.options.debug) {
       console.log.apply(console, args);
     }
   }
