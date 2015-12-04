@@ -45,6 +45,9 @@ class Dispatcher {
    * @param {Event} event
    */
   dispatch(event) {
+    if (!this.listeners) {
+      throw new Error('Please call Dispatcher constructor.');
+    }
     this.listeners[event.type] ? this.listeners[event.type].forEach(l => l(event)) : void 0;
   }
 

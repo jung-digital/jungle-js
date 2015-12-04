@@ -3,6 +3,8 @@
 /*============================================*\
  * Imports
 \*============================================*/
+import EventDispatcher from '../lib/core/util/Dispatcher';
+import Event from '../lib/core/util/Event';
 
 /*============================================*\
  * Class
@@ -10,7 +12,7 @@
 /**
  * A configurable menu.
  */
-class Menu {
+class Menu extends EventDispatcher {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
@@ -21,6 +23,8 @@ class Menu {
    * @param {String} configFile
    */
   constructor(container, configFile) {
+    super();
+
     var _this = this;
     this.$container = $(container);
 
@@ -29,6 +33,13 @@ class Menu {
       _this.prepareHrefs();
       $(document).ready(_this.onRenderReady.bind(_this));
     });
+  }
+
+  //---------------------------------------------
+  // Properties
+  //---------------------------------------------
+  get configData () {
+    return this.menuConfigData;
   }
 
   //---------------------------------------------
@@ -46,6 +57,8 @@ class Menu {
    * Handler when all render dependencies have loaded
    */
   onRenderReady() {
+    this.dispatch(new Event(Menu.LOAD_COMPLETE));
+
     var renderTemplateWith = _.template($('#menuTemplate').html());
 
     this.$container.html(renderTemplateWith(this.menuConfigData));
@@ -93,6 +106,8 @@ class Menu {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 }
+
+Menu.LOAD_COMPLETE = Event.generateType('LOAD_COMPLETE', 'Dispatched when the menu has initially been rendered');
 
 window.Jungle = window.Jungle || {};
 window.Jungle.Menu = Menu;

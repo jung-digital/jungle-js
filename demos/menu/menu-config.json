@@ -1,35 +1,46 @@
 {
-	"items": [
-		{
-			"name": "Home",
-			"href": "http://www.interdompartners.com/welcome.html",
-			"isSelected": true
-		},
-		{
-			"name": "Login",
-			"href": "http://173.164.36.5:10010/InterdomWebsiteTest/login.jsp"
-		},
-		{
-			"name": "Contact Us",
-			"href": "http://www.interdompartners.com/contact.html"
-		},
-		{
-			"name": "Container Tracing",
-			"subtitle": "no login required",
-			"href": "http://interdom.dyndns.org:10010/InterdomWebsite/Container_Tracing.jsp"
-		},
-		{
-			"name": "Download Forms",
-			"href": "http://www.interdompartners.com/download.html"
-		},
-		{
-			"name": "Railroad Circulars",
-			"href": "http://www.interdompartners.com/RCT.html"
-		},
-		{
-			"name": "Useful links",
-			"href": "http://www.interdompartners.com/links.html"
-		}
-	],
-	"queryStringPassThrough": "sesval"
+  "items": [
+    {
+      "name": "Home",
+      "href": "http://www.interdompartners.com/welcome.html",
+      "isSelected": true
+    },
+    {
+      "name": "Login",
+      "href": "http://173.164.36.5:10010/InterdomWebsiteTest/login.jsp",
+      "doesOpenSubmenu": true
+    },
+    {
+      "name": "Contact Us",
+      "href": "http://www.interdompartners.com/contact.html"
+    },
+    {
+      "name": "Container Tracing",
+      "subtitle": "no login required",
+      "href": "http://interdom.dyndns.org:10010/InterdomWebsite/Container_Tracing.jsp"
+    },
+    {
+      "name": "Download Forms",
+      "href": "http://www.interdompartners.com/download.html"
+    },
+    {
+      "name": "Railroad Circulars",
+      "href": "http://www.interdompartners.com/RCT.html"
+    },
+    {
+      "name": "Useful links",
+      "href": "http://www.interdompartners.com/links.html"
+    },
+    {
+      "name": "My Account",
+      "href": "http://www.interdompartners.com/RCT.html",
+      "loginRequired": true
+    },
+    {
+      "name": "Quotes, Orders &amp; Trace",
+      "href": "http://www.interdompartners.com/links.html",
+      "loginRequired": true
+    }
+  ],
+  "queryStringPassThrough": "sesval"
 }
