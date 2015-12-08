@@ -10,21 +10,26 @@ function getParameterByName(name) {
   return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-window.jungleMenu.addListener(Jungle.Menu.LOAD_COMPLETE, function () {
-  var sessionId = getParameterByName('sess');
+var sessionId = getParameterByName('sess');
 
-  console.log('Menu Loaded!');
-
-  if (sessionId !== '') {
+if (sessionId !== '') {
+  window.jungleMenu.addListener(Jungle.Menu.LOAD_COMPLETE, function () {
     console.log(sessionId);
 
     var menuItems = window.jungleMenu.configData.items;
     menuItems.forEach(function (item) {
       if (item.loginRequired) {
         item.enabled = true;
+        item.href += '?' + window.jungleMenu.configData.sessionVariable + '=' + sessionId;
+        console.log(item.href);
       }
     });
-  }
+  });
+}
+
+window.jungleMenu.addListener(Jungle.Menu.RENDERED, function () {
+  $('#formLogin').attr('action', window.jungleMenu.configData.action);
+  $('#formInputCallback').attr('value', window.jungleMenu.configData.callback);
 });
 
 console.log(window.location.href);

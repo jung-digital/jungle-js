@@ -1,4 +1,7 @@
 {
+  "action": "http://173.164.36.5:10010/InterdomWebsiteTest/login.jsp",
+  "callback": "http://interdom.jungdigital.com/leftnav.html?sess=",
+  "sessionVariable": "sess",
   "items": [
     {
       "name": "Home",
@@ -41,6 +44,5 @@
       "href": "http://www.interdompartners.com/links.html",
       "loginRequired": true
     }
-  ],
-  "queryStringPassThrough": "sesval"
+  ]
 }

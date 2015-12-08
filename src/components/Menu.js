@@ -20,26 +20,31 @@ class Menu extends EventDispatcher {
    * Build a new Menu.
    *
    * @param {DOMElement} container
-   * @param {String} configFile
+   * @param {String} filenameOrConfig
    */
-  constructor(container, configFile) {
+  constructor(container, filenameOrConfig) {
     super();
 
     var _this = this;
     this.$container = $(container);
 
-    $.get(configFile, function(data) {
-      _this.menuConfigData = data;
-      _this.prepareHrefs();
+    if (typeof filenameOrConfig === 'string') {
+      $.get(filenameOrConfig, initialize);
+    } else {
+      initialize(filenameOrConfig);
+    }
+
+    function initialize(config) {
+      _this.config = config;
       $(document).ready(_this.onRenderReady.bind(_this));
-    });
+    }
   }
 
   //---------------------------------------------
   // Properties
   //---------------------------------------------
-  get configData () {
-    return this.menuConfigData;
+  get configData() {
+    return this.config;
   }
 
   //---------------------------------------------
@@ -61,18 +66,10 @@ class Menu extends EventDispatcher {
 
     var renderTemplateWith = _.template($('#menuTemplate').html());
 
-    this.$container.html(renderTemplateWith(this.menuConfigData));
+    this.$container.html(renderTemplateWith(this.config));
     this.bindDOMElements();
-  }
 
-  prepareHrefs() {
-    if (typeof this.menuConfigData.queryStringPassThrough !== 'undefined') {
-      var queryStringPT = this.menuConfigData.queryStringPassThrough;
-
-      this.menuConfigData.items.forEach(function(item) {
-        item.href += '?' + queryStringPT + '=' + this.getParameterByName(queryStringPT);
-      }.bind(this));
-    }
+    this.dispatch(new Event(Menu.RENDERED));
   }
 
   /**
@@ -80,6 +77,10 @@ class Menu extends EventDispatcher {
    */
   onMenuItemClick(e) {
     var $el = $(e.currentTarget);
+
+    if (this.config && (typeof this.config.clickCallback === 'function')) {
+      this.config.clickCallback($el);
+    }
 
     this.$container.find('.item').removeClass('active');
     this.$container.find('.submenu').closest('.item').removeClass('open');
@@ -108,6 +109,7 @@ class Menu extends EventDispatcher {
 }
 
 Menu.LOAD_COMPLETE = Event.generateType('LOAD_COMPLETE', 'Dispatched when the menu has initially been rendered');
+Menu.RENDERED = Event.generateType('RENDERED', 'Dispatched once the menu has been renderered');
 
 window.Jungle = window.Jungle || {};
 window.Jungle.Menu = Menu;
