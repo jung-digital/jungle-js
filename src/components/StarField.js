@@ -42,17 +42,6 @@ const STAR_TEMPLATE = [0.0, 0.1, 0.2, 0.1, 0.0,
                         0.2, 0.5, 1.0, 0.5, 0.2,
                         0.1, 0.4, 0.5, 0.4, 0.1,
                         0.0, 0.1, 0.2, 0.1, 0.0];
-const STAR_TEMPLATE_X = [0, 1, 2, 3, 4, 5,
-                        0, 1, 2, 3, 4, 5,
-                        0, 1, 2, 3, 4, 5,
-                        0, 1, 2, 3, 4, 5,
-                        0, 1, 2, 3, 4, 5];
-
-const STAR_TEMPLATE_Y = [1, 1, 1, 1, 1,
-                        2, 2, 2, 2, 2,
-                        3, 3, 3, 3, 3,
-                        4, 4, 4, 4, 4,
-                        5, 5, 5, 5, 5];
 
 const STAR_TEMPLATE_9X9 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                             0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
@@ -216,7 +205,7 @@ class StarField extends GraphicContainer {
       this.renderer.addListener(GraphicRendererEvents.WINDOW_SCROLL, this.windowScrollHandler.bind(this));
     }
 
-    this.viewStars(0, window.scrollY);
+    this.viewStars(0, window.scrollY || window.pageYOffset);
   }
 
   canvasResizedHandler(event) {
@@ -231,7 +220,7 @@ class StarField extends GraphicContainer {
 
     this._rebuildImageDataCache();
 
-    this.viewStars(0, window.scrollY);
+    this.viewStars(0, window.scrollY || window.pageYOffset);
   }
 
   /**
@@ -252,16 +241,15 @@ class StarField extends GraphicContainer {
     this.imda.data.set(this.cacheImDa.data);
 
     let d = new Uint32Array(this.imda.data.buffer);
+    let buf = new Uint8ClampedArray(this.imda.data.buffer);
     let x = 0;
     let y = 0;
     let i = 0;
-    let cxy = Math.floor(this.wh / 2);
     let ix = 0;
     let wh = this.wh;
     let templateSize = 81;
     let templateSizeSmall = 25;
     let tempWidth = 9;
-    let tempWidthSmall = 5;
 
     var starDraw = function(star) {
       let a = undefined;
@@ -328,10 +316,11 @@ class StarField extends GraphicContainer {
         }
       }
     };
+
     this.stars.forEach(starDraw);
 
     // Render stars to canvas
-    ctx.putImageData(this.imda, 0.5, 0.5);
+    ctx.putImageData(this.imda, 0.0, 0.0);
   }
 
   /**
@@ -340,7 +329,7 @@ class StarField extends GraphicContainer {
   windowScrollHandler(event) {
     let o = this.options;
 
-    this.viewStars(0, window.scrollY);
+    this.viewStars(0, window.scrollY || window.pageYOffset);
   }
 }
 
