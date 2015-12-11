@@ -307,12 +307,9 @@ class StarField extends GraphicContainer {
           star.ixs = [];
           star.cacheColor = [];
 
-          y = 0;
-          x = 0;
+          y = 2;
+          x = 2;
           for (i = 0; i < templateSizeSmall; i++) {
-            y = x == 4 ? y + 1 : y;
-            x = x == 4 ? 0 : x + 1;
-
             // Calculate the alpha value based on the distance of the pixel from
             // the center of the star.
 
@@ -324,6 +321,9 @@ class StarField extends GraphicContainer {
             d[ix] = (star.c & 0x00FFFFFF) | Math.min(255, Math.max((d[ix] & 0xFF000000) >> 24, Math.floor(a * 255))) << 24;
             star.ixs.push(ix);
             star.cacheColor.push(d[ix]);
+
+            y = x == 6 ? y + 1 : y;
+            x = x == 6 ? 2 : x + 1;
           }
         }
       }
