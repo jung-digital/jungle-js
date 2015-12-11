@@ -37,15 +37,32 @@ const STAR_TWINKLE_TIME_MIN = 0.6;
 const STAR_TWINKLE_TIME_MAX = 1.2;
 
 const STAR_TWINKLE_RATE = 0.01;
-const STAR_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.1, 0.2, 0.1, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.1, 0.4, 0.5, 0.4, 0.1, 0.0, 0.0,
-                        0.0, 0.0, 0.2, 0.5, 1.0, 0.5, 0.2, 0.0, 0.0,
-                        0.0, 0.0, 0.1, 0.4, 0.5, 0.4, 0.1, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.1, 0.2, 0.1, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                        0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+const STAR_TEMPLATE = [0.0, 0.1, 0.2, 0.1, 0.0,
+                        0.1, 0.4, 0.5, 0.4, 0.1,
+                        0.2, 0.5, 1.0, 0.5, 0.2,
+                        0.1, 0.4, 0.5, 0.4, 0.1,
+                        0.0, 0.1, 0.2, 0.1, 0.0];
+const STAR_TEMPLATE_X = [0, 1, 2, 3, 4, 5,
+                        0, 1, 2, 3, 4, 5,
+                        0, 1, 2, 3, 4, 5,
+                        0, 1, 2, 3, 4, 5,
+                        0, 1, 2, 3, 4, 5];
+
+const STAR_TEMPLATE_Y = [1, 1, 1, 1, 1,
+                        2, 2, 2, 2, 2,
+                        3, 3, 3, 3, 3,
+                        4, 4, 4, 4, 4,
+                        5, 5, 5, 5, 5];
+
+const STAR_TEMPLATE_9X9 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                            0.0, 0.0, 0.0, 0.1, 0.2, 0.1, 0.0, 0.0, 0.0,
+                            0.0, 0.0, 0.1, 0.4, 0.5, 0.4, 0.1, 0.0, 0.0,
+                            0.0, 0.0, 0.2, 0.5, 1.0, 0.5, 0.2, 0.0, 0.0,
+                            0.0, 0.0, 0.1, 0.4, 0.5, 0.4, 0.1, 0.0, 0.0,
+                            0.0, 0.0, 0.0, 0.1, 0.2, 0.1, 0.0, 0.0, 0.0,
+                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
 const STAR_TWINKLE_TEMPLATE = [0.0, 0.0, 0.0, 0.0, 0.6, 0.0, 0.0, 0.0, 0.0,
                                 0.0, 0.0, 0.0, 0.1, 0.7, 0.1, 0.0, 0.0, 0.0,
@@ -241,8 +258,10 @@ class StarField extends GraphicContainer {
     let cxy = Math.floor(this.wh / 2);
     let ix = 0;
     let wh = this.wh;
-    let templateSize = STAR_TWINKLE_TEMPLATE.length;
-    let tempWidth = Math.round(Math.sqrt(templateSize));
+    let templateSize = 81;
+    let templateSizeSmall = 25;
+    let tempWidth = 9;
+    let tempWidthSmall = 5;
 
     var starDraw = function(star) {
       let a = undefined;
@@ -259,13 +278,13 @@ class StarField extends GraphicContainer {
         let base = undefined;
 
         for (i = 0; i < templateSize; i++) {
-          if (STAR_TEMPLATE[i] === 0 && STAR_TWINKLE_TEMPLATE[i] === 0) {
+          if (STAR_TEMPLATE_9X9[i] === 0 && STAR_TWINKLE_TEMPLATE[i] === 0) {
             continue;
           }
           y = Math.floor(i / tempWidth);
           x = i % tempWidth;
 
-          base = (STAR_TEMPLATE[i] / sd2) * (1 - intensity);
+          base = (STAR_TEMPLATE_9X9[i] / sd2) * (1 - intensity);
           a = Math.min(1, ((STAR_TWINKLE_TEMPLATE[i] * intensity) + base));
           ia = 1 - a;
 
@@ -281,16 +300,19 @@ class StarField extends GraphicContainer {
       } else {
         // Draw each pixel of the star. Pulling from cache if we can.
         if (star.ixs) {
-          for (i = 0; i < templateSize; i++) {
+          for (i = 0; i < templateSizeSmall; i++) {
             d[star.ixs[i]] = star.cacheColor[i];
           }
         } else {
           star.ixs = [];
           star.cacheColor = [];
 
-          for (i = 0; i < templateSize; i++) {
-            y = Math.floor(i / tempWidth);
-            x = i % tempWidth;
+          y = 0;
+          x = 0;
+          for (i = 0; i < templateSizeSmall; i++) {
+            y = x == 4 ? y + 1 : y;
+            x = x == 4 ? 0 : x + 1;
+
             // Calculate the alpha value based on the distance of the pixel from
             // the center of the star.
 
