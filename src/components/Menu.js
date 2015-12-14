@@ -3,7 +3,7 @@
 /*============================================*\
  * Imports
 \*============================================*/
-import EventDispatcher from '../lib/core/util/Dispatcher';
+import Dispatcher from '../lib/core/util/Dispatcher';
 import Event from '../lib/core/util/Event';
 
 /*============================================*\
@@ -12,7 +12,7 @@ import Event from '../lib/core/util/Event';
 /**
  * A configurable menu.
  */
-class Menu extends EventDispatcher {
+class Menu extends Dispatcher {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
@@ -77,10 +77,6 @@ class Menu extends EventDispatcher {
    */
   onMenuItemClick(e) {
     var $el = $(e.currentTarget);
-
-    if (this.config && (typeof this.config.clickCallback === 'function')) {
-      this.config.clickCallback($el);
-    }
 
     this.$container.find('.item').removeClass('active');
     this.$container.find('.submenu').closest('.item').removeClass('open');

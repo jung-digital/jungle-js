@@ -1,7 +1,8 @@
 {
   "action": "http://173.164.36.5:10010/InterdomWebsiteTest/login.jsp",
   "callback": "http://interdom.jungdigital.com/leftnav.html?sess=",
-  "sessionVariable": "sess",
+  "logout": "http://interdom.jungdigital.com/leftnav.html",
+  "home": "",
   "items": [
     {
       "name": "Home",
@@ -11,7 +12,14 @@
     {
       "name": "Login",
       "href": "http://173.164.36.5:10010/InterdomWebsiteTest/login.jsp",
-      "doesOpenSubmenu": true
+      "doesOpenSubmenu": true,
+      "enabled": true
+    },
+    {
+      "name": "Logout",
+      "href": "javascript:logout();",
+      "target": "_self",
+      "enabled": false
     },
     {
       "name": "Contact Us",
@@ -36,13 +44,76 @@
     },
     {
       "name": "My Account",
-      "href": "http://www.interdompartners.com/RCT.html",
-      "loginRequired": true
+      "href": "javascript:openSubMenu('ITEM_ID');",
+      "id": "account",
+      "target": "_self",
+      "loginRequired": true,
+      "children": [
+        {
+          "name": "User Admin",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00102+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "View Admin",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00107+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Bio",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00104+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Customer Notes",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00127+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Reports",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00122+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        }
+      ]
     },
     {
       "name": "Quotes, Orders &amp; Trace",
-      "href": "http://www.interdompartners.com/links.html",
-      "loginRequired": true
+      "href": "javascript:openSubMenu('ITEM_ID');",
+      "target": "_self",
+      "id": "qot",
+      "loginRequired": true,
+      "children": [
+        {
+          "name": "Quotes Request",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00105+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Quotes Bill",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00120+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Orders",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00118+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Orders Trace",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00116+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Billing Status",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00124+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        },
+        {
+          "name": "Performance View",
+          "href": "http://69.17.24.199//cgi-bin/lansaweb?PROCFUN+WBPR001+WB00129+DEV+FUNCPARMS+FWB33SESS(A0200):",
+          "loginRequired": true
+        }
+      ]
     }
   ]
 }

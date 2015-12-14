@@ -14,17 +14,28 @@ var sessionId = getParameterByName('sess');
 
 if (sessionId !== '') {
   window.jungleMenu.addListener(Jungle.Menu.LOAD_COMPLETE, function () {
-    console.log(sessionId);
-
-    var menuItems = window.jungleMenu.configData.items;
-    menuItems.forEach(function (item) {
-      if (item.loginRequired) {
-        item.enabled = true;
-        item.href += '?' + window.jungleMenu.configData.sessionVariable + '=' + sessionId;
-        console.log(item.href);
-      }
-    });
+    window.jungleMenu.configData.items.forEach(processItem);
   });
+
+  function processItem(item) {
+    if (item.name === 'Login') {
+      item.enabled = false;
+    } else if (item.name === 'Logout') {
+      item.enabled = true;
+    }
+    if (item.loginRequired) {
+      item.enabled = true;
+      if (item.href.indexOf('javascript') == -1) {
+        item.href += sessionId;
+      }
+    }
+
+    item.href = item.href.replace('SESSION_ID', sessionId);
+
+    if (item.children) {
+      item.children.forEach(processItem);
+    }
+  }
 }
 
 window.jungleMenu.addListener(Jungle.Menu.RENDERED, function () {
@@ -32,4 +43,15 @@ window.jungleMenu.addListener(Jungle.Menu.RENDERED, function () {
   $('#formInputCallback').attr('value', window.jungleMenu.configData.callback);
 });
 
-console.log(window.location.href);
+window.openSubMenu = function (id) {
+  if ($('.child-menu-' + id).css('max-height') == '0px') {
+    $('.child-menu-' + id).css('max-height', '500px');
+  } else {
+    $('.child-menu-' + id).css('max-height', '0px');
+  }
+};
+
+window.logout = function () {
+  document.getElementByName('main').href =
+  window.location.href = window.jungleMenu.configData.logout;
+}
