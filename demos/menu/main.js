@@ -44,6 +44,8 @@ window.jungleMenu.addListener(Jungle.Menu.RENDERED, function () {
 });
 
 window.openSubMenu = function (id) {
+  $('.child-menu').css('max-height', '0px');
+
   if ($('.child-menu-' + id).css('max-height') == '0px') {
     $('.child-menu-' + id).css('max-height', '500px');
   } else {
