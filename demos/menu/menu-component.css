@@ -11,7 +11,7 @@
   text-align: right;
   border-bottom: 1px solid rgba(118, 195, 255, 0.59);
   position: relative;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
 
   -webkit-user-select: none;
@@ -23,7 +23,7 @@
 .item .item-child {
   color: white;
   text-transform: none;
-  padding: 1px 18px 0px 10px;
+  padding: 1px 12px 0px 10px;
   text-align: right;
   position: relative;
   font-size: 14px;
@@ -59,19 +59,24 @@
   text-decoration: none;
 }
 
+.menu-component .item.secure {
+  background: rgba(255, 255, 255, .15);
+  font-size: 14px;
+}
+
 .menu-component .item:hover,
-.menu-component .item.active {
+.menu-component .item.secure:hover {
   background: rgba(255, 255, 255, .25);
 }
 
-.menu-component .item.secure {
-  background: rgba(255, 255, 255, .15);
-  padding: 6px 0px 4px 10px;
-  font-size: 14px;
+.menu-component .item.active {
+  background: rgba(255, 255, 255, .20);
 }
 
 .menu-component .item.secure a {
   padding-right: 18px;
+  width: 100%;
+  display: block;
 }
 
 .menu-component .item.secure .child-menu a {
@@ -110,7 +115,7 @@
   border-right: 8px solid #1D1D1D;
   position: absolute;
   right: 0px;
-  top: 11px;
+  top: 8px;
 }
 
 .item .item-child:hover:after {

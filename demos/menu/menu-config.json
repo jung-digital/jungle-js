@@ -1,8 +1,8 @@
 {
   "action": "http://173.164.36.5:10010/InterdomWebsiteTest/login.jsp",
-  "callback": "http://localhost:3030/leftnav.html?sess=",
-  "logout": "http://localhost:3030/leftnav.html",
-  "home": "",
+  "callback": "http://interdom.jungdigital.com/leftnav.html?sess=",
+  "logout": "http://interdom.jungdigital.com/leftnav.html",
+  "home": "http://www.interdompartners.com/welcome.html",
   "items": [
     {
       "name": "Home",
