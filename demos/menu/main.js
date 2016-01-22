@@ -1,4 +1,12 @@
-var menuContainer = document.querySelector(".menu-component");
-var configFilePath = "/menu-config.json";
 
-var jungleMenu = new Jungle.Menu(menuContainer, configFilePath);
+$.get("/menu-config.json", function(data) {
+
+	var jungleMenu = new Jungle.Menu({
+			container: document.querySelector(".menu-component"),
+			config: data,
+			isSticky: true
+		})
+
+	jungleMenu.render();
+  
+});

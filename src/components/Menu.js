@@ -17,18 +17,20 @@ class Menu {
   /**
    * Build a new Menu.
    *
-   * @param {DOMElement} container
-   * @param {String} configFile
+   * @param {DOMElement} settings
    */
-  constructor(container, configFile) {
-    var _this = this;
-    this.$container = $(container);
+  constructor(options) {
+    
+    var defaults = {
+      $container: "jungle-menu",
+      isSticky: false,
+      config: []
+    }
 
-    $.get(configFile, function(data) {
-      _this.menuConfigData = data;
-      _this.prepareHrefs();
-      $(document).ready(_this.onRenderReady.bind(_this));
-    });
+    this.settings = _.extend({}, defaults, options)
+
+    this.$container = $(this.settings.container);
+    this.menuConfigData = this.settings.config;
   }
 
   //---------------------------------------------
@@ -42,10 +44,37 @@ class Menu {
     this.$container.find('.submenu').on('click', this.onSubMenuContainerClick.bind(this));
   }
 
+  render() {
+    $(document).ready(this.onRenderReady.bind(this));
+
+    if (this.settings.isSticky) {
+      $(document).scroll(_.throttle(function() {
+
+        var $menu = $(".menu");
+        var $menuAnchor = $(".menu-anchor");
+
+        var menuHeightToTopOfWindow = $menuAnchor.offset().top;
+        var documentscrollTop = $(document).scrollTop();
+
+        if (documentscrollTop >= menuHeightToTopOfWindow) {
+          $menu.addClass("isFloating");
+          $menuAnchor.css({"height" : $menu.height() + "px"});
+        } else {
+          $menu.removeClass("isFloating");
+          $menuAnchor.css({"height" : "0"});
+        }
+
+      }, 10));
+
+    }
+
+  }
+
   /**
    * Handler when all render dependencies have loaded
    */
   onRenderReady() {
+    this.prepareHrefs();
     var renderTemplateWith = _.template($('#menuTemplate').html());
 
     this.$container.html(renderTemplateWith(this.menuConfigData));
