@@ -12,4 +12,5 @@ window.starField = new StarField({
   starDensity: 2,
   starTwinkleRate: 0.01
 });
+
 renderer.addChild(starField);

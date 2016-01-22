@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menu Example</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="/menu-component.css">
+  <link href='https://fonts.googleapis.com/css?family=Hind:400,500,300,700' rel='stylesheet' type='text/css'>
+</head>
+<body>
+<div class="menu-component"></div>
+<script type="text/template" id="menuTemplate">
+  <% items.forEach(function(item) { %>
+  <% if (item.doesOpenSubmenu && item.enabled === true) { %>
+  <div class="item submenu-on-click">
+    <div id="login"><%= item.name %></div>
+    <div class="form-component submenu">
+      <form id="formLogin" action="[populated in main.js]" method="post">
+        <input id="formInputCallback" name="URL" type="hidden" value="[populated in main.js]"/>
+        <div class="form-group">
+          <input type="text" name="User" id="login-email" placeholder="Username" required/>
+        </div>
+        <div class="form-group">
+          <input type="password" name="Password" id="login-password" placeholder="Password" required/>
+        </div>
+        <div class="form-group">
+          <input type="submit" value="SUBMIT">
+        </div>
+      </form>
+    </div>
+  </div>
+  <% } else if (!item.loginRequired && item.enabled !== false) { %>
+  <a href="<%= item.href %>" target="<%= item.target || 'main' %>">
+    <div class="item <% if (item.isSelected) { print('active') } %>">
+      <%= item.name %>
+      <% if (typeof item.subtitle !== "undefined") { %>
+      <div class="subtitle"><%= item.subtitle %></div>
+      <% } %>
+    </div>
+  </a>
+  <% } %>
+  <% }); %>
+
+  <div class="secure-items">
+  <% items.forEach(function(item, ix) { %>
+    <% if (item.loginRequired && item.enabled) { %>
+      <div class="item secure <% if (ix === items.length-1) print('last'); %>">
+        <a href="<%= item.href.replace('ITEM_ID', item.id) %>" target="<%= item.target || 'main' %>">
+        <%= item.name %>
+        </a>
+        <% if (item.children) { %>
+          <div class="child-menu child-menu-<%= item.id%>">
+            <% item.children.forEach(function (item2, ix) { %>
+            <a href="<%= item2.href %>" target="main">
+              <div class="item-child <% if (ix === item.children.length-1) print('last'); %>">
+                <%= item2.name %>
+              </div>
+            </a>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  <% }); %>
+  </div>
+
+  <div class="logo-container">
+    <div class="logo"></div>
+    <div><strong>Copyright 2014</strong></div>
+    <div>Interdom LLC</div>
+    <div>11800 S. 75th Ave · Suite 2N</div>
+    <div>Palos Heights, IL 60463</div>
+  </div>
+</script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="/dist/menu.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
