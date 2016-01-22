@@ -209,18 +209,20 @@ class StarField extends GraphicContainer {
   }
 
   canvasResizedHandler(event) {
-    let w = this.renderer.canvas.width;
-    let h = this.renderer.canvas.height;
     let o = this.options;
+    if (o.fieldWidth != this.renderer.canvas.width && o.fieldHeight != this.renderer.canvas.height) {
+      let w = this.renderer.canvas.width;
+      let h = this.renderer.canvas.height;
 
-    if (o.fill) {
-      o.fieldWidth = w;
-      o.fieldHeight = h;
+      if (o.fill) {
+        o.fieldWidth = w;
+        o.fieldHeight = h;
+      }
+
+      this._rebuildImageDataCache();
+
+      this.viewStars(0, window.scrollY || window.pageYOffset);
     }
-
-    this._rebuildImageDataCache();
-
-    this.viewStars(0, window.scrollY || window.pageYOffset);
   }
 
   /**

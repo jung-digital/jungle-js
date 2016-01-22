@@ -35,6 +35,9 @@ class Menu extends Dispatcher {
     }
 
     function initialize(config) {
+      if (typeof config === 'string') {
+        config = JSON.parse(config);
+      }
       _this.config = config;
       $(document).ready(_this.onRenderReady.bind(_this));
     }
