@@ -3,6 +3,8 @@
 /*============================================*\
  * Imports
 \*============================================*/
+import Dispatcher from '../lib/core/util/Dispatcher';
+import Event from '../lib/core/util/Event';
 
 /*============================================*\
  * Class
@@ -10,17 +12,21 @@
 /**
  * A configurable menu.
  */
-class Menu {
+class Menu extends Dispatcher {
   //---------------------------------------------
   // Constructor
   //---------------------------------------------
   /**
    * Build a new Menu.
    *
-   * @param {DOMElement} settings
+
+   * @param {DOMElement} container
+   * @param {String} filenameOrConfig
    */
   constructor(options) {
-    
+
+    super();
+
     var defaults = {
       $container: "jungle-menu",
       isSticky: false,
@@ -29,8 +35,29 @@ class Menu {
 
     this.settings = _.extend({}, defaults, options)
 
+    var _this = this;
     this.$container = $(this.settings.container);
-    this.menuConfigData = this.settings.config;
+
+    if (typeof this.settings.config === 'string') {
+      $.get(this.settings.config, initialize);
+    } else {
+      initialize(this.settings.config);
+    }
+
+    function initialize(config) {
+      if (typeof config === 'string') {
+        config = JSON.parse(config);
+      }
+      _this.config = config;
+      $(document).ready(_this.onRenderReady.bind(_this));
+    }
+  }
+
+  //---------------------------------------------
+  // Properties
+  //---------------------------------------------
+  get configData() {
+    return this.config;
   }
 
   //---------------------------------------------
@@ -44,8 +71,17 @@ class Menu {
     this.$container.find('.submenu').on('click', this.onSubMenuContainerClick.bind(this));
   }
 
-  render() {
-    $(document).ready(this.onRenderReady.bind(this));
+  /**
+   * Handler when all render dependencies have loaded
+   */
+  onRenderReady() {
+    // this.prepareHrefs();
+    this.dispatch(new Event(Menu.LOAD_COMPLETE));
+
+    var renderTemplateWith = _.template($('#menuTemplate').html());
+
+    this.$container.html(renderTemplateWith(this.config));
+    this.bindDOMElements();
 
     if (this.settings.isSticky) {
       $(document).scroll(_.throttle(function() {
@@ -53,42 +89,25 @@ class Menu {
         var $menu = $(".menu");
         var $menuAnchor = $(".menu-anchor");
 
-        var menuHeightToTopOfWindow = $menuAnchor.offset().top;
-        var documentscrollTop = $(document).scrollTop();
+        if ($menu.length > 0 && $menuAnchor.length > 0) {
 
-        if (documentscrollTop >= menuHeightToTopOfWindow) {
-          $menu.addClass("isFloating");
-          $menuAnchor.css({"height" : $menu.height() + "px"});
-        } else {
-          $menu.removeClass("isFloating");
-          $menuAnchor.css({"height" : "0"});
+          var menuHeightToTopOfWindow = $menuAnchor.offset().top;
+          var documentscrollTop = $(document).scrollTop();
+
+          if (documentscrollTop >= menuHeightToTopOfWindow) {
+            $menu.addClass("isFloating");
+            $menuAnchor.css({"height" : $menu.height() + "px"});
+          } else {
+            $menu.removeClass("isFloating");
+            $menuAnchor.css({"height" : "0"});
+          }
         }
 
       }, 10));
 
     }
 
-  }
-
-  /**
-   * Handler when all render dependencies have loaded
-   */
-  onRenderReady() {
-    this.prepareHrefs();
-    var renderTemplateWith = _.template($('#menuTemplate').html());
-
-    this.$container.html(renderTemplateWith(this.menuConfigData));
-    this.bindDOMElements();
-  }
-
-  prepareHrefs() {
-    if (typeof this.menuConfigData.queryStringPassThrough !== 'undefined') {
-      var queryStringPT = this.menuConfigData.queryStringPassThrough;
-
-      this.menuConfigData.items.forEach(function(item) {
-        item.href += '?' + queryStringPT + '=' + this.getParameterByName(queryStringPT);
-      }.bind(this));
-    }
+    this.dispatch(new Event(Menu.RENDERED));
   }
 
   /**
@@ -122,6 +141,9 @@ class Menu {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 }
+
+Menu.LOAD_COMPLETE = Event.generateType('LOAD_COMPLETE', 'Dispatched when the menu has initially been rendered');
+Menu.RENDERED = Event.generateType('RENDERED', 'Dispatched once the menu has been renderered');
 
 window.Jungle = window.Jungle || {};
 window.Jungle.Menu = Menu;

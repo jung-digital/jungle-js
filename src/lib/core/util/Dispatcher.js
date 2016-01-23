@@ -34,9 +34,8 @@ class Dispatcher {
     } else if (!this.listeners) {
       throw new Error('Dispatcher constructor was not called before calling addListener.');
     }
-
-    this.listeners[type] = this.listeners[type] || [];
-    this.listeners[type].push(callback);
+    this.listeners[type.type] = this.listeners[type.type] || [];
+    this.listeners[type.type].push(callback);
   }
 
   /**
@@ -45,7 +44,10 @@ class Dispatcher {
    * @param {Event} event
    */
   dispatch(event) {
-    this.listeners[event.type] ? this.listeners[event.type].forEach(l => l(event)) : void 0;
+    if (!this.listeners) {
+      throw new Error('Please call Dispatcher constructor.');
+    }
+    this.listeners[event.type.type] ? this.listeners[event.type.type].forEach(l => l(event)) : void 0;
   }
 
   /**
@@ -55,7 +57,7 @@ class Dispatcher {
    * @returns {Boolean}
    */
   hasListener(type) {
-    return this.listeners[type] !== undefined;
+    return this.listeners[type.type] !== undefined;
   }
 }
 
