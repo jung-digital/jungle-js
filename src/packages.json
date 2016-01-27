@@ -38,5 +38,9 @@
   {
     "key": "Menu",
     "entry": "src/components/Menu.js"
+  },
+  {
+    "key": "SlideSwipe",
+    "entry": "src/components/SlideSwipe.js"
   }
 ]

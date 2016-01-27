@@ -1,0 +1,31 @@
+.slides {
+  margin: 0 auto;
+  width: 800px;
+}
+
+.slide {
+  width: 500px;
+  height: 500px;
+  border: 1px solid black;
+  margin: 0 auto;
+}
+
+.slide-1 {
+  background: #1abc9c;
+}
+
+.slide-2 {
+  background: #3498db;
+}
+
+.slide-3 {
+  background: #9b59b6;
+}
+
+.slide-4 {
+  background: #e67e22;
+}
+
+.slide-5 {
+  background: #2c3e50;
+}
