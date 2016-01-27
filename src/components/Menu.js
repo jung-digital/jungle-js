@@ -28,12 +28,12 @@ class Menu extends Dispatcher {
     super();
 
     var defaults = {
-      $container: "jungle-menu",
+      $container: 'jungle-menu',
       isSticky: false,
       config: []
-    }
+    };
 
-    this.settings = _.extend({}, defaults, options)
+    this.settings = _.extend({}, defaults, options);
 
     var _this = this;
     this.$container = $(this.settings.container);
@@ -48,7 +48,7 @@ class Menu extends Dispatcher {
       if (typeof config === 'string') {
         config = JSON.parse(config);
       }
-      _this.config = config;
+      _this.config = _.extend({}, config, {settings: _this.settings});
       $(document).ready(_this.onRenderReady.bind(_this));
     }
   }
@@ -86,8 +86,8 @@ class Menu extends Dispatcher {
     if (this.settings.isSticky) {
       $(document).scroll(_.throttle(function() {
 
-        var $menu = $(".menu");
-        var $menuAnchor = $(".menu-anchor");
+        var $menu = $('.menu');
+        var $menuAnchor = $('.menu-anchor');
 
         if ($menu.length > 0 && $menuAnchor.length > 0) {
 
@@ -95,11 +95,11 @@ class Menu extends Dispatcher {
           var documentscrollTop = $(document).scrollTop();
 
           if (documentscrollTop >= menuHeightToTopOfWindow) {
-            $menu.addClass("isFloating");
-            $menuAnchor.css({"height" : $menu.height() + "px"});
+            $menu.addClass('isFloating');
+            $menuAnchor.css({'height': $menu.height() + 'px'});
           } else {
-            $menu.removeClass("isFloating");
-            $menuAnchor.css({"height" : "0"});
+            $menu.removeClass('isFloating');
+            $menuAnchor.css({'height': '0'});
           }
         }
 
