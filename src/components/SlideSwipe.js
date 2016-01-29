@@ -39,7 +39,7 @@ class SlideSwipe extends Dispatcher {
     this.options.transitionSpeed = this.options.transitionSpeed || 0.5;
 
     // Any scroll speed over 500 px / sec will trigger a slide change.
-    this.options.mouseWheelThreshold = this.options.mouseWheelThreshold || 200;
+    this.options.mouseWheelThreshold = this.options.mouseWheelThreshold || 50;
 
     this.base = $(this.options.baseSelector);
 
@@ -56,6 +56,9 @@ class SlideSwipe extends Dispatcher {
     this.idToSlideIx = {};
 
     this.curSlideIx = 0;
+
+    this.lastDeltaY = 0;
+    this.lastWheelTime = new Date();
 
     setTimeout(function () {
       this._setupBase();
@@ -137,7 +140,7 @@ class SlideSwipe extends Dispatcher {
     this.base.css('position', this.options.basePosition);
   }
 
-  gotoSlide(ix) {
+  gotoSlide(ix, callback) {
     var o = this.options;
     var _this = this;
 
@@ -149,17 +152,11 @@ class SlideSwipe extends Dispatcher {
       return;
     }
 
-    this.ignoreWheel = true;
-
     var nextSlide = this.slides[ix];
 
     TweenLite.to(nextSlide.slide[0], o.transitionSpeed, {
       top: '0%',
-      onComplete: function () {
-        setTimeout(function () {
-          _this.ignoreWheel = false;
-        }, 100);
-      }
+      onComplete: callback
     });
 
     if (ix < this.curSlideIx) {
@@ -183,42 +180,58 @@ class SlideSwipe extends Dispatcher {
     console.log(event);
   }
 
+  /**
+   * Handles mouse wheel events. This is unfortunately complicated by the fact that everyone has their
+   * mouse wheel settings set up differently.
+   *
+   * In addition, some browsers have a
+   *
+   * @param event
+   */
   wheelHandler(event) {
+    var _this = this;
+
+    var o = this.options;
+    var deltaY = !isNaN(event.originalEvent.deltaY) ? event.originalEvent.deltaY : 0;
+
     if (this.ignoreWheel) {
       event.stopImmediatePropagation();
       event.preventDefault();
+
+      this.lastWheelTime = new Date();
+      this.lastDeltaY = deltaY;
+
       return;
     }
 
-    var o = this.options;
-    var allowPropagation = false;
+    // We allow a 'swipe' gesture if:
+    //
+    // 1) There have been no scroll events in the last 100 ms. (this is for single click mouse wheels and no ease)
+    // OR 2) A new scroll event has a delta with a opposite sign (-/+)
+    // OR 3) A new scroll event in the same direction has a delta magnitude that is greater than the last one AND occurs
+    //    at least 50 ms AFTER the last gesture has ended.
 
-    // 100 ms threshold sensitivity
-    if (this.startScrollTime && this.startScrollTime > new Date().getTime() - 200) {
-      if (Math.abs(this.deltaY) >= o.mouseWheelThreshold) {
-        if (this.deltaY < 0) {
-          if (this.curSlideIx > 0) {
-            this.gotoSlide(this.curSlideIx - 1);
-          } else {
-            allowPropagation = true;
-          }
-        } else {
-          if (this.curSlideIx < this.slides.length - 1) {
-            this.gotoSlide(this.curSlideIx + 1);
-          } else {
-            allowPropagation = true;
-          }
-        }
+    if (deltaY !== 0) {
+      var allowPropagation = (deltaY < 0) ? _this.curSlideIx <= 0 : (_this.curSlideIx >= _this.slides.length - 1);
+      var allowSwipe = !allowPropagation;
+
+      var now = new Date().getTime();
+      var magnitudeIncrease = Math.abs(deltaY) > Math.abs(this.lastDeltaY) * 2;
+      var swipeGestureDetected = (now - this.lastWheelTime.getTime() > 200) ||
+        (Math.sign(deltaY) != Math.sign(this.lastDeltaY)) ||
+        magnitudeIncrease;
+
+      if (allowSwipe && swipeGestureDetected && _this.options.direction === 'vertical') {
+        this.ignoreWheel = true;
+
+        _this.gotoSlide(deltaY < 0 ? _this.curSlideIx - 1 : _this.curSlideIx + 1, function () {
+          _this.ignoreWheel = false;
+        });
       }
-    } else {
-      this.startScrollTime = undefined;
-      this.deltaY = this.deltaX = 0;
     }
 
-    this.startScrollTime = this.startScrollTime || new Date().getTime();
-
-    this.deltaY += !isNaN(event.originalEvent.deltaY) ? event.originalEvent.deltaY : 0;
-    this.deltaX += !isNaN(event.originalEvent.deltaX) ? event.originalEvent.deltaX : 0;
+    this.lastWheelTime = new Date();
+    this.lastDeltaY = deltaY;
 
     if (!allowPropagation) {
       event.stopImmediatePropagation();

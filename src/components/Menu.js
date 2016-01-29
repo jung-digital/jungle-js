@@ -143,7 +143,7 @@ class Menu extends Dispatcher {
 }
 
 Menu.LOAD_COMPLETE = Event.generateType('LOAD_COMPLETE', 'Dispatched when the menu has initially been rendered');
-Menu.RENDERED = Event.generateType('RENDERED', 'Dispatched once the menu has been renderered');
+Menu.RENDERED = Event.generateType('RENDERED', 'Dispatched once the menu has been renderer');
 
 window.Jungle = window.Jungle || {};
 window.Jungle.Menu = Menu;
