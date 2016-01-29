@@ -62,9 +62,9 @@ class SlideSwipe extends Dispatcher {
 
     setTimeout(function () {
       this._setupBase();
-      this.hammer.on('swipe', this.swipeHandler);
+      this.hammer.on('swipe', this.swipeHandler.bind(this));
 
-      this.base.on('mousewheel DOMMouseWheel', this.wheelHandler.bind(this));
+      this.base.on('wheel mousewheel DOMMouseWheel', this.wheelHandler.bind(this));
     }.bind(this), 1);
   }
 
@@ -177,7 +177,19 @@ class SlideSwipe extends Dispatcher {
   // Event Handlers
   //---------------------------------------------
   swipeHandler(event) {
-    console.log(event);
+    var deltaY = event.deltaY;
+
+    if (deltaY !== 0) {
+      var allowSwipe = !((deltaY > 0) ? this.curSlideIx <= 0 : (this.curSlideIx >= this.slides.length - 1));
+
+      if (allowSwipe && this.options.direction === 'vertical') {
+        this.ignoreWheel = true;
+
+        this.gotoSlide(deltaY > 0 ? this.curSlideIx - 1 : this.curSlideIx + 1, function () {
+          this.ignoreWheel = false;
+        });
+      }
+    }
   }
 
   /**
