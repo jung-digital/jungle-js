@@ -75,6 +75,18 @@ class SlideSwipe extends Dispatcher {
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  areSlidesWithinScreen() {
+    var $window = $(window);
+
+    var docViewTop = $window.scrollTop();
+    var docViewBottom = docViewTop + $window.height();
+
+    var elemTop = this.base.offset().top;
+    var elemBottom = elemTop + this.base.height();
+
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+  }
+
   setSlides(selectorOrArray) {
     var o = this.options;
     var _this = this;
@@ -298,6 +310,10 @@ class SlideSwipe extends Dispatcher {
     var deltaX = !isNaN(event.originalEvent.deltaX) ? event.originalEvent.deltaX : 0;
     var deltaY = !isNaN(event.originalEvent.deltaY) ? event.originalEvent.deltaY : 0;
 
+    if (!this.areSlidesWithinScreen()) {
+      return;
+    }
+    
     if (this.ignoreWheel) {
       event.stopImmediatePropagation();
       event.preventDefault();
@@ -317,19 +333,19 @@ class SlideSwipe extends Dispatcher {
     //    at least 50 ms AFTER the last gesture has ended.
 
     var allowPropagation;
-    var allowSwipe = !allowPropagation;
+    var allowSwipe;
 
     console.log('Trying', deltaX, deltaY);
 
     if (deltaY !== 0) {
       allowPropagation = (deltaY < 0) ? _this.curSlideYIx <= 0 : (_this.curSlideYIx >= _this.slides[this.curSlideXIx].length - 1);
+      allowSwipe = !allowPropagation;
 
       var now = new Date().getTime();
       var magnitudeIncrease = Math.abs(deltaY) > Math.abs(this.lastDeltaY) * 2;
       var swipeGestureDetected = (now - this.lastWheelTime.getTime() > 200) ||
         (Math.sign(deltaY) != Math.sign(this.lastDeltaY)) ||
         magnitudeIncrease;
-
 
       if (allowSwipe && swipeGestureDetected) {
         this.ignoreWheel = true;

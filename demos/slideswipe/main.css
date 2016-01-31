@@ -1,8 +1,12 @@
 html, body {
   font-family: 'PT Sans', sans-serif;
-  background: #95a5a6;
   color: #2c3e50;
   height:100%;
+}
+
+body {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#cedce7+0,596a72+100;Grey+3D+%231 */
+  background: #8a8a8a;
 }
 
 h1 {
@@ -12,37 +16,51 @@ h1 {
 .slides {
   margin: 0 auto;
   width: 800px;
-  border: 1em solid #DDD;
+  border: 2px solid #CCC;
   height: calc(100% - 250px);
+  background-color: #EFEFEF;
 }
 
 .slide {
   width: 300px;
   height: 300px;
-  border: 1em solid #DDD;
+  border: 1px solid #FFF;
   margin: 0 auto;
   text-align: center;
   font-size: 24px;
   font-weight: bold;
-  padding: 5em;
+  padding: 2em;
 }
 
+.slide img {
+  width: 100%;
+}
 .slide-1 {
-  background: #1abc9c;
+  background: url(http://luxurygreecedmc.com/wp-content/uploads/2015/11/main.jpg);
+  background-position: center center;
+  background-size: cover;
 }
 
 .slide-2 {
-  background: #3498db;
+  background: url(http://images.cruisecritic.com/lido/2015/07/greece-meteora.jpg);
+  background-position: center center;
+  background-size: cover;
 }
 
 .slide-3 {
-  background: #9b59b6;
+  background: url(https://www.ownersdirect.co.uk/info/files/live/sites/odhr/files/holidays/gallery/scuba-diving-greece.jpg);
+  background-position: center center;
+  background-size: cover;
 }
 
 .slide-4 {
-  background: #e67e22;
+  background: url(http://theluxtraveller.com/wp-content/uploads/2013/11/Milos.jpg);
+  background-position: center center;
+  background-size: cover;
 }
 
 .slide-5 {
-  background: #16a085;
+  background: url(http://img.directbooking.ro/getimage.ashx?f=reclame&file=db2dd084-ca42-43a4-b680-6b3f938038c8insulegrecia.jpg);
+  background-position: center center;
+  background-size: cover;
 }
