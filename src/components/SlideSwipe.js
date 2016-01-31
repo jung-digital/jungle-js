@@ -5,6 +5,7 @@
 \*============================================*/
 import Dispatcher from '../lib/core/util/Dispatcher';
 import Event from '../lib/core/util/Event';
+import Slide from './slideSwipe/Slide';
 
 /*============================================*\
  * Statics
@@ -124,9 +125,14 @@ class SlideSwipe extends Dispatcher {
 
     y = y === undefined ? 0 : y;
 
-    this.slides[x][y] = {
-      child: elem
-    };
+    var slide = new Slide({
+      element: elem,
+      base: this.base,
+      x: x,
+      y: y
+    });
+
+    this.slides[x][y] = slide;
 
     this.idToSlideIx[id] = {
       x: x,
@@ -150,7 +156,9 @@ class SlideSwipe extends Dispatcher {
       });
     });
 
-    startSlide.slide.css('top', '0%');
+    setTimeout(function () {
+      startSlide.center();
+    }, 0);
   }
 
   /**
@@ -191,58 +199,61 @@ class SlideSwipe extends Dispatcher {
     var nextSlide = this.slides[x][y];
 
     if (x < this.curSlideXIx) { // Shift Right
-      nextSlide.slide[0].style.top = '0%';
+      nextSlide.slide[0].style.top = nextSlide.getCenterTopPercent() + '%';
 
       TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
         left: '-200%'
       }, {
-        left: '0%',
+        left: nextSlide.getCenterLeftPercent() + '%',
         onComplete: callback
       });
 
       TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
-        left: '0%'
+        left: this.curSlide.getCenterLeftPercent() + '%'
       },{
         left: '200%'
       });
     } else if (x > this.curSlideXIx) { // Shift Left
-      nextSlide.slide[0].style.top = '0%';
+      nextSlide.slide[0].style.top = nextSlide.getCenterTopPercent() + '%';
 
       TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
         left: '200%'
       }, {
-        left: '0%',
+        left: nextSlide.getCenterLeftPercent() + '%',
         onComplete: callback
       });
 
       TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
-        left: '0%'
+        left: this.curSlide.getCenterLeftPercent() + '%'
       },{
         left: '-200%'
       });
     } else if (y > this.curSlideYIx) { // Shift Down
+      nextSlide.slide[0].style.left = nextSlide.getCenterLeftPercent() + '%';
+
       TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
         top: '200%'
       }, {
-        top: '0%',
+        top: nextSlide.getCenterTopPercent() + '%',
         onComplete: callback
       });
 
       TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
-        top: '0%'
+        top: this.curSlide.getCenterLeftPercent() + '%'
       },{
         top: '-200%'
       });
     } else if (y < this.curSlideYIx) { // Shift Up
+      nextSlide.slide[0].style.left = nextSlide.getCenterLeftPercent() + '%';
       TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
         top: '-200%'
       }, {
-        top: '0%',
+        top: nextSlide.getCenterTopPercent() + '%',
         onComplete: callback
       });
 
       TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
-        top: '0%'
+        top: this.curSlide.getCenterLeftPercent() + '%'
       },{
         top: '200%'
       });
