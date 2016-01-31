@@ -10,6 +10,7 @@ import Event from '../lib/core/util/Event';
  * Statics
 \*============================================*/
 var slideswipeIndex = 0;
+var instance = 0;
 
 /*============================================*\
  * Class
@@ -27,19 +28,20 @@ class SlideSwipe extends Dispatcher {
   constructor(options) {
     super();
 
+    this.instance = instance++;
+
     var defaults = {};
 
     this.options = _.extend({}, defaults, options);
 
     this.options.baseSelector = this.options.baseSelector || document.body;
-    this.options.direction = this.options.direction || 'vertical';
     this.options.basePosition = this.options.basePosition || 'relative';
-    this.options.startIndex = this.options.startIndex ? this.options.startIndex : 0;
+    this.options.startIndexX = this.options.startIndexX ? this.options.startIndexX : 0;
+    this.options.startIndexY = this.options.startIndexY ? this.options.startIndexY : 0;
     this.options.autoSize = this.options.autoSize === false ? false : true;
     this.options.transitionSpeed = this.options.transitionSpeed || 0.5;
 
-    // Any scroll speed over 500 px / sec will trigger a slide change.
-    this.options.mouseWheelThreshold = this.options.mouseWheelThreshold || 50;
+    this.options.direction = 'horizontal';
 
     this.base = $(this.options.baseSelector);
 
@@ -55,7 +57,8 @@ class SlideSwipe extends Dispatcher {
     this.slides = [];
     this.idToSlideIx = {};
 
-    this.curSlideIx = 0;
+    this.curSlideXIx = 0;
+    this.curSlideYIx = 0;
 
     this.lastDeltaY = 0;
     this.lastWheelTime = new Date();
@@ -71,53 +74,83 @@ class SlideSwipe extends Dispatcher {
   //---------------------------------------------
   // Methods
   //---------------------------------------------
-  addSlides(selector) {
+  setSlides(selectorOrArray) {
     var o = this.options;
-    var elements = $(selector).toArray();
+    var _this = this;
 
-    elements.forEach(function (element) {
-      this._addElementAsSlide(element);
-    }.bind(this));
+    // Array is assumed to be standard horizontal first (x), vertical second (y).
+    if (Array.isArray(selectorOrArray)) {
+      var hor = selectorOrArray;
 
-    if (o.startIndex < this.slides.length) {
-      this._setupStartSlide();
-    }
-  }
+      if (hor.length == 1 && typeof hor[0] === 'string') {
+        this.direction = 'vertical';
 
-  _setupStartSlide() {
-    var o = this.options;
-    var startSlide = this.slides[o.startIndex];
+        $(hor[0]).toArray().forEach(function (item, y) {
+          _this._addElementAsSlideAt(item, 0, y);
+        });
+      } else {
+        this.direction = "both";
 
-    this.curSlideIx = o.startIndex;
-    this.curSlide = this.slides[this.curSlideIx];
-
-    this.slides.forEach(function (slide, ix) {
-      if (o.direction === 'vertical') {
-        if (ix < o.startIndex) {
-          slide.slide.css('top', '-100%');
-        } else if (ix === o.startIndex) {
-          slide.slide.css('top', '0%');
-        } else {
-          slide.slide.css('top', '100%');
-        }
+        // Horizontal [0, 1, 2... X]
+        hor.forEach(function (xItem, x) {
+          // Vertical [0, 1, 2... Y]
+          if (Array.isArray(xItem)) {
+            var ver = xItem;
+            ver.forEach(function (yItem, y) {
+              _this._addElementAsSlideAt($(yItem)[0], x, y);
+            });
+          }
+        });
       }
-    });
+    } else if (typeof selectorOrArray === 'string') {
+      $(selectorOrArray).toArray().forEach(function (item, x) {
+        _this._addElementAsSlideAt(item, x, 0);
+      });
+    } else {
+      throw Error('Please provide a single or double dimensioned array or a jQuery selector string to addSlides.');
+    }
+
+    this._setupStartSlide();
   }
 
-  _addElementAsSlide(elem) {
+  _addElementAsSlideAt(elem, x, y) {
     if (elem.getAttribute('id') == '') {
       elem.setAttribute('id', 'slide-child-' + slideswipeIndex++);
     }
 
     var id = elem.getAttribute('id');
 
-    this.slides.push({
+    this.slides[x] = this.slides[x] || [];
+
+    y = y === undefined ? 0 : y;
+
+    this.slides[x][y] = {
       child: elem
+    };
+
+    this.idToSlideIx[id] = {
+      x: x,
+      y: y
+    };
+
+    console.log(x, y);
+    this._wrapElementInSlide(elem);
+  }
+
+  _setupStartSlide() {
+    var o = this.options;
+    var startSlide = this.curSlide = this.slides[o.startIndexX][o.startIndexY];
+
+    this.curSlideXIx = o.startIndexX;
+    this.curSlideYIx = o.startIndexY;
+
+    this.slides.forEach(function (ver, x) {
+      ver.forEach(function (slide, y) {
+        slide.slide.css('top', '-200%');
+      });
     });
 
-    this.idToSlideIx[id] = this.slides.length-1;
-
-    this._wrapElementInSlide(elem);
+    startSlide.slide.css('top', '0%');
   }
 
   /**
@@ -127,11 +160,11 @@ class SlideSwipe extends Dispatcher {
    * @private
    */
   _wrapElementInSlide(element) {
-    var ix = this.idToSlideIx[element.getAttribute('id')];
+    var pos = this.idToSlideIx[element.getAttribute('id')];
 
-    $(element).wrap("<div class='slideswipe-slide' id='slide-" + ix + "'></div>");
+    $(element).wrap("<div class='slideswipe-slide' id='slide-" + this.instance + '' + pos.x + '' +  pos.y + "'></div>");
 
-    this.slides[ix].slide = $('#slide-' + ix);
+    this.slides[pos.x][pos.y].slide = $('#slide-' + this.instance + '' + pos.x + '' + pos.y);
   }
 
   _setupBase() {
@@ -140,37 +173,84 @@ class SlideSwipe extends Dispatcher {
     this.base.css('position', this.options.basePosition);
   }
 
-  gotoSlide(ix, callback) {
+  gotoSlide(x, y, callback) {
     var o = this.options;
     var _this = this;
 
     this.deltaX = this.deltaY = undefined;
 
-    console.log('Goto slide!', ix);
-
-    if (ix < 0 || ix > this.slides.length - 1 || ix == this.curSlideIx) {
+    if (x < 0 || x > this.slides.length - 1 ||
+        (x == this.curSlideXIx && y == this.curSlideYIx) ||
+        y < 0 || y > this.slides[x].length - 1) {
+      callback(false);
       return;
     }
 
-    var nextSlide = this.slides[ix];
+    console.log('Goto slide!', x, y);
 
-    TweenLite.to(nextSlide.slide[0], o.transitionSpeed, {
-      top: '0%',
-      onComplete: callback
-    });
+    var nextSlide = this.slides[x][y];
 
-    if (ix < this.curSlideIx) {
-      TweenLite.to(this.curSlide.slide[0], o.transitionSpeed, {
-        top: '100%'
+    if (x < this.curSlideXIx) { // Shift Right
+      nextSlide.slide[0].style.top = '0%';
+
+      TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
+        left: '-200%'
+      }, {
+        left: '0%',
+        onComplete: callback
       });
-    } else {
-      TweenLite.to(this.curSlide.slide[0], o.transitionSpeed, {
-        top: '-100%'
+
+      TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
+        left: '0%'
+      },{
+        left: '200%'
+      });
+    } else if (x > this.curSlideXIx) { // Shift Left
+      nextSlide.slide[0].style.top = '0%';
+
+      TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
+        left: '200%'
+      }, {
+        left: '0%',
+        onComplete: callback
+      });
+
+      TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
+        left: '0%'
+      },{
+        left: '-200%'
+      });
+    } else if (y > this.curSlideYIx) { // Shift Down
+      TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
+        top: '200%'
+      }, {
+        top: '0%',
+        onComplete: callback
+      });
+
+      TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
+        top: '0%'
+      },{
+        top: '-200%'
+      });
+    } else if (y < this.curSlideYIx) { // Shift Up
+      TweenLite.fromTo(nextSlide.slide[0], o.transitionSpeed, {
+        top: '-200%'
+      }, {
+        top: '0%',
+        onComplete: callback
+      });
+
+      TweenLite.fromTo(this.curSlide.slide[0], o.transitionSpeed, {
+        top: '0%'
+      },{
+        top: '200%'
       });
     }
 
     this.curSlide = nextSlide;
-    this.curSlideIx = ix;
+    this.curSlideXIx = x;
+    this.curSlideYIx = y;
   }
 
   //---------------------------------------------
@@ -185,7 +265,7 @@ class SlideSwipe extends Dispatcher {
       if (allowSwipe && this.options.direction === 'vertical') {
         this.ignoreWheel = true;
 
-        this.gotoSlide(deltaY > 0 ? this.curSlideIx - 1 : this.curSlideIx + 1, function () {
+        this.gotoSlide(this.curSlideXIx, deltaY > 0 ? this.curSlideIx - 1 : this.curSlideIx + 1, function () {
           this.ignoreWheel = false;
         });
       }
@@ -204,6 +284,7 @@ class SlideSwipe extends Dispatcher {
     var _this = this;
 
     var o = this.options;
+    var deltaX = !isNaN(event.originalEvent.deltaX) ? event.originalEvent.deltaX : 0;
     var deltaY = !isNaN(event.originalEvent.deltaY) ? event.originalEvent.deltaY : 0;
 
     if (this.ignoreWheel) {
@@ -211,6 +292,7 @@ class SlideSwipe extends Dispatcher {
       event.preventDefault();
 
       this.lastWheelTime = new Date();
+      this.lastDeltaX = deltaX;
       this.lastDeltaY = deltaY;
 
       return;
@@ -223,9 +305,13 @@ class SlideSwipe extends Dispatcher {
     // OR 3) A new scroll event in the same direction has a delta magnitude that is greater than the last one AND occurs
     //    at least 50 ms AFTER the last gesture has ended.
 
+    var allowPropagation;
+    var allowSwipe = !allowPropagation;
+
+    console.log('Trying', deltaX, deltaY);
+
     if (deltaY !== 0) {
-      var allowPropagation = (deltaY < 0) ? _this.curSlideIx <= 0 : (_this.curSlideIx >= _this.slides.length - 1);
-      var allowSwipe = !allowPropagation;
+      allowPropagation = (deltaY < 0) ? _this.curSlideYIx <= 0 : (_this.curSlideYIx >= _this.slides[this.curSlideXIx].length - 1);
 
       var now = new Date().getTime();
       var magnitudeIncrease = Math.abs(deltaY) > Math.abs(this.lastDeltaY) * 2;
@@ -233,16 +319,37 @@ class SlideSwipe extends Dispatcher {
         (Math.sign(deltaY) != Math.sign(this.lastDeltaY)) ||
         magnitudeIncrease;
 
-      if (allowSwipe && swipeGestureDetected && _this.options.direction === 'vertical') {
+
+      if (allowSwipe && swipeGestureDetected) {
         this.ignoreWheel = true;
 
-        _this.gotoSlide(deltaY < 0 ? _this.curSlideIx - 1 : _this.curSlideIx + 1, function () {
+        _this.gotoSlide(this.curSlideXIx, deltaY < 0 ? _this.curSlideYIx - 1 : _this.curSlideYIx + 1, function () {
+          _this.ignoreWheel = false;
+        });
+      }
+    }
+
+    if (deltaX !== 0) {
+      allowPropagation = (deltaX < 0) ? _this.curSlideXIx <= 0 : (_this.curSlideXIx >= _this.slides.length - 1);
+      allowSwipe = !allowPropagation;
+
+      var now = new Date().getTime();
+      var magnitudeIncrease = Math.abs(deltaX) > Math.abs(this.lastDeltaX) * 2;
+      var swipeGestureDetected = (now - this.lastWheelTime.getTime() > 200) ||
+        (Math.sign(deltaX) != Math.sign(this.lastDeltaX)) ||
+        magnitudeIncrease;
+
+      if (allowSwipe && swipeGestureDetected) {
+        this.ignoreWheel = true;
+
+        _this.gotoSlide(deltaX < 0 ? _this.curSlideXIx - 1 : _this.curSlideXIx + 1, this.curSlideYIx, function () {
           _this.ignoreWheel = false;
         });
       }
     }
 
     this.lastWheelTime = new Date();
+    this.lastDeltaX = deltaX;
     this.lastDeltaY = deltaY;
 
     if (!allowPropagation) {
