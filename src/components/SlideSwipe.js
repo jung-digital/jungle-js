@@ -313,7 +313,7 @@ class SlideSwipe extends Dispatcher {
     if (!this.areSlidesWithinScreen()) {
       return;
     }
-    
+
     if (this.ignoreWheel) {
       event.stopImmediatePropagation();
       event.preventDefault();
