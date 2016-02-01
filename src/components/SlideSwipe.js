@@ -170,6 +170,7 @@ class SlideSwipe extends Dispatcher {
     });
 
     setTimeout(function () {
+      startSlide.select();
       startSlide.center();
     }, 0);
   }
@@ -210,6 +211,9 @@ class SlideSwipe extends Dispatcher {
     console.log('Goto slide!', x, y);
 
     var nextSlide = this.slides[x][y];
+
+    nextSlide.select();
+    this.curSlide.deselect();
 
     if (x < this.curSlideXIx) { // Shift Right
       nextSlide.slide[0].style.top = nextSlide.getCenterTopPercent() + '%';

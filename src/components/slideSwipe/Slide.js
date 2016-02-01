@@ -29,11 +29,27 @@ class Slide extends Dispatcher {
     for (var prop in properties) {
       this[prop] = properties[prop];
     }
+
+    $(window).resize((function () {
+      if (this.selected) {
+        this.center();
+      }
+    }).bind(this));
+
+    this.selected = false;
   }
 
   //---------------------------------------------
   // Methods
   //---------------------------------------------
+  select() {
+    this.selected = true;
+  }
+
+  deselect() {
+    this.selected = false;
+  }
+
   center() {
     $(this.slide).css('top', this.getCenterTopPercent() + '%');
     $(this.slide).css('left', this.getCenterLeftPercent() + '%');
