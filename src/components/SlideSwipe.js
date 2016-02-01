@@ -51,7 +51,7 @@ class SlideSwipe extends Dispatcher {
     }
 
     this.hammer = new Hammer(this.base[0]);
-    this.hammer.get('swipe').set({direction: this.options.direction === 'vertical' ? Hammer.DIRECTION_VERTICAL : Hammer.DIRECTION_HORIZONTAL });
+    this.hammer.get('swipe').set({direction: Hammer.DIRECTION_ALL });
 
     var _this = this;
 
@@ -68,6 +68,7 @@ class SlideSwipe extends Dispatcher {
       this._setupBase();
       this.hammer.on('swipe', this.swipeHandler.bind(this));
 
+      console.log(this.hammer);
       this.base.on('wheel mousewheel DOMMouseWheel', this.wheelHandler.bind(this));
     }.bind(this), 1);
   }
@@ -281,14 +282,25 @@ class SlideSwipe extends Dispatcher {
   //---------------------------------------------
   swipeHandler(event) {
     var deltaY = event.deltaY;
+    var deltaX = event.deltaX;
 
-    if (deltaY !== 0) {
-      var allowSwipe = !((deltaY > 0) ? this.curSlideIx <= 0 : (this.curSlideIx >= this.slides.length - 1));
+    if (deltaY !== 0 && Math.abs(deltaY) > Math.abs(deltaX)) {
+      var allowSwipe = !((deltaY > 0) ? this.curSlideYIx <= 0 : (this.curSlideYIx >= this.slides[this.curSlideXIx].length - 1));
 
-      if (allowSwipe && this.options.direction === 'vertical') {
+      if (allowSwipe) {
         this.ignoreWheel = true;
 
-        this.gotoSlide(this.curSlideXIx, deltaY > 0 ? this.curSlideIx - 1 : this.curSlideIx + 1, function () {
+        this.gotoSlide(this.curSlideXIx, deltaY > 0 ? this.curSlideYIx - 1 : this.curSlideYIx + 1, function () {
+          this.ignoreWheel = false;
+        });
+      }
+    } else if (deltaX !== 0) {
+      var allowSwipe = !((deltaX > 0) ? this.curSlideXIx <= 0 : (this.curSlideXIx >= this.slides.length - 1));
+
+      if (allowSwipe) {
+        this.ignoreWheel = true;
+
+        this.gotoSlide(deltaX > 0 ? this.curSlideXIx - 1 : this.curSlideXIx + 1, this.curSlideYIx, function () {
           this.ignoreWheel = false;
         });
       }
