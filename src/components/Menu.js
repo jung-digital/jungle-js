@@ -68,6 +68,8 @@ class Menu extends Dispatcher {
    */
   bindDOMElements() {
     this.$container.find('.item').on('click', this.onMenuItemClick.bind(this));
+    this.$container.find('.item').on('mouseover', this.onMenuItemMouseOver.bind(this));
+    this.$container.find('.item').on('mouseout', this.onMenuItemMouseOut.bind(this));
     this.$container.find('.submenu').on('click', this.onSubMenuContainerClick.bind(this));
   }
 
@@ -121,8 +123,34 @@ class Menu extends Dispatcher {
 
     $el.addClass('active');
 
-    if ($el.find('.submenu').length > 0) {
+    if ($el.find('.submenu').length) {
       $el.toggleClass('open');
+    }
+  }
+
+  /**
+   * Handle a mouseover
+   * @param e
+   */
+  onMenuItemMouseOver(e) {
+    var $el = $(e.currentTarget);
+
+    if ($el.find('.submenu').length) {
+      this.$container.find('.submenu').removeClass('hover-opened');
+
+      $el.find('.submenu').addClass('hover-opened');
+    }
+  }
+
+  /**
+   * Handle a mouseout
+   * @param e
+   */
+  onMenuItemMouseOut(e) {
+    var $el = $(e.currentTarget);
+
+    if ($el.find('.submenu').length) {
+      this.$container.find('.submenu').removeClass('hover-opened');
     }
   }
 
