@@ -68,8 +68,12 @@ class Menu extends Dispatcher {
    */
   bindDOMElements() {
     this.$container.find('.item').on('click', this.onMenuItemClick.bind(this));
-    this.$container.find('.item').on('mouseover', this.onMenuItemMouseOver.bind(this));
-    this.$container.find('.item').on('mouseout', this.onMenuItemMouseOut.bind(this));
+
+    if( !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+      this.$container.find('.item').on('mouseover', this.onMenuItemMouseOver.bind(this));
+      this.$container.find('.item').on('mouseout', this.onMenuItemMouseOut.bind(this));
+    }
+
     this.$container.find('.submenu').on('click', this.onSubMenuContainerClick.bind(this));
   }
 
