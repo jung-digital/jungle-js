@@ -3,25 +3,23 @@
 \*============================================*/
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
-const es6ify = require('es6ify');
-const uglify = require('gulp-uglifyjs');
-const browserify = require('browserify');
 const filter = require('gulp-filter');
-const extractor = require('gulp-extract-sourcemap')
+//const extractor = require('gulp-extract-sourcemap')
 const del = require('del');
-const glob = require('glob');
+//const glob = require('glob');
 const path = require('path');
-const isparta = require('isparta');
-const watchify = require('watchify');
-const vinylBuffer = require('vinyl-buffer');
-const runSequence = require('run-sequence');
-const vinylSource = require('vinyl-source-stream');
+//const isparta = require('isparta');
+//const watchify = require('watchify');
+//const vinylBuffer = require('vinyl-buffer');
+//const runSequence = require('run-sequence');
+//const vinylSource = require('vinyl-source-stream');
 const browserSync = require('browser-sync');
 const manifest = require('./package.json');
 const destinationFolder = './dist';
 const builds = require('./src/packages.json');
-const fs = require('fs');
+//const fs = require('fs');
 const mkdirp = require('mkdirp');
+const webpack = require('gulp-webpack');
 
 const config = manifest.babelBoilerplateOptions;
 
@@ -101,32 +99,17 @@ function buildComplete(build, done) {
 
   mkdirp.sync(targetDir);
 
-  browserify({
-      debug: true
-    })
-    .add(es6ify.runtime)
-    .transform(es6ify)
-    .add(build.entry)
-    .bundle()
-    .pipe(vinylSource(build.key.toLowerCase() + '.js'))
-    .pipe(vinylBuffer())
-    .pipe(extractor({
-      basedir: destinationFolder,
-      removeSourcesContent: true
-    }))
-    .on('postextract', function(sourceMap){
-      exchange.source_map.orig = sourceMap;
-      fs.writeFileSync(targetDir + '/' + build.key.toLowerCase() + '.min.js');
-    })
-    .pipe( filter('**/*.js') )
-    .pipe(gulp.dest(targetDir))
-    .pipe(uglify(build.key.toLowerCase() + '.min.js', {
-      outSourceMap: true,
-      basePath: destinationFolder,
-      output: {
-        source_map: exchange.source_map
-      }
-    }))
+  var webpackConfig = require('./webpack.config.js');
+
+  webpackConfig.entry = [build.entry];
+  webpackConfig.output = {
+      path: path.join(__dirname, 'dist'),
+      publicPath: '/',
+      filename: build.key.toLowerCase() + '.js'
+    };
+
+  gulp.src(build.entry)
+    .pipe(webpack(webpackConfig))
     .pipe(gulp.dest(targetDir))
     .on('end', done);
 }

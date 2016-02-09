@@ -37,6 +37,6 @@
   },
   {
     "key": "Menu",
-    "entry": "src/components/Menu.js"
+    "entry": "./src/components/Menu.js"
   }
 ]
