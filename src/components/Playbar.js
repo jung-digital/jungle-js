@@ -152,7 +152,10 @@ class Playbar extends GraphicComponent {
 
         let chapterX = (closestChapter.position / this.total) * w;
 
-        let r = new Rect(this.globalX + chapterX - 20, this.globalY - 45, 110, 40);
+        let lines = closestChapter.text.split('\n').length;
+        let lineHeight = 18;
+
+        let r = new Rect(this.globalX + chapterX - 20, this.globalY - (25 + (lines * lineHeight)), 110, 20 + (lines * lineHeight));
         let v = fit(r, this.renderer.bounds);
         r.left = v[0];
         r.top = v[1];
@@ -168,6 +171,7 @@ class Playbar extends GraphicComponent {
             tailLength: 10,
             tailGirth: 5,
             autoWidth: true,
+            lineHeight,
             target: vec2.fromValues(this.globalX + chapterX, 0)
           });
 

@@ -13,11 +13,11 @@ window.renderer = new Jungle.GraphicRenderer(canvas, {
 window.playbar = new Playbar({
   total: 100,
   current: 0,
-  boundsPercent: new Jungle.util.Rect(0.0, 0.4, 1.0, NaN),
+  boundsPercent: new Jungle.util.Rect(0.0, 0.8, 1.0, NaN),
   bounds: new Jungle.util.Rect(0, 0, 0, 20),
   chapters: [{
     position: 2,
-    text: '2nd percentile.'
+    text: '2nd percentile.\nSecond line.'
   },{
     position: 25,
     text: '25th percentile.'

@@ -178,7 +178,13 @@ class GraphicComponent extends GraphicContainer {
     ctx.font = o.font;
     ctx.fillStyle = o.color;
     ctx.textBaseline = baseline;
-    ctx.fillText(text, this.globalX + x, this.globalY + y);
+
+    let texts = text.split('\n');
+    let lineHeight = o.lineHeight || 20;
+
+    texts.forEach((text, ix) => {
+      ctx.fillText(text, this.globalX + x, this.globalY + y + (lineHeight * ix));
+    });
   }
 
   /**

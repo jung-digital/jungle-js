@@ -43,6 +43,7 @@ class Callout extends GraphicComponent {
     o.tailLength = o.tailLength || 20;
     o.tailGirth = o.tailGirth || 10;
     o.autoWidth = o.autoWidth || true;
+    o.lineHeight = o.lineHeight || 18;
 
     this.calloutSide = o.calloutSide || 'bottom';
     this.target = o.target || this._getDefaultTargetForSide(this.calloutSide);
@@ -158,7 +159,13 @@ class Callout extends GraphicComponent {
     }
 
     if (this.options.autoWidth) {
-      this.width = this.measureText(this._text).width + this.padding.left + this.padding.right - 9;
+      let texts = this._text.split('\n');
+
+      this.width = 0;
+
+      texts.forEach(text => {
+        this.width = Math.max(this.measureText(text).width + this.padding.left + this.padding.right - 9, this.width);
+      });
     }
   }
 
