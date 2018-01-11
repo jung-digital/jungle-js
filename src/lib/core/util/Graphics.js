@@ -80,7 +80,6 @@ export function fillCallout(ctx, x, y, w, h, xTarget, yTarget, radius, calloutSi
   radius = radius || 10;
 
   let cr = radius;
-  let wcr = w - (cr * 2);
 
   if (calloutSide === 'top' || calloutSide === 'bottom') {
     h = h - ctl;
@@ -123,7 +122,7 @@ export function fillCallout(ctx, x, y, w, h, xTarget, yTarget, radius, calloutSi
   if (autoFill) {
     ctx.fill();
   }
-};
+}
 
 /**
  * Given a Rect A and a Rect B and a target vec2, returns a vec2 that assures that repositions Rect A so that
@@ -138,20 +137,22 @@ export function fit(rectA, rectB) {
   let y = rectA.top;
   if (rectA.left < rectB.left) {
     x = rectB.left;
-  } else if (rectA.left + rectA.width > rectB.left + rectB.width) {
+  }
+  if (rectA.left + rectA.width > rectB.left + rectB.width) {
     x = rectB.right - rectA.width;
   }
   if (rectA.top < rectB.top) {
     y = rectB.top;
-  } else if (rectA.top + rectA.height > rectB.top + rectB.height) {
+  }
+  if (rectA.top + rectA.height > rectB.top + rectB.height) {
     y = rectB.bottom - rectA.height;
   }
 
   return vec2.fromValues(x, y);
-};
+}
 
 export default {
-  fillRectRadius: fillRectRadius,
-  fillCallout: fillCallout,
-  fit: fit
+  fillRectRadius,
+  fillCallout,
+  fit
 };

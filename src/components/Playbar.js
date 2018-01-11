@@ -155,9 +155,10 @@ class Playbar extends GraphicComponent {
         let lines = closestChapter.text.split('\n').length;
         let lineHeight = 18;
 
-        let r = new Rect(this.globalX + chapterX - 20, this.globalY - (25 + (lines * lineHeight)), 110, 20 + (lines * lineHeight));
+        let r = new Rect(this.globalX + chapterX - 20, this.globalY - (25 + (lines * lineHeight)), 130, 20 + (lines * lineHeight));
         let v = fit(r, this.renderer.bounds);
-        r.left = v[0];
+
+        r.left = v[0] !== r.left ? v[0] - 20 : r.left;
         r.top = v[1];
 
         this._callout = new Callout({
