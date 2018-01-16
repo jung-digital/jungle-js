@@ -26,7 +26,7 @@ window.playbar = new Playbar({
     text: '50th percentile. Super long text!'
   },{
     position: 75,
-    text: '75th percentile.'
+    text: ''
   },{
     position: 98,
     text: '98th percentile.'

@@ -150,18 +150,19 @@ class Playbar extends GraphicComponent {
           this.renderer.removeChild(this._callout);
         }
 
-        let chapterX = (closestChapter.position / this.total) * w;
+        if (closestChapter.text) {
+          let chapterX = (closestChapter.position / this.total) * w;
 
-        let lines = closestChapter.text.split('\n').length;
-        let lineHeight = 18;
+          let lines = closestChapter.text.split('\n').length;
+          let lineHeight = 18;
 
-        let r = new Rect(this.globalX + chapterX - 20, this.globalY - (25 + (lines * lineHeight)), 130, 20 + (lines * lineHeight));
-        let v = fit(r, this.renderer.bounds);
+          let r = new Rect(this.globalX + chapterX - 20, this.globalY - (25 + (lines * lineHeight)), 130, 20 + (lines * lineHeight));
+          let v = fit(r, this.renderer.bounds);
 
-        r.left = v[0] !== r.left ? v[0] - 20 : r.left;
-        r.top = v[1];
+          r.left = v[0] !== r.left ? v[0] - 20 : r.left;
+          r.top = v[1];
 
-        this._callout = new Callout({
+          this._callout = new Callout({
             text: closestChapter.text || 'Chapter text undefined.',
             bounds: r,
             color: 'white',
@@ -176,7 +177,8 @@ class Playbar extends GraphicComponent {
             target: vec2.fromValues(this.globalX + chapterX, 0)
           });
 
-        this.renderer.addChild(this._callout);
+          this.renderer.addChild(this._callout);
+        }
       } else {
         if (this._callout) {
           this.renderer.removeChild(this._callout);
@@ -260,11 +262,18 @@ class Playbar extends GraphicComponent {
 
     if (this.chapters) {
       this.chapters.forEach(chapter => {
-        ctx.fillStyle = chapter.position < this.current ? o.chapterFillColorPlayed : o.chapterFillColor;
+
         ctx.beginPath();
         ctx.arc(this.globalX + this.width * (chapter.position / this.total), this.globalY + this.height / 2, o.chapterRadius, 0, Math.PI * 2);
         ctx.closePath();
-        ctx.fill();
+
+        if (chapter.text) {
+          ctx.fillStyle = chapter.position < this.current ? o.chapterFillColorPlayed : o.chapterFillColor;
+          ctx.fill();
+        } else {
+          ctx.strokeStyle = chapter.position < this.current ? o.chapterFillColorPlayed : o.chapterFillColor;
+          ctx.stroke();
+        }
       });
     }
 
