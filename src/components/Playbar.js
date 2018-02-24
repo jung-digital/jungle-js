@@ -166,7 +166,7 @@ class Playbar extends GraphicComponent {
             text: closestChapter.text || 'Chapter text undefined.',
             bounds: r,
             color: 'white',
-            font: '12px Georgia',
+            font: '12px \'Roboto\',Arial, Helvetica, sans-serif',
             bgColor: 'black',
             padding: new Rect(10),
             cornerRadius: 5,

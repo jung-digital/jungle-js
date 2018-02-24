@@ -378,7 +378,7 @@ class GraphicRenderer extends GraphicComponent {
     super._onFrameHandler(this.elapsed);
 
     if (this.options.debug) {
-      this.ctx.font = '12px Georgia white';
+      this.ctx.font = '12px Arial white';
       this.ctx.fillStyle = 'orange';
       this.ctx.fillText(this.debugText, this.options.debugPosX, this.options.debugPosY);
     }

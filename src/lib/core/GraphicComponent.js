@@ -142,7 +142,7 @@ class GraphicComponent extends GraphicContainer {
   setupFontOptions(options) {
     let o = this.options;
 
-    o.font = options.font || o.font || '12px Georgia white';
+    o.font = options.font || o.font || '12px Arial white';
     o.color = options.color || o.color || 'black';
   }
 
@@ -175,6 +175,7 @@ class GraphicComponent extends GraphicContainer {
 
     baseline = baseline || 'hanging';
 
+    console.log('FONT', o.font);
     ctx.font = o.font;
     ctx.fillStyle = o.color;
     ctx.textBaseline = baseline;
